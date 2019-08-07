@@ -1,0 +1,26 @@
+#version 430 core
+//ïœêîégÇ¶Ç»Ç¢
+uniform const int localSizeX = 100;
+uniform const int localSizeY = 1;
+uniform const int localSizeZ = 50;
+
+layout(local_size_x = 100, local_size_y = 1, local_size_z = 50) in;
+
+class Cell
+{
+	vec4 position;
+};
+
+layout(std430, binding = 0) buffer Cells
+{
+  Cell cell[];
+};
+
+void main()
+{
+  const uint testNum = gl_WorkGroupID.x;
+
+
+  //cell[i].position.z += 1.0f;
+  
+}
