@@ -13,10 +13,18 @@ public:
 		float cellSizeX, float cellSizeZ, float cellSizeY);
 	~CellularAutomata();
 
-	void DispatchCompute();
+	void DispatchCompute(int gridNumX, int gridNumY, int gridNumZ);
 
 	//てすと
 	Cell* GetCells() { return cells; }
+
+	//旧Cellクラスからの移行
+	enum CellFlags {
+		ISCRYSTAL = 1,				//元のsnowflakeにあたる
+		ISEDGECRYSTAL = (1 << 1),	//edge_snowflake
+		ISBOUNDARY = (1 << 2),		//non_boundary
+		ISEDGEBOUNDARY = (1 << 3)	//boundary
+	};
 private:
 	//セル先頭ポインタ
 	Cell* cells;

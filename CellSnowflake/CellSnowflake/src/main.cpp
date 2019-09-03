@@ -37,7 +37,7 @@ const float pi = 3.1415926535f;
 // 水蒸気セルの初期拡散質量
 const float rho = 0.1f;
 
-const int gridNumX = 100;
+const int gridNumX = 50;
 const int gridNumY = 1;
 const int gridNumZ = 50;
 
@@ -78,7 +78,7 @@ int main() {
 	const GLint projectionLoc(glGetUniformLocation(vertfragProgramObj, "projection"));
 
 	CellularAutomata cellularAutomata(rho, gridNumX, gridNumY, gridNumZ, cellSizeX, cellSizeZ, cellSizeY);
-	//TESTTTT
+	
 	for (int k = 0; k < gridNumY; ++k) {
 		for (int j = 0; j < gridNumZ; ++j) {
 			for (int i = 0; i < gridNumX; ++i) {
@@ -87,7 +87,6 @@ int main() {
 			}
 		}
 	}
-
 	//std::unique_ptr<const Shape> shape(new Shape(3, 12, octahedronVertex));
 	std::unique_ptr<const Shape> shape(new Shape(4, gridNumX*gridNumY*gridNumZ, TestCellVertex));
 
@@ -133,7 +132,11 @@ int main() {
 		// 図形を描画する
 		shape->draw();
 		//セルオートマトン処理
-		cellularAutomata.DispatchCompute();
+		cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
+
+		/*std::cout << cellularAutomata.GetCells()[0].GetPos()[0]
+			<< cellularAutomata.GetCells()[0].GetPos()[1]
+			<< cellularAutomata.GetCells()[0].GetPos()[2] << std::endl;*/
 		//
 		// カラーバッファを入れ替える
 		window.swapBuffers();

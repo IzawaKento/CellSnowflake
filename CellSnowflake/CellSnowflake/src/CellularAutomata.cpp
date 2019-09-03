@@ -19,15 +19,15 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 				cells[pointNum].SetPosition(x, y, z);
 				//cells[pointNum].SetFlagFalse(Cell::CellFlags::ISCRYSTAL);		//なくてもいい
 				//cells[pointNum].SetFlagFalse(Cell::CellFlags::ISEDGECRYSTAL);
-				cells[pointNum].SetFlagTrue(Cell::CellFlags::ISBOUNDARY);	//Cellのコンストラクタの方がいい？
+				cells[pointNum].SetFlagTrue(CellFlags::ISBOUNDARY);	//Cellのコンストラクタの方がいい？
 				//cells[pointNum].SetFlagFalse(Cell::CellFlags::ISEDGEBOUNDARY);
 			}
 		}
 	}
 	//中心点を結晶に
 	int centerCellNum = (gridNumX * gridNumY * gridNumZ - 1) / 2;
-	cells[centerCellNum].SetFlagTrue(Cell::CellFlags::ISCRYSTAL);
-	cells[centerCellNum].SetFlagTrue(Cell::CellFlags::ISEDGECRYSTAL);
+	cells[centerCellNum].SetFlagTrue(CellFlags::ISCRYSTAL);
+	cells[centerCellNum].SetFlagTrue(CellFlags::ISEDGECRYSTAL);
 
 	//中心点の周りを結晶に
 	SetEdgeCry(centerCellNum + 1);
@@ -73,18 +73,18 @@ CellularAutomata::~CellularAutomata() {
 }
 
 //毎フレーム行うコンピュートシェーダの実行
-void CellularAutomata::DispatchCompute() {
+void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ) {
 	// 更新用のシェーダプログラムの使用開始
 	glUseProgram(computeProgramObj);
 	//引数は３次元でx, y, zのワークグループを起動する数
-	glDispatchCompute(1, 1, 1);
+	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
 }
 
 void CellularAutomata::SetEdgeCry(int cellNum) {
-	cells[cellNum].SetFlagTrue(Cell::CellFlags::ISCRYSTAL);
-	cells[cellNum].SetFlagTrue(Cell::CellFlags::ISEDGECRYSTAL);
-	cells[cellNum].SetFlagFalse(Cell::CellFlags::ISBOUNDARY);
-	cells[cellNum].SetFlagFalse(Cell::CellFlags::ISEDGEBOUNDARY);
+	cells[cellNum].SetFlagTrue(CellFlags::ISCRYSTAL);
+	cells[cellNum].SetFlagTrue(CellFlags::ISEDGECRYSTAL);
+	cells[cellNum].SetFlagFalse(CellFlags::ISBOUNDARY);
+	cells[cellNum].SetFlagFalse(CellFlags::ISEDGEBOUNDARY);
 	cells[cellNum].SetDiffusionMass(0.0f);
 	cells[cellNum].SetBoundaryMass(1.0f);
 }
