@@ -151,7 +151,7 @@ GLuint Program::createCompProgramObj(const char *csrc) {
 	{
 		// バーテックスシェーダのシェーダオブジェクトを作成する
 		//戻り値は作成されたシェーダオブジェクトのハンドル (識別名) 
-		const GLuint cobj(glCreateShader(GL_VERTEX_SHADER));
+		const GLuint cobj(glCreateShader(GL_COMPUTE_SHADER));
 		//			shader, count, **string, *length
 		/*
 		glShaderSource() の引数 string に渡す配列の各要素が終端にヌル文字

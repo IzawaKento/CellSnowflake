@@ -83,7 +83,7 @@ int main() {
 		for (int j = 0; j < gridNumZ; ++j) {
 			for (int i = 0; i < gridNumX; ++i) {
 				int num = i + gridNumX * j + k * gridNumX * gridNumZ;
-				TestCellVertex[num].position = cellularAutomata.GetCells()[num].GetPos();
+				TestCellVertex[num].position = cellularAutomata.GetCells()[num].position;
 			}
 		}
 	}
@@ -134,9 +134,9 @@ int main() {
 		//セルオートマトン処理
 		cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
 
-		/*std::cout << cellularAutomata.GetCells()[0].GetPos()[0]
-			<< cellularAutomata.GetCells()[0].GetPos()[1]
-			<< cellularAutomata.GetCells()[0].GetPos()[2] << std::endl;*/
+		std::cout << cellularAutomata.GetCells()[135].position[0] << ", "
+			<< cellularAutomata.GetCells()[135].position[1] << ", "
+			<< cellularAutomata.GetCells()[135].position[2] << std::endl;
 		//
 		// カラーバッファを入れ替える
 		window.swapBuffers();

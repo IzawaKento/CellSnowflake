@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include "Program.h"
 
-class Cell;
+struct Cell;
 
 class CellularAutomata {
 public:
@@ -30,7 +30,7 @@ private:
 	Cell* cells;
 
 	//セルを境界結晶にする
-	void SetEdgeCry(int);
+	//void SetEdgeCry(int);
 
 	//シェーダーストレージバッファオブジェクト
 	GLuint ssbo;

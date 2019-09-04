@@ -2,7 +2,7 @@
 #include "GL/glew.h"
 #include "Vector.h"
 
-class Cell {
+struct Cell {
 	Vector4 position;
 	/*
 	1桁: isCrystal
@@ -10,15 +10,19 @@ class Cell {
 	4桁: isBoundary
 	8桁: isEdgeBoundary
 	*/
+	
+	/*
 	unsigned flags = 0;	//ビット演算でややこしいことしてみる。無駄に４つもある
 
 	GLfloat diffusionMass = 0.0f;
 	GLfloat boundaryMass = 0.0f;
 	GLint horizontalNeighbourNum = 0;
 	GLint verticalNeighbourNum = 0;
+	*/
+
 	
-public:
 	void SetPosition(GLfloat x, GLfloat y, GLfloat z);
+	/*
 	void SetFlagTrue(unsigned flagID);
 	void SetFlagFalse(unsigned flagID);
 
@@ -36,6 +40,6 @@ public:
 
 	//test
 	Vector4 GetPos() { return position; }
-
+	*/
 	
 };
