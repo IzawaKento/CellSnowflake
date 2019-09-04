@@ -14,6 +14,9 @@ public:
 	~CellularAutomata();
 
 	void DispatchCompute(int gridNumX, int gridNumY, int gridNumZ);
+	
+	//セルを頂点として描く
+	void drawCell(int count);
 
 	//てすと
 	Cell* GetCells() { return cells; }
@@ -32,9 +35,13 @@ private:
 	//セルを境界結晶にする
 	//void SetEdgeCry(int);
 
+	//セル描画用
+	GLuint vao;
 	//シェーダーストレージバッファオブジェクト
 	GLuint ssbo;
 
+	//描画用プログラムオブジェクト
+	GLuint vertfragProgramObj = Program::loadProgramObj("src\\point.vert", "src\\point.frag");
 	//コンピュートシェーダー用プログラムオブジェクト
 	GLuint computeProgramObj = Program::loadCompProgramObj("src\\compute.comp");
 

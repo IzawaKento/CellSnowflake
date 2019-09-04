@@ -130,13 +130,16 @@ int main() {
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, projection.data());
 
 		// 図形を描画する
-		shape->draw();
+		//shape->draw();
 		//セルオートマトン処理
-		cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
+		//cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
 
-		std::cout << cellularAutomata.GetCells()[135].position[0] << ", "
+		cellularAutomata.drawCell(gridNumX*gridNumY*gridNumZ);
+
+		//画像の頂点は動かないのでここで確認
+		/*std::cout << cellularAutomata.GetCells()[135].position[0] << ", "
 			<< cellularAutomata.GetCells()[135].position[1] << ", "
-			<< cellularAutomata.GetCells()[135].position[2] << std::endl;
+			<< cellularAutomata.GetCells()[135].position[2] << std::endl;*/
 		//
 		// カラーバッファを入れ替える
 		window.swapBuffers();

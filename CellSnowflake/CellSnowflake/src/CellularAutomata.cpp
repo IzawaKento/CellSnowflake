@@ -49,6 +49,20 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	
 	//Houdiniの隣り合うセル数格納処理は省略
 
+	//確認用頂点配列オブジェクト
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	
+	//vboとして
+	glGenBuffers(1, &ssbo);
+	glBindBuffer(GL_ARRAY_BUFFER, ssbo);
+	glBufferData(GL_ARRAY_BUFFER,
+		gridNumX*gridNumY*gridNumZ * sizeof(Cell), cells, GL_STATIC_DRAW);
+	// 結合されている頂点バッファオブジェクトを in 変数から参照できるようにする
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glEnableVertexAttribArray(0);
+
+	/*
 	//シェーダーストレージバッファオブジェクトの作成
 	glGenBuffers(1, &ssbo);
 	// シェーダストレージバッファオブジェクトを 0 番の結合ポイントに結合する
@@ -56,7 +70,9 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	//データを送る
 	glBufferData(GL_SHADER_STORAGE_BUFFER,
 		gridNumX*gridNumY*gridNumZ * sizeof(Cell), cells, GL_STATIC_DRAW);	//わからんけどとりあえずSTATIC, DRAW
+	*/
 	
+
 	/*没
 	//まとめられそう
 	const GLint localSizeXLoc(glGetUniformLocation(computeProgramObj, "localSizeX"));
@@ -81,6 +97,7 @@ CellularAutomata::~CellularAutomata() {
 //毎フレーム行うコンピュートシェーダの実行
 void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ) {
 
+	// シェーダストレージバッファオブジェクトを 0 番の結合ポイントに結合する
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	// 更新用のシェーダプログラムの使用開始
 	glUseProgram(computeProgramObj);
@@ -97,3 +114,10 @@ void CellularAutomata::SetEdgeCry(int cellNum) {
 	cells[cellNum].SetBoundaryMass(1.0f);
 }
 */
+
+void CellularAutomata::drawCell(int count) {
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, ssbo);
+	glUseProgram(vertfragProgramObj);
+	glDrawArrays(GL_POINTS, 0, count);
+}

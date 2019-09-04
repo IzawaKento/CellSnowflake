@@ -22,5 +22,5 @@ layout(std430, binding = 0) buffer Cells
 void main()
 {
 	const uint i = gl_WorkGroupID.x;
-	cell[i].position.y = 9.0;
+	//cell[i].position.y = 9.0;
 }
