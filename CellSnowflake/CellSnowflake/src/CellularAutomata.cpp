@@ -59,7 +59,7 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	glBufferData(GL_ARRAY_BUFFER,
 		gridNumX*gridNumY*gridNumZ * sizeof(Cell), cells, GL_STATIC_DRAW);
 	// 結合されている頂点バッファオブジェクトを in 変数から参照できるようにする
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Cell), &static_cast<const Cell *>(0)->position);
 	glEnableVertexAttribArray(0);
 
 	/*
@@ -115,9 +115,9 @@ void CellularAutomata::SetEdgeCry(int cellNum) {
 }
 */
 
-void CellularAutomata::drawCell(int count) {
+void CellularAutomata::drawCell(int count, GLuint vfProgObj) {
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, ssbo);
-	glUseProgram(vertfragProgramObj);
+	glUseProgram(vfProgObj);
 	glDrawArrays(GL_POINTS, 0, count);
 }

@@ -132,9 +132,9 @@ int main() {
 		// 図形を描画する
 		//shape->draw();
 		//セルオートマトン処理
-		//cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
+		cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
 
-		cellularAutomata.drawCell(gridNumX*gridNumY*gridNumZ);
+		cellularAutomata.drawCell(gridNumX*gridNumY*gridNumZ, vertfragProgramObj);
 
 		//画像の頂点は動かないのでここで確認
 		/*std::cout << cellularAutomata.GetCells()[135].position[0] << ", "

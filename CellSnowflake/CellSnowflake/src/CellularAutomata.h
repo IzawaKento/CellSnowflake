@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include "Program.h"
 
-struct Cell;
+class Cell;
 
 class CellularAutomata {
 public:
@@ -16,7 +16,7 @@ public:
 	void DispatchCompute(int gridNumX, int gridNumY, int gridNumZ);
 	
 	//セルを頂点として描く
-	void drawCell(int count);
+	void drawCell(int count, GLuint vfProgObj);
 
 	//てすと
 	Cell* GetCells() { return cells; }
@@ -41,7 +41,7 @@ private:
 	GLuint ssbo;
 
 	//描画用プログラムオブジェクト
-	GLuint vertfragProgramObj = Program::loadProgramObj("src\\point.vert", "src\\point.frag");
+	//GLuint vertfragProgramObj = Program::loadProgramObj("src\\point.vert", "src\\point.frag");
 	//コンピュートシェーダー用プログラムオブジェクト
 	GLuint computeProgramObj = Program::loadCompProgramObj("src\\compute.comp");
 

@@ -2,7 +2,8 @@
 #include "GL/glew.h"
 #include "Vector.h"
 
-struct Cell {
+class Cell {
+public:
 	Vector4 position;
 	/*
 	1Œ…: isCrystal
@@ -20,7 +21,7 @@ struct Cell {
 	GLint verticalNeighbourNum = 0;
 	*/
 
-	
+
 	void SetPosition(GLfloat x, GLfloat y, GLfloat z);
 	/*
 	void SetFlagTrue(unsigned flagID);
