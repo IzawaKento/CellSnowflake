@@ -1,4 +1,4 @@
-#version 150 core
+#version 430 core
 //uniform vec2 size;
 //uniform float scale;
 uniform mat4 modelview;

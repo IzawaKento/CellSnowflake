@@ -37,7 +37,7 @@ const float pi = 3.1415926535f;
 // 水蒸気セルの初期拡散質量
 const float rho = 0.1f;
 
-const int gridNumX = 100;
+const int gridNumX = 50;
 const int gridNumY = 1;
 const int gridNumZ = 50;
 
@@ -78,16 +78,15 @@ int main() {
 	const GLint projectionLoc(glGetUniformLocation(vertfragProgramObj, "projection"));
 
 	CellularAutomata cellularAutomata(rho, gridNumX, gridNumY, gridNumZ, cellSizeX, cellSizeZ, cellSizeY);
-	//TESTTTT
+	
 	for (int k = 0; k < gridNumY; ++k) {
 		for (int j = 0; j < gridNumZ; ++j) {
 			for (int i = 0; i < gridNumX; ++i) {
 				int num = i + gridNumX * j + k * gridNumX * gridNumZ;
-				TestCellVertex[num].position = cellularAutomata.GetCells()[num].GetPos();
+				TestCellVertex[num].position = cellularAutomata.GetCells()[num].position;
 			}
 		}
 	}
-
 	//std::unique_ptr<const Shape> shape(new Shape(3, 12, octahedronVertex));
 	std::unique_ptr<const Shape> shape(new Shape(4, gridNumX*gridNumY*gridNumZ, TestCellVertex));
 
@@ -131,9 +130,16 @@ int main() {
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, projection.data());
 
 		// 図形を描画する
-		shape->draw();
+		//shape->draw();
 		//セルオートマトン処理
-		cellularAutomata.DispatchCompute();
+		cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
+
+		cellularAutomata.drawCell(gridNumX*gridNumY*gridNumZ, vertfragProgramObj);
+
+		//画像の頂点は動かないのでここで確認
+		/*std::cout << cellularAutomata.GetCells()[135].position[0] << ", "
+			<< cellularAutomata.GetCells()[135].position[1] << ", "
+			<< cellularAutomata.GetCells()[135].position[2] << std::endl;*/
 		//
 		// カラーバッファを入れ替える
 		window.swapBuffers();

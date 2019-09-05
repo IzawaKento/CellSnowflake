@@ -19,7 +19,7 @@ Object::Object(GLint size, GLsizei vertexcount, const Vertex *vertex)
 
 Object::~Object() {
 	// 頂点配列オブジェクトを削除する
-	glDeleteBuffers(1, &vao);
+	glDeleteVertexArrays(1, &vao);
 	// 頂点バッファオブジェクトを削除する
 	glDeleteBuffers(1, &vbo);
 }
