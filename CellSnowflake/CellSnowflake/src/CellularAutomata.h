@@ -17,6 +17,17 @@ public:
 	
 	//セルを頂点として描く
 	void drawCell(int count, GLuint vfProgObj);
+	
+	//安直やけどいいのか?
+	int getCellNumX(int i) {
+		return (i % (mGridNumX * mGridNumZ)) % mGridNumX;
+	}
+	int getCellNumY(int i) {
+		return i / (mGridNumX * mGridNumZ);
+	}
+	int getCellNumZ(int i) {
+		return (i % (mGridNumX * mGridNumZ)) / mGridNumX;
+	}
 
 	//てすと
 	Cell* GetCells() { return cells; }
@@ -33,16 +44,16 @@ private:
 	Cell* cells;
 
 	//セルを境界結晶にする
-	//void SetEdgeCry(int);
+	void SetEdgeCry(int);
 
 	//セル描画用
 	GLuint vao;
 	//シェーダーストレージバッファオブジェクト
 	GLuint ssbo;
 
-	//描画用プログラムオブジェクト
-	//GLuint vertfragProgramObj = Program::loadProgramObj("src\\point.vert", "src\\point.frag");
 	//コンピュートシェーダー用プログラムオブジェクト
 	GLuint computeProgramObj = Program::loadCompProgramObj("src\\compute.comp");
-
+	
+	//よく使いそうな値なので保存
+	const int mGridNumX, mGridNumY, mGridNumZ;
 };

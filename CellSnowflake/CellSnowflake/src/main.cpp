@@ -38,7 +38,7 @@ const float pi = 3.1415926535f;
 const float rho = 0.1f;
 
 const int gridNumX = 50;
-const int gridNumY = 1;
+const int gridNumY = 3;
 const int gridNumZ = 50;
 
 const float cellSizeX = 0.05f;
@@ -67,7 +67,7 @@ int main() {
 	Window window(640, 480, "Test");
 
 	// 背景色を指定する
-	glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+	glClearColor(0.4f, 0.4f, 0.4f, 0.0f);
 
 	//// シェーダのソースファイルを読み込んでプログラムオブジェクトを作成する
 	//Program program("src\\point.vert", "src\\point.frag");
@@ -90,14 +90,31 @@ int main() {
 	//std::unique_ptr<const Shape> shape(new Shape(3, 12, octahedronVertex));
 	std::unique_ptr<const Shape> shape(new Shape(4, gridNumX*gridNumY*gridNumZ, TestCellVertex));
 
+	//FPS表示用
+	double previousTime = glfwGetTime();
+	int frameCount = 0;
+
 	// ウィンドウが開いている間繰り返す
 	while (window.shouldClose() == GL_FALSE)
 	{
 		// ウィンドウを消去する
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		/*
+		//FPS表示
+		double currentTime = glfwGetTime();
+		frameCount++;
+		if (currentTime - previousTime >= 1.0)
+		{
+			std::cout << "fps:" << frameCount << std::endl;
+
+			frameCount = 0;
+			previousTime = currentTime;
+		}
+		*/
+
 		// シェーダプログラムの使用開始
-		glUseProgram(vertfragProgramObj);
+		//glUseProgram(vertfragProgramObj);
 
 		// 拡大縮小の変換行列を求める
 		const GLfloat *const size(window.getSize());
@@ -107,6 +124,9 @@ int main() {
 		const Vector3 pos{ position[0], position[1], 0.0 };
 		const Matrix translation(Matrix::translate(pos));
 		// モデル変換行列を求める scalingしてからtranslateなのでちゃんと拡大する
+		const Vector3 rAxis{ 0.0f, 1.0f, 0.0f };
+		const Matrix r(Matrix::rotate(static_cast<GLfloat>(glfwGetTime()),	//回す用
+			rAxis));
 		const Matrix model(translation);
 		// ビュー変換行列を求める
 
@@ -114,7 +134,7 @@ int main() {
 		/*Vector3 eyePos{ 3.0f, 4.0f, 3.0f };
 		Vector3 destPos{ 3.0f, 0.0f, 3.1f };
 		Vector3 upVec{ 0.0f, 1.0f, 0.0f };*/
-		Vector3 eyePos{ 3.0f, 4.0f, 5.0f };
+		Vector3 eyePos{ 3.0f, 2.0f, 3.0f };
 		Vector3 destPos{ 0.0f, 0.0f, 0.0f };
 		Vector3 upVec{ 0.0f, 1.0f, 0.0f };
 		const Matrix view(Matrix::lookat(eyePos, destPos, upVec));

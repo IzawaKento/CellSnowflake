@@ -48,6 +48,10 @@ public:
 		{
 			// ƒL[‚Ìó‘Ô‚ð•Û‘¶‚·‚é
 			instance->keyStatus = action;
+			//Q‚ª‰Ÿ‚³‚ê‚½‚ç
+			if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
+
+			}
 		}
 	}
 

@@ -2,16 +2,23 @@
 
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
+//フラグの代わり.....
+const uint ISCRYSTAL = 1;	//ISCRYSTAL
+const uint ISEDGECRYSTAL = 2;	//ISEDGECRYSTAL
+const uint ISBOUNDARY = 4;	//ISBOUNDARY
+const uint ISEDGEBOUNDARY = 8;	//ISEDGEBOUNDARY
+
 class Cell
 {
 	vec4 position;
-	/*
+	vec4 color;
+	int hexMapNum;
+	bool mZIsOdd;
 	uint flags;
 	float diffusionMass;
 	float boundaryMass;
 	int horizontalNeighbourNum;
 	int verticalNeighbourNum;
-	*/
 };
 
 layout(std430, binding = 0) buffer Cells
@@ -19,8 +26,73 @@ layout(std430, binding = 0) buffer Cells
 	Cell cell[];
 };
 
+//flagIDは2進数の値
+//flagsのビットのfragID番目（0から）が1ならtrue
+bool isFlag(uint i, uint flagID) {
+	return ((cell[i].flags & flagID) != 0);
+}
+void setFlagTrue(uint i, uint flagID) {
+	cell[i].flags |= flagID;
+}
+void setFlagFalse(uint i, uint flagID) {
+	cell[i].flags &= ~flagID;
+}
+
+void setEdgeCry(uint i){
+	setFlagTrue(i, ISCRYSTAL);
+	setFlagTrue(i, ISEDGECRYSTAL);
+	setFlagFalse(i, ISBOUNDARY);
+	setFlagFalse(i, ISEDGEBOUNDARY);
+	cell[i].diffusionMass = 0.0;
+	cell[i].boundaryMass = 1.0;
+}
+
+void setEdgeBoundary(uint i){
+	if(isFlag(i, ISCRYSTAL) || isFlag(i, ISEDGEBOUNDARY)) return;
+	setFlagFalse(i, ISBOUNDARY);
+	setFlagTrue(i, ISEDGEBOUNDARY);
+}
+
 void main()
 {
 	const uint i = gl_WorkGroupID.x;
-	cell[i].position.y = cell[i].position.y + 0.002;
+	const float colorValue = float(i) / float(gl_NumWorkGroups.x);
+	//cell[i].mZIsOdd = false;
+	//とりあえず色付ける
+	if(isFlag(i, ISCRYSTAL)){
+		cell[i].color.rgba = vec4(0.0, 1.0, 1.0, 1.0);
+	}else if(isFlag(i, ISEDGEBOUNDARY)){
+		cell[i].color.rgba = vec4(1.0, 0.8, 0.0, 1.0);
+	}else if(cell[i].mZIsOdd){
+		cell[i].color.rgba = vec4(0.6, 0.0, 0.6, 1.0);
+	}else {
+		//cell[i].color.rgba = vec4(colorValue, 0.0, 0.0, 1.0);
+		cell[i].color.rgba = vec4(0.0, 0.0, 0.0, 1.0);
+	}
+
+	//set_boundary
+	if(isFlag(i, ISEDGECRYSTAL)){
+		int zOddNum = int(cell[i].mZIsOdd) * 2 - 1;	//名前思いつかん
+		setEdgeBoundary(i + 1);
+		setEdgeBoundary(i - 1);
+		
+		setEdgeBoundary(i + 50);
+		setEdgeBoundary(i - 50);
+		setEdgeBoundary(i + 50 + (int(cell[i].mZIsOdd) * 2 - 1));
+		setEdgeBoundary(i - 50 + (int(cell[i].mZIsOdd) * 2 - 1));
+		/*
+		cell[i + 1].horizontalNeighbourNum++;
+		cell[i - 1].horizontalNeighbourNum++;
+		cell[i + 50].horizontalNeighbourNum++;
+		cell[i - 50].horizontalNeighbourNum++;
+		cell[i + 50 + (int(cell[i].mZIsOdd) * 2 - 1)].horizontalNeighbourNum++;
+		cell[i - 50 + (int(cell[i].mZIsOdd) * 2 - 1)].horizontalNeighbourNum++;
+		//setEdgeBoundary(i + 50 * 50);
+		//setEdgeBoundary(i - 50 * 50);
+		cell[i + 50*50].verticalNeighbourNum++;
+		cell[i - 50*50].verticalNeighbourNum++;
+		*/
+	}
 }
+
+

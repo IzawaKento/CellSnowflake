@@ -3,44 +3,35 @@
 #include "Vector.h"
 
 class Cell {
+//もはや全部publicになってもうてるけど、structに変えたほうがいいかな
 public:
-	Vector4 position;
+	alignas(16) Vector4 position;	//4byte * 4
+	//頂点カラー
+	alignas(16) GLfloat color[4] = {0.1f, 0.3f, 0.4f, 1.0f};
+	//六角形マップ内部値　未使用
+	GLint hexMapNum;
+	//セル配列のZ値が奇数かどうか
+	GLboolean mZIsOdd;
 	/*
 	1桁: isCrystal
 	2桁: isEdgeCrystal
 	4桁: isBoundary
 	8桁: isEdgeBoundary
 	*/
-	
-	/*
-	unsigned flags = 0;	//ビット演算でややこしいことしてみる。無駄に４つもある
-
+	//ビット演算でややこしいことしてみる。無駄に４つもある
+	GLuint flags = 0;
 	GLfloat diffusionMass = 0.0f;
 	GLfloat boundaryMass = 0.0f;
 	GLint horizontalNeighbourNum = 0;
 	GLint verticalNeighbourNum = 0;
-	*/
 
+	void SetPosition(GLfloat x, GLfloat y, GLfloat z) {
+		position[0] = x;
+		position[1] = y;
+		position[2] = z;
+		position[3] = 1.0f;
+	}
 
-	void SetPosition(GLfloat x, GLfloat y, GLfloat z);
-	/*
 	void SetFlagTrue(unsigned flagID);
 	void SetFlagFalse(unsigned flagID);
-
-	void SetDiffusionMass(float value)
-	{
-		diffusionMass = value;
-	}
-	void SetBoundaryMass(float value)
-	{
-		boundaryMass = value;
-	}
-
-	float GetDiffusionMass() { return diffusionMass; }
-	float GetBoundaryMass() { return boundaryMass; }
-
-	//test
-	Vector4 GetPos() { return position; }
-	*/
-	
 };

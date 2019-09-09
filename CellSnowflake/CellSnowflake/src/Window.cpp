@@ -27,6 +27,7 @@ Window::Window(int width, int height, const char* title)
 		exit(1);
 	}
 	// 垂直同期のタイミングを待つ
+	//1: 60fps, 0: 上限なし
 	glfwSwapInterval(1);
 
 	// このインスタンスの this ポインタを記録しておく
