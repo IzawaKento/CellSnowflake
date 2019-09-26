@@ -21,6 +21,6 @@ void Shape::draw() const {
 
 void Shape::execute() const {
 	//•`‰æ‚·‚é
-	glDrawArrays(GL_POINTS, 0, vertexCount);
-	//glDrawArrays(GL_LINE_STRIP, 0, vertexCount);
+	//glDrawArrays(GL_POINTS, 0, vertexCount);
+	glDrawArrays(GL_LINE_STRIP, 0, vertexCount);
 }

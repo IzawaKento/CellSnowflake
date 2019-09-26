@@ -38,7 +38,7 @@ const float pi = 3.1415926535f;
 const float rho = 0.1f;
 
 const int gridNumX = 50;
-const int gridNumY = 3;
+const int gridNumY = 5;
 const int gridNumZ = 50;
 
 const float cellSizeX = 0.05f;
@@ -64,10 +64,28 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+	
+	/*
+	GLint workgroupCount;
+	glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_COUNT, &workgroupCount);
+	std::cout << "WORK_GROUP_COUNT" << workgroupCount << std::endl;
+	*/
+
+
 	Window window(640, 480, "Test");
+	
+	//ワークグループ内で起動可能なスレッドの数	1536　少な！！
+	GLint workgroupInvocations = 0;
+	glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS, &workgroupInvocations);
+	std::cout << "WORK_GROUP_INVOCATIONS " << workgroupInvocations << std::endl;
+	//シェアードメモリの合計サイズ	49152？
+	GLint sharedMemorySize = 0;
+	glGetIntegerv(GL_MAX_COMPUTE_SHARED_MEMORY_SIZE, &sharedMemorySize);
+	std::cout << "SHARED_MEMORY_SIZE " << sharedMemorySize << std::endl;
+
 
 	// 背景色を指定する
-	glClearColor(0.4f, 0.4f, 0.4f, 0.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	//// シェーダのソースファイルを読み込んでプログラムオブジェクトを作成する
 	//Program program("src\\point.vert", "src\\point.frag");
@@ -97,6 +115,14 @@ int main() {
 	// ウィンドウが開いている間繰り返す
 	while (window.shouldClose() == GL_FALSE)
 	{
+		//リプレイ
+		if (glfwGetTime() > 3.0f)
+		{
+			std::cout << "RePlay" << std::endl;
+			cellularAutomata.initialize();
+			glfwSetTime(0.0);
+		}
+
 		// ウィンドウを消去する
 		glClear(GL_COLOR_BUFFER_BIT);
 
@@ -134,7 +160,7 @@ int main() {
 		/*Vector3 eyePos{ 3.0f, 4.0f, 3.0f };
 		Vector3 destPos{ 3.0f, 0.0f, 3.1f };
 		Vector3 upVec{ 0.0f, 1.0f, 0.0f };*/
-		Vector3 eyePos{ 3.0f, 2.0f, 3.0f };
+		Vector3 eyePos{ 4.0f, 3.0f, 4.0f };
 		Vector3 destPos{ 0.0f, 0.0f, 0.0f };
 		Vector3 upVec{ 0.0f, 1.0f, 0.0f };
 		const Matrix view(Matrix::lookat(eyePos, destPos, upVec));
@@ -155,12 +181,7 @@ int main() {
 		cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
 
 		cellularAutomata.drawCell(gridNumX*gridNumY*gridNumZ, vertfragProgramObj);
-
-		//画像の頂点は動かないのでここで確認
-		/*std::cout << cellularAutomata.GetCells()[135].position[0] << ", "
-			<< cellularAutomata.GetCells()[135].position[1] << ", "
-			<< cellularAutomata.GetCells()[135].position[2] << std::endl;*/
-		//
+		
 		// カラーバッファを入れ替える
 		window.swapBuffers();
 	}

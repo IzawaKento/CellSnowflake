@@ -6,9 +6,9 @@
 CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gridNumZ,
 	float cellSizeX, float cellSizeZ, float cellSizeY) 
 	:cells(new Cell[gridNumX*gridNumY*gridNumZ]), mGridNumX(gridNumX), mGridNumY(gridNumY), mGridNumZ(gridNumZ)
-{	
-	/*
+{	/*
 	std::cout << "sizeofCell:" << sizeof(Cell) << std::endl;
+	std::cout << "sizeofGLboolean:" << sizeof(GLboolean) << std::endl;
 	std::cout << "cells[0].pos:   " << &cells[0].position << std::endl;
 	std::cout << "cells[0].pos[1]:" << &cells[0].position[1] << std::endl;
 	std::cout << "cells[0].pos[2]:" << &cells[0].position[2] << std::endl;
@@ -17,7 +17,6 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	std::cout << "cells[0].col[1]:" << &cells[0].color[1] << std::endl;
 	std::cout << "cells[0].col[2]:" << &cells[0].color[2] << std::endl;
 	std::cout << "cells[0].col[3]:" << &cells[0].color[3] << std::endl;
-	std::cout << "cells[0].hex:   " << &cells[0].hexMapNum << std::endl;
 	std::cout << "cells[0].fla:   " << &cells[0].flags << std::endl;
 	std::cout << "cells[0].dif:   " << &cells[0].diffusionMass << std::endl;
 	std::cout << "cells[0].bou:   " << &cells[0].boundaryMass << std::endl;
@@ -33,7 +32,6 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	std::cout << "cells[0].col[1]:" << &cells[1].color[1] << std::endl;
 	std::cout << "cells[0].col[2]:" << &cells[1].color[2] << std::endl;
 	std::cout << "cells[0].col[3]:" << &cells[1].color[3] << std::endl;
-	std::cout << "cells[0].hex:   " << &cells[1].hexMapNum << std::endl;
 	std::cout << "cells[0].fla:   " << &cells[1].flags << std::endl;
 	std::cout << "cells[0].dif:   " << &cells[1].diffusionMass << std::endl;
 	std::cout << "cells[0].bou:   " << &cells[1].boundaryMass << std::endl;
@@ -45,14 +43,13 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 		for (int i_z = 0; i_z < gridNumZ; ++i_z) {
 			GLfloat z = i_z * cellSizeZ;
 			float shiftX = (i_z % 2) * 0.5f * cellSizeX;
-			GLboolean zIsOdd = static_cast<GLboolean>(i_z % 2);
+			GLuint zIsOdd = i_z % 2;
 			for (int i_x = 0; i_x < gridNumX; ++i_x) {
 				GLfloat x = i_x * cellSizeX + shiftX;
 				int pointNum = i_x + gridNumX * i_z + i_y * gridNumX * gridNumZ;
 				cells[pointNum].SetPosition(x, y, z);
-
-				cells[pointNum].mZIsOdd = zIsOdd;
-				//std::cout << static_cast<int>(zIsOdd) << " " << pointNum << std::endl;
+				//ここ複雑になってる
+				cells[pointNum].SetFlagTrue(CellFlags::MZISODD * zIsOdd);
 				
 				/*没、未使用
 				//Zが奇数なら*2+1、偶数なら*2。1との論理積
@@ -68,6 +65,18 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 				cells[pointNum].SetFlagFalse(CellFlags::ISEDGECRYSTAL);
 				cells[pointNum].SetFlagTrue(CellFlags::ISBOUNDARY);	//Cellのコンストラクタの方がいい？
 				cells[pointNum].SetFlagFalse(CellFlags::ISEDGEBOUNDARY);
+				cells[pointNum].diffusionMass = rho;
+				cells[pointNum].boundaryMass = 0.0f;
+
+				//端っこなら
+				if (i_y == 0 || i_y == gridNumY - 1
+					|| i_z == 0 || i_z == gridNumZ - 1
+					|| i_x == 0 || i_x == gridNumX - 1) {
+					cells[pointNum].SetFlagTrue(CellFlags::ISENDOFCELLS);
+				}
+				else {
+					cells[pointNum].SetFlagFalse(CellFlags::ISENDOFCELLS);
+				}
 			}
 		}
 	}
@@ -75,7 +84,6 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	//中心点を結晶に
 	int centerCellNum = (gridNumX / 2) + (gridNumZ / 2 * gridNumX) + (gridNumY / 2 * gridNumX * gridNumZ);
 	cells[centerCellNum].SetFlagTrue(CellFlags::ISCRYSTAL);
-	cells[centerCellNum].SetFlagTrue(CellFlags::ISEDGECRYSTAL);
 	
 	//中心点の周りを結晶に
 	SetEdgeCry(centerCellNum + 1);
@@ -83,8 +91,9 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	//いいのかわからん
 	SetEdgeCry(centerCellNum + gridNumX);
 	SetEdgeCry(centerCellNum - gridNumX);
-	SetEdgeCry(centerCellNum + gridNumX + cells[centerCellNum].mZIsOdd * 2 - 1);
-	SetEdgeCry(centerCellNum - gridNumX + cells[centerCellNum].mZIsOdd * 2 - 1);
+	int zOddNum = static_cast<int>(cells[centerCellNum].isFlag(CellFlags::MZISODD)) * 2 - 1;
+	SetEdgeCry(centerCellNum + gridNumX + zOddNum);
+	SetEdgeCry(centerCellNum - gridNumX + zOddNum);
 
 	////ifはつかってないけどめっちゃくそやと思う
 	//SetEdgeCry((cells[centerCellNum].hexMapNum + gridNumX * 2 + 1) / 2);
@@ -143,6 +152,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glUseProgram(computeProgramObj);
 	//引数は３次元でx, y, zのワークグループを起動する数
 	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
+	
 }
 
 void CellularAutomata::SetEdgeCry(int cellNum) {
@@ -160,4 +170,23 @@ void CellularAutomata::drawCell(int count, GLuint vfProgObj) {
 	glBindBuffer(GL_ARRAY_BUFFER, ssbo);
 	glUseProgram(vfProgObj);
 	glDrawArrays(GL_POINTS, 0, count);
+}
+
+void CellularAutomata::initialize() {
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+
+	Cell* c(static_cast<Cell*>(glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY)));
+	memcpy(c, cells, sizeof(Cell)*mGridNumX*mGridNumY*mGridNumZ);	//なんかわからんけど動いてる()
+	//for (int i = 0; i < mGridNumX * mGridNumY * mGridNumZ; ++i) {
+	//	c[i].position = cells[i].position;
+	//	c[i].color
+	//	c[i].flags = cells[i].flags;
+	//	c[i].diffusionMass = cells[i].diffusionMass;
+	//	c[i].boundaryMass = cells[i].boundaryMass;
+	//	c[i].horizontalNeighbourNum = cells[i].horizontalNeighbourNum;
+	//	c[i].verticalNeighbourNum = cells[i].verticalNeighbourNum;
+	//	//memcpy(c + i, cells + i, sizeof(Cell));
+	//}
+	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+
 }

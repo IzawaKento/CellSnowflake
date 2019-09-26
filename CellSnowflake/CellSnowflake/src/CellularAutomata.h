@@ -17,6 +17,9 @@ public:
 	
 	//セルを頂点として描く
 	void drawCell(int count, GLuint vfProgObj);
+
+	//セル初期化
+	void initialize();
 	
 	//安直やけどいいのか?
 	int getCellNumX(int i) {
@@ -37,7 +40,9 @@ public:
 		ISCRYSTAL = 1,				//元のsnowflakeにあたる
 		ISEDGECRYSTAL = (1 << 1),	//edge_snowflake
 		ISBOUNDARY = (1 << 2),		//non_boundary
-		ISEDGEBOUNDARY = (1 << 3)	//boundary
+		ISEDGEBOUNDARY = (1 << 3),	//boundary
+		MZISODD = (1 << 4),
+		ISENDOFCELLS = (1 << 5),
 	};
 private:
 	//セル先頭ポインタ
@@ -53,7 +58,7 @@ private:
 
 	//コンピュートシェーダー用プログラムオブジェクト
 	GLuint computeProgramObj = Program::loadCompProgramObj("src\\compute.comp");
-	
+
 	//よく使いそうな値なので保存
 	const int mGridNumX, mGridNumY, mGridNumZ;
 };

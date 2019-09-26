@@ -8,17 +8,15 @@ public:
 	alignas(16) Vector4 position;	//4byte * 4
 	//頂点カラー
 	alignas(16) GLfloat color[4] = {0.1f, 0.3f, 0.4f, 1.0f};
-	//六角形マップ内部値　未使用
-	GLint hexMapNum;
-	//セル配列のZ値が奇数かどうか
-	GLboolean mZIsOdd;
 	/*
 	1桁: isCrystal
 	2桁: isEdgeCrystal
 	4桁: isBoundary
 	8桁: isEdgeBoundary
+	16桁:mZIsOdd		セル配列のZ値が奇数かどうか
+	32桁:isEndofCells
 	*/
-	//ビット演算でややこしいことしてみる。無駄に４つもある
+	//ビット演算でややこしいことしてみる。無駄に6つもある
 	GLuint flags = 0;
 	GLfloat diffusionMass = 0.0f;
 	GLfloat boundaryMass = 0.0f;
@@ -32,6 +30,7 @@ public:
 		position[3] = 1.0f;
 	}
 
+	bool isFlag(unsigned flagID);
 	void SetFlagTrue(unsigned flagID);
 	void SetFlagFalse(unsigned flagID);
 };

@@ -64,7 +64,7 @@ void Window::swapBuffers() {
 	/*if (keyStatus == GLFW_RELEASE)
 		glfwWaitEvents();
 	else*/
-	glfwPollEvents();
+		glfwPollEvents();
 
 	//なんでここでやるんにゃ？Waiteventが問題らしい
 	// キーボードの状態を調べる

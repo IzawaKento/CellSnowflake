@@ -7,13 +7,15 @@ const uint ISCRYSTAL = 1;	//ISCRYSTAL
 const uint ISEDGECRYSTAL = 2;	//ISEDGECRYSTAL
 const uint ISBOUNDARY = 4;	//ISBOUNDARY
 const uint ISEDGEBOUNDARY = 8;	//ISEDGEBOUNDARY
+const uint MZISODD = 16;	//セル番号のZ値が奇数である
+const uint ISENDOFCELLS = 32;
+//パラメータ
+const float phi = 0.0;
 
 class Cell
 {
 	vec4 position;
 	vec4 color;
-	int hexMapNum;
-	bool mZIsOdd;
 	uint flags;
 	float diffusionMass;
 	float boundaryMass;
@@ -52,47 +54,103 @@ void setEdgeBoundary(uint i){
 	setFlagFalse(i, ISBOUNDARY);
 	setFlagTrue(i, ISEDGEBOUNDARY);
 }
-
+//test/////
+float colortest(float c){
+	return c < 1.0 ? 0.0 : c;
+}
 void main()
 {
 	const uint i = gl_WorkGroupID.x;
 	const float colorValue = float(i) / float(gl_NumWorkGroups.x);
-	//cell[i].mZIsOdd = false;
+	int zOddNum = int(isFlag(i, MZISODD)) * 2 - 1;	//名前思いつかん
+
+	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + 50, i - 50, i + 50 + zOddNum, i - 50 + zOddNum);
+
 	//とりあえず色付ける
+	/*
 	if(isFlag(i, ISCRYSTAL)){
 		cell[i].color.rgba = vec4(0.0, 1.0, 1.0, 1.0);
 	}else if(isFlag(i, ISEDGEBOUNDARY)){
 		cell[i].color.rgba = vec4(1.0, 0.8, 0.0, 1.0);
-	}else if(cell[i].mZIsOdd){
-		cell[i].color.rgba = vec4(0.6, 0.0, 0.6, 1.0);
 	}else {
 		//cell[i].color.rgba = vec4(colorValue, 0.0, 0.0, 1.0);
+		cell[i].color.rgba = vec4(cell[i].diffusionMass, cell[i].diffusionMass, 0.0, 1.0);
+	}
+	*/
+
+	//diffusionMassのみ可視化
+	cell[i].color.rgba = vec4(0.0, cell[i].diffusionMass, 0.0, 1.0);
+	
+	if(isFlag(i, ISENDOFCELLS)){
 		cell[i].color.rgba = vec4(0.0, 0.0, 0.0, 1.0);
 	}
+	
+	if(isFlag(i, ISCRYSTAL)){
+		cell[i].color.rgba += vec4(1.0, 0.0, 1.0, 1.0);
+	}
+	
 
 	//set_boundary
 	if(isFlag(i, ISEDGECRYSTAL)){
-		int zOddNum = int(cell[i].mZIsOdd) * 2 - 1;	//名前思いつかん
-		setEdgeBoundary(i + 1);
-		setEdgeBoundary(i - 1);
-		
-		setEdgeBoundary(i + 50);
-		setEdgeBoundary(i - 50);
-		setEdgeBoundary(i + 50 + (int(cell[i].mZIsOdd) * 2 - 1));
-		setEdgeBoundary(i - 50 + (int(cell[i].mZIsOdd) * 2 - 1));
-		/*
-		cell[i + 1].horizontalNeighbourNum++;
-		cell[i - 1].horizontalNeighbourNum++;
-		cell[i + 50].horizontalNeighbourNum++;
-		cell[i - 50].horizontalNeighbourNum++;
-		cell[i + 50 + (int(cell[i].mZIsOdd) * 2 - 1)].horizontalNeighbourNum++;
-		cell[i - 50 + (int(cell[i].mZIsOdd) * 2 - 1)].horizontalNeighbourNum++;
-		//setEdgeBoundary(i + 50 * 50);
-		//setEdgeBoundary(i - 50 * 50);
+		//水平
+		setEdgeBoundary(aroundCellIDs[0]);
+		setEdgeBoundary(aroundCellIDs[1]);
+		setEdgeBoundary(aroundCellIDs[2]);
+		setEdgeBoundary(aroundCellIDs[3]);
+		setEdgeBoundary(aroundCellIDs[4]);
+		setEdgeBoundary(aroundCellIDs[5]);
+		cell[aroundCellIDs[0]].horizontalNeighbourNum++;
+		cell[aroundCellIDs[1]].horizontalNeighbourNum++;
+		cell[aroundCellIDs[2]].horizontalNeighbourNum++;
+		cell[aroundCellIDs[3]].horizontalNeighbourNum++;
+		cell[aroundCellIDs[4]].horizontalNeighbourNum++;
+		cell[aroundCellIDs[5]].horizontalNeighbourNum++;
+		//垂直
+		setEdgeBoundary(i + 50 * 50);
+		setEdgeBoundary(i - 50 * 50);
 		cell[i + 50*50].verticalNeighbourNum++;
 		cell[i - 50*50].verticalNeighbourNum++;
-		*/
 	}
+
+	//edge再計算は省略
+
+	//diffusion_1
+	if(!isFlag(i, ISCRYSTAL) && !isFlag(i, ISENDOFCELLS)){		//気体であり端っこでない
+		float tmpDiffusionMass = 0.0;
+		//水平
+		float horiDiffMass = 0.0;
+		horiDiffMass = cell[i].diffusionMass +
+			cell[aroundCellIDs[0]].diffusionMass + 
+			cell[aroundCellIDs[1]].diffusionMass + 
+			cell[aroundCellIDs[2]].diffusionMass + 
+			cell[aroundCellIDs[3]].diffusionMass + 
+			cell[aroundCellIDs[4]].diffusionMass + 
+			cell[aroundCellIDs[5]].diffusionMass;
+		horiDiffMass /= 7.0;
+
+		//垂直
+		float verDiffMass =  cell[i].diffusionMass;
+		verDiffMass += cell[i + 50 * 50].diffusionMass +
+			cell[i - 50 * 50].diffusionMass;	//どうも足すだけ
+		//拡散質量計算
+		tmpDiffusionMass = horiDiffMass * 4.0 / 7.0 + verDiffMass * 3.0 / 14.0;	//拡散が速すぎる
+		cell[i].diffusionMass = tmpDiffusionMass;
+
+		//一旦ここで値を同期させたい！！！！
+
+		/*
+		//diffusion_2
+		int ad = isFlag(i - 50 * 50, ISCRYSTAL) ? 1 : 0;	//下のセルが結晶なら1, 気体なら0
+		int au = isFlag(i + 50 * 50, ISCRYSTAL) ? 1 : 0;
+		float dmx = cell[i].diffusionMass;
+		float dmxu = cell[i + 50 * 50].diffusionMass;
+
+		tmpDiffusionMass = (1 - phi * (1 - ad)) * dmx + phi * (1 - au) * dmxu;
+		*/
+		//cell[i].diffusionMass = tmpDiffusionMass;
+
+	}
+
 }
 
 

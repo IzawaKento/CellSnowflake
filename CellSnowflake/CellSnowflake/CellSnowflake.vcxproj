@@ -120,6 +120,7 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="src\compute.comp" />
+    <None Include="src\diffusion2.comp" />
     <None Include="src\point.frag" />
     <None Include="src\point.vert" />
   </ItemGroup>

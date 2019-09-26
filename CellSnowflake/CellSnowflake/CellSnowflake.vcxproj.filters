@@ -19,6 +19,7 @@
     <None Include="src\point.vert" />
     <None Include="src\point.frag" />
     <None Include="src\compute.comp" />
+    <None Include="src\diffusion2.comp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
