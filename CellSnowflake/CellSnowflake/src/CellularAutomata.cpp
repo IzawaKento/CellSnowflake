@@ -73,6 +73,8 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 					|| i_z == 0 || i_z == gridNumZ - 1
 					|| i_x == 0 || i_x == gridNumX - 1) {
 					cells[pointNum].SetFlagTrue(CellFlags::ISENDOFCELLS);
+					//拡散確認、試しに0にしてみる
+					//cells[pointNum].diffusionMass = 0.0f;
 				}
 				else {
 					cells[pointNum].SetFlagFalse(CellFlags::ISENDOFCELLS);
@@ -127,11 +129,19 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	glBindBuffer(GL_ARRAY_BUFFER, ssbo);
 	glBufferData(GL_ARRAY_BUFFER,
 		gridNumX*gridNumY*gridNumZ * sizeof(Cell), cells, GL_STATIC_DRAW);
+
 	// 結合されている頂点バッファオブジェクトを in 変数から参照できるようにする
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Cell), &static_cast<const Cell *>(0)->position);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Cell), &static_cast<const Cell *>(0)->color);
 	glEnableVertexAttribArray(1);
+	
+	//書き込み用SSBO作成
+	glGenBuffers(1, &tmpSsbo);
+	//結合ポイントは1番でいいのか？
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
+	glBufferData(GL_SHADER_STORAGE_BUFFER,
+		gridNumX*gridNumY*gridNumZ * sizeof(Cell), cells, GL_STATIC_DRAW);
 
 	//続きはシェーダで書く
 
@@ -143,16 +153,52 @@ CellularAutomata::~CellularAutomata() {
 	glDeleteBuffers(1, &ssbo);
 }
 
+void CellularAutomata::copySSBO(GLuint readBuffer, GLuint writeBuffer) {
+	//SSBOをコピー
+	//SSBOのままでは引数的にコピーできない
+	glBindBuffer(GL_COPY_READ_BUFFER, readBuffer);
+	glBindBuffer(GL_COPY_WRITE_BUFFER, writeBuffer);
+	glCopyBufferSubData(GL_COPY_READ_BUFFER, GL_COPY_WRITE_BUFFER,
+		0, 0, mGridNumX*mGridNumY*mGridNumZ * sizeof(Cell));
+	//解放
+	glBindBuffer(GL_COPY_READ_BUFFER, 0);
+	glBindBuffer(GL_COPY_WRITE_BUFFER, 0);
+}
+
 //毎フレーム行うコンピュートシェーダの実行
 void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ) {
 
+	//setBoundary
 	// シェーダストレージバッファオブジェクトを 0 番の結合ポイントに結合する
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+	// 書き込み用SSBOを 1 番の結合ポイントに結合する
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	// 更新用のシェーダプログラムの使用開始
 	glUseProgram(computeProgramObj);
 	//引数は３次元でx, y, zのワークグループを起動する数
 	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
+
 	
+	//更新後SSBOを読み取り用SSBOにコピー
+	copySSBO(tmpSsbo, ssbo);
+
+	//diffusion1
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
+	glUseProgram(diffusion1ComProgObj);
+	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
+
+	//更新後SSBOを読み取り用SSBOにコピー
+	copySSBO(tmpSsbo, ssbo);
+
+	//diffusion2
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
+	glUseProgram(diffusion2ComProgObj);
+	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
+
+	//更新後SSBOを読み取り用SSBOにコピー
+	copySSBO(tmpSsbo, ssbo);
 }
 
 void CellularAutomata::SetEdgeCry(int cellNum) {
@@ -174,19 +220,10 @@ void CellularAutomata::drawCell(int count, GLuint vfProgObj) {
 
 void CellularAutomata::initialize() {
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
-
-	Cell* c(static_cast<Cell*>(glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY)));
-	memcpy(c, cells, sizeof(Cell)*mGridNumX*mGridNumY*mGridNumZ);	//なんかわからんけど動いてる()
-	//for (int i = 0; i < mGridNumX * mGridNumY * mGridNumZ; ++i) {
-	//	c[i].position = cells[i].position;
-	//	c[i].color
-	//	c[i].flags = cells[i].flags;
-	//	c[i].diffusionMass = cells[i].diffusionMass;
-	//	c[i].boundaryMass = cells[i].boundaryMass;
-	//	c[i].horizontalNeighbourNum = cells[i].horizontalNeighbourNum;
-	//	c[i].verticalNeighbourNum = cells[i].verticalNeighbourNum;
-	//	//memcpy(c + i, cells + i, sizeof(Cell));
-	//}
-	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-
+	glNamedBufferSubDataEXT(ssbo, 0, 
+		mGridNumX*mGridNumY*mGridNumZ * sizeof(Cell), cells);
+	
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
+	glNamedBufferSubDataEXT(tmpSsbo, 0,
+		mGridNumX*mGridNumY*mGridNumZ * sizeof(Cell), cells);
 }

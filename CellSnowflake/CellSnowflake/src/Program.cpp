@@ -127,7 +127,8 @@ bool Program::readShaderSource(const char *name, std::vector<GLchar> &buffer) {
 		file.close();
 		return false;
 	}
-	std::cout << buffer.data() << std::endl;
+	//ソース文出力
+	//std::cout << buffer.data() << std::endl;
 	// 読み込み成功
 	file.close();
 	return true;

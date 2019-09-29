@@ -13,6 +13,8 @@ public:
 		float cellSizeX, float cellSizeZ, float cellSizeY);
 	~CellularAutomata();
 
+	void copySSBO(GLuint readBuffer, GLuint writeBuffer);
+
 	void DispatchCompute(int gridNumX, int gridNumY, int gridNumZ);
 	
 	//セルを頂点として描く
@@ -55,9 +57,14 @@ private:
 	GLuint vao;
 	//シェーダーストレージバッファオブジェクト
 	GLuint ssbo;
+	//更新データ書き込み用SSBO、更新後↑にバッファをコピーする
+	GLuint tmpSsbo;		//名前これでいいんかなあ
 
 	//コンピュートシェーダー用プログラムオブジェクト
 	GLuint computeProgramObj = Program::loadCompProgramObj("src\\compute.comp");
+	GLuint diffusion1ComProgObj = Program::loadCompProgramObj("src\\diffusion1.comp");
+	GLuint diffusion2ComProgObj = Program::loadCompProgramObj("src\\diffusion2.comp");
+
 
 	//よく使いそうな値なので保存
 	const int mGridNumX, mGridNumY, mGridNumZ;

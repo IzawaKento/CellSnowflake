@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
@@ -28,16 +28,21 @@ layout(std430, binding = 0) buffer Cells
 	Cell cell[];
 };
 
+layout(std430, binding = 1) buffer tmpCells
+{
+	Cell tmpCell[];
+};
+
 //flagIDは2進数の値
 //flagsのビットのfragID番目（0から）が1ならtrue
 bool isFlag(uint i, uint flagID) {
 	return ((cell[i].flags & flagID) != 0);
 }
 void setFlagTrue(uint i, uint flagID) {
-	cell[i].flags |= flagID;
+	tmpCell[i].flags |= flagID;
 }
 void setFlagFalse(uint i, uint flagID) {
-	cell[i].flags &= ~flagID;
+	tmpCell[i].flags &= ~flagID;
 }
 
 void setEdgeCry(uint i){
@@ -45,8 +50,8 @@ void setEdgeCry(uint i){
 	setFlagTrue(i, ISEDGECRYSTAL);
 	setFlagFalse(i, ISBOUNDARY);
 	setFlagFalse(i, ISEDGEBOUNDARY);
-	cell[i].diffusionMass = 0.0;
-	cell[i].boundaryMass = 1.0;
+	tmpCell[i].diffusionMass = 0.0;
+	tmpCell[i].boundaryMass = 1.0;
 }
 
 void setEdgeBoundary(uint i){
@@ -79,14 +84,14 @@ void main()
 	*/
 
 	//diffusionMassのみ可視化
-	cell[i].color.rgba = vec4(0.0, cell[i].diffusionMass, 0.0, 1.0);
-	
+	tmpCell[i].color.rgba = vec4(abs(cell[i].diffusionMass - 0.1) * 30.0, 0.0, 0.0, 1.0);
+	/*
 	if(isFlag(i, ISENDOFCELLS)){
-		cell[i].color.rgba = vec4(0.0, 0.0, 0.0, 1.0);
+		tmpCell[i].color.rgba = vec4(0.0, 0.0, 0.0, 1.0);
 	}
-	
+	*/
 	if(isFlag(i, ISCRYSTAL)){
-		cell[i].color.rgba += vec4(1.0, 0.0, 1.0, 1.0);
+		tmpCell[i].color.rgba += vec4(1.0, 0.0, 1.0, 1.0);
 	}
 	
 
@@ -99,21 +104,21 @@ void main()
 		setEdgeBoundary(aroundCellIDs[3]);
 		setEdgeBoundary(aroundCellIDs[4]);
 		setEdgeBoundary(aroundCellIDs[5]);
-		cell[aroundCellIDs[0]].horizontalNeighbourNum++;
-		cell[aroundCellIDs[1]].horizontalNeighbourNum++;
-		cell[aroundCellIDs[2]].horizontalNeighbourNum++;
-		cell[aroundCellIDs[3]].horizontalNeighbourNum++;
-		cell[aroundCellIDs[4]].horizontalNeighbourNum++;
-		cell[aroundCellIDs[5]].horizontalNeighbourNum++;
+		tmpCell[aroundCellIDs[0]].horizontalNeighbourNum++;
+		tmpCell[aroundCellIDs[1]].horizontalNeighbourNum++;
+		tmpCell[aroundCellIDs[2]].horizontalNeighbourNum++;
+		tmpCell[aroundCellIDs[3]].horizontalNeighbourNum++;
+		tmpCell[aroundCellIDs[4]].horizontalNeighbourNum++;
+		tmpCell[aroundCellIDs[5]].horizontalNeighbourNum++;
 		//垂直
 		setEdgeBoundary(i + 50 * 50);
 		setEdgeBoundary(i - 50 * 50);
-		cell[i + 50*50].verticalNeighbourNum++;
-		cell[i - 50*50].verticalNeighbourNum++;
+		tmpCell[i + 50*50].verticalNeighbourNum++;
+		tmpCell[i - 50*50].verticalNeighbourNum++;
 	}
 
 	//edge再計算は省略
-
+	/*
 	//diffusion_1
 	if(!isFlag(i, ISCRYSTAL) && !isFlag(i, ISENDOFCELLS)){		//気体であり端っこでない
 		float tmpDiffusionMass = 0.0;
@@ -129,27 +134,14 @@ void main()
 		horiDiffMass /= 7.0;
 
 		//垂直
-		float verDiffMass =  cell[i].diffusionMass;
+		float verDiffMass =  0.0;//cell[i].diffusionMass;
 		verDiffMass += cell[i + 50 * 50].diffusionMass +
 			cell[i - 50 * 50].diffusionMass;	//どうも足すだけ
 		//拡散質量計算
 		tmpDiffusionMass = horiDiffMass * 4.0 / 7.0 + verDiffMass * 3.0 / 14.0;	//拡散が速すぎる
-		cell[i].diffusionMass = tmpDiffusionMass;
-
-		//一旦ここで値を同期させたい！！！！
-
-		/*
-		//diffusion_2
-		int ad = isFlag(i - 50 * 50, ISCRYSTAL) ? 1 : 0;	//下のセルが結晶なら1, 気体なら0
-		int au = isFlag(i + 50 * 50, ISCRYSTAL) ? 1 : 0;
-		float dmx = cell[i].diffusionMass;
-		float dmxu = cell[i + 50 * 50].diffusionMass;
-
-		tmpDiffusionMass = (1 - phi * (1 - ad)) * dmx + phi * (1 - au) * dmxu;
-		*/
-		//cell[i].diffusionMass = tmpDiffusionMass;
-
+		tmpCell[i].diffusionMass = tmpDiffusionMass;
 	}
+	*/
 
 }
 

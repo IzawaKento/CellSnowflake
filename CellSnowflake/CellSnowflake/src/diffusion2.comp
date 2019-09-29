@@ -1,4 +1,4 @@
-#version 430 core
+#version 450 core
 
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
@@ -11,3 +11,53 @@ const uint MZISODD = 16;	//セル番号のZ値が奇数である
 const uint ISENDOFCELLS = 32;
 //パラメータ
 const float phi = 0.0;
+
+class Cell
+{
+	vec4 position;
+	vec4 color;
+	uint flags;
+	float diffusionMass;
+	float boundaryMass;
+	int horizontalNeighbourNum;
+	int verticalNeighbourNum;
+};
+
+layout(std430, binding = 0) buffer Cells
+{
+	Cell cell[];
+};
+
+layout(std430, binding = 1) buffer tmpCells
+{
+	Cell tmpCell[];
+};
+
+//flagIDは2進数の値
+//flagsのビットのfragID番目（0から）が1ならtrue
+bool isFlag(uint i, uint flagID) {
+	return ((cell[i].flags & flagID) != 0);
+}
+void setFlagTrue(uint i, uint flagID) {
+	tmpCell[i].flags |= flagID;
+}
+void setFlagFalse(uint i, uint flagID) {
+	tmpCell[i].flags &= ~flagID;
+}
+
+void main(){
+	
+	const uint i = gl_WorkGroupID.x;
+
+
+	if(!isFlag(i, ISCRYSTAL) && !isFlag(i, ISENDOFCELLS)){
+		float tmpDiffusionMass = 0.0;
+		int ad = isFlag(i - 50 * 50, ISCRYSTAL) ? 1 : 0;	//下のセルが結晶なら1, 気体なら0
+		int au = isFlag(i + 50 * 50, ISCRYSTAL) ? 1 : 0;
+		float dmx = cell[i].diffusionMass;
+		float dmxu = cell[i + 50 * 50].diffusionMass;
+
+		tmpDiffusionMass = (1 - phi * (1 - ad)) * dmx + phi * (1 - au) * dmxu;
+		tmpCell[i].diffusionMass = tmpDiffusionMass;
+	}
+}
