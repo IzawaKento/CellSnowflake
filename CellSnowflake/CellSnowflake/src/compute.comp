@@ -100,24 +100,24 @@ void main()
 
 	//set_boundary
 	if(isFlag(i, ISEDGECRYSTAL)){
+		//うーん読みにくい。。
 		//水平
-		setEdgeBoundary(aroundCellIDs[0]);
-		setEdgeBoundary(aroundCellIDs[1]);
-		setEdgeBoundary(aroundCellIDs[2]);
-		setEdgeBoundary(aroundCellIDs[3]);
-		setEdgeBoundary(aroundCellIDs[4]);
-		setEdgeBoundary(aroundCellIDs[5]);
-		tmpCell[aroundCellIDs[0]].horizontalNeighbourNum++;
-		tmpCell[aroundCellIDs[1]].horizontalNeighbourNum++;
-		tmpCell[aroundCellIDs[2]].horizontalNeighbourNum++;
-		tmpCell[aroundCellIDs[3]].horizontalNeighbourNum++;
-		tmpCell[aroundCellIDs[4]].horizontalNeighbourNum++;
-		tmpCell[aroundCellIDs[5]].horizontalNeighbourNum++;
+		for(int i = 0; i < 6; ++i){
+			uint id = aroundCellIDs[i];
+			setEdgeBoundary(id);
+
+			//if(isFlag(id, ISCRYSTAL)) continue;
+			tmpCell[id].horizontalNeighbourNum++;
+		}
 		//垂直
 		setEdgeBoundary(i + 50 * 50);
+		//if(isFlag(i + 50 * 50, ISCRYSTAL)){
+			tmpCell[i + 50*50].verticalNeighbourNum++;
+		//}
 		setEdgeBoundary(i - 50 * 50);
-		tmpCell[i + 50*50].verticalNeighbourNum++;
-		tmpCell[i - 50*50].verticalNeighbourNum++;
+		//if(isFlag(i - 50 * 50, ISCRYSTAL)){
+			tmpCell[i - 50*50].verticalNeighbourNum++;
+		//}
 	}
 
 	//edge再計算は省略
