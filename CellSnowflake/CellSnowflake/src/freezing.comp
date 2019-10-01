@@ -1,0 +1,77 @@
+#version 450 core
+
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+
+//フラグの代わり.....
+const uint ISCRYSTAL = 1;	//ISCRYSTAL
+const uint ISEDGECRYSTAL = 2;	//ISEDGECRYSTAL
+const uint ISBOUNDARY = 4;	//ISBOUNDARY
+const uint ISEDGEBOUNDARY = 8;	//ISEDGEBOUNDARY
+const uint MZISODD = 16;	//セル番号のZ値が奇数である
+const uint ISENDOFCELLS = 32;
+//パラメータ
+const float kappa01 = 0.1, kappa10 = 0.1, kappa11 = 0.1, 
+	kappa20 = 0.1, kappa21 = 0.1, kappa30 = 0.1, kappa31 = 0.1;
+
+class Cell
+{
+	vec4 position;
+	vec4 color;
+	uint flags;
+	float diffusionMass;
+	float boundaryMass;
+	int horizontalNeighbourNum;
+	int verticalNeighbourNum;
+};
+
+layout(std430, binding = 0) buffer Cells
+{
+	Cell cell[];
+};
+
+layout(std430, binding = 1) buffer tmpCells
+{
+	Cell tmpCell[];
+};
+
+//flagIDは2進数の値
+//flagsのビットのfragID番目（0から）が1ならtrue
+bool isFlag(uint i, uint flagID) {
+	return ((cell[i].flags & flagID) != 0);
+}
+
+void main(){
+	
+	const uint i = gl_WorkGroupID.x;
+
+	if(isFlag(i, ISEDGEBOUNDARY) && !isFlag(i, ISENDOFCELLS)){
+		const int h = min(3, cell[i].horizontalNeighbourNum);
+		const int v = min(1, cell[i].verticalNeighbourNum);
+
+		float kappa;
+
+		if(h == 0 && v == 1){
+			kappa = kappa01;
+		}else if(h == 1 && v == 0){
+			kappa = kappa10;
+		}else if(h == 1 && v == 1){
+			kappa = kappa11;
+		}else if(h == 2 && v == 0){
+			kappa = kappa20;
+		}else if(h == 2 && v == 1){
+			kappa = kappa21;
+		}else if(h == 3 && v == 0){
+			kappa = kappa30;
+		}else if(h == 3 && v == 1){
+			kappa = kappa31;
+		}else{
+			kappa = 999;
+		}
+
+		float tmpBoundaryMass = cell[i].boundaryMass + (1 - kappa) * cell[i].diffusionMass;
+		float tmpDiffusionMass = kappa * cell[i].diffusionMass;
+
+		tmpCell[i].diffusionMass = tmpDiffusionMass;
+		tmpCell[i].boundaryMass = tmpBoundaryMass;
+	}
+}

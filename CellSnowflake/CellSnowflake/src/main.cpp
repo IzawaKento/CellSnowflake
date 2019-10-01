@@ -116,7 +116,7 @@ int main() {
 	while (window.shouldClose() == GL_FALSE)
 	{
 		//リプレイ
-		if (glfwGetTime() > 3.0f)
+		if (glfwGetTime() > 10.0f)
 		{
 			std::cout << "RePlay" << std::endl;
 			cellularAutomata.initialize();
@@ -126,7 +126,7 @@ int main() {
 		// ウィンドウを消去する
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		/*
+		
 		//FPS表示
 		double currentTime = glfwGetTime();
 		frameCount++;
@@ -137,7 +137,7 @@ int main() {
 			frameCount = 0;
 			previousTime = currentTime;
 		}
-		*/
+		
 
 		// シェーダプログラムの使用開始
 		//glUseProgram(vertfragProgramObj);

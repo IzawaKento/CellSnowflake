@@ -64,6 +64,9 @@ private:
 	GLuint computeProgramObj = Program::loadCompProgramObj("src\\compute.comp");
 	GLuint diffusion1ComProgObj = Program::loadCompProgramObj("src\\diffusion1.comp");
 	GLuint diffusion2ComProgObj = Program::loadCompProgramObj("src\\diffusion2.comp");
+	GLuint freezingComProgObj = Program::loadCompProgramObj("src\\freezing.comp");
+	GLuint attachmentComProgObj = Program::loadCompProgramObj("src\\attachment.comp");
+	GLuint meltingComProgObj = Program::loadCompProgramObj("src\\melt.comp");
 
 
 	//‚æ‚­Žg‚¢‚»‚¤‚È’l‚È‚Ì‚Å•Û‘¶

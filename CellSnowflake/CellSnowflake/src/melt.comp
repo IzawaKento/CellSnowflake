@@ -1,0 +1,90 @@
+#version 450 core
+
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+
+//フラグの代わり.....
+const uint ISCRYSTAL = 1;	//ISCRYSTAL
+const uint ISEDGECRYSTAL = 2;	//ISEDGECRYSTAL
+const uint ISBOUNDARY = 4;	//ISBOUNDARY
+const uint ISEDGEBOUNDARY = 8;	//ISEDGEBOUNDARY
+const uint MZISODD = 16;	//セル番号のZ値が奇数である
+const uint ISENDOFCELLS = 32;
+//パラメータ
+const float mu01 = 0.001, mu10 = 0.001, mu11 = 0.001, 
+	mu20 = 0.001, mu21 = 0.001, mu30 = 0.001, mu31 = 0.001;
+
+class Cell
+{
+	vec4 position;
+	vec4 color;
+	uint flags;
+	float diffusionMass;
+	float boundaryMass;
+	int horizontalNeighbourNum;
+	int verticalNeighbourNum;
+};
+
+layout(std430, binding = 0) buffer Cells
+{
+	Cell cell[];
+};
+
+layout(std430, binding = 1) buffer tmpCells
+{
+	Cell tmpCell[];
+};
+
+//flagIDは2進数の値
+//flagsのビットのfragID番目（0から）が1ならtrue
+bool isFlag(uint i, uint flagID) {
+	return ((cell[i].flags & flagID) != 0);
+}
+void setFlagTrue(uint i, uint flagID) {
+	tmpCell[i].flags |= flagID;
+}
+void setFlagFalse(uint i, uint flagID) {
+	tmpCell[i].flags &= ~flagID;
+}
+
+void main(){
+	
+	const uint i = gl_WorkGroupID.x;
+
+	if(isFlag(i, ISEDGEBOUNDARY) && !isFlag(i, ISENDOFCELLS)){
+		const int h = min(3, cell[i].horizontalNeighbourNum);
+		const int v = min(1, cell[i].verticalNeighbourNum);
+
+		float mu;
+
+		if(h == 0 && v == 1){
+			mu = mu01;
+		}else if(h == 1 && v == 0){
+			mu = mu10;
+		}else if(h == 1 && v == 1){
+			mu = mu11;
+		}else if(h == 2 && v == 0){
+			mu = mu20;
+		}else if(h == 2 && v == 1){
+			mu = mu21;
+		}else if(h == 3 && v == 0){
+			mu = mu30;
+		}else if(h == 3 && v == 1){
+			mu = mu31;
+		}else{
+			mu = 999;
+		}
+
+		float tmpBoundaryMass = (1 - mu) * cell[i].boundaryMass;
+		float tmpDiffusionMass = cell[i].diffusionMass + mu * cell[i].boundaryMass;
+
+		tmpCell[i].diffusionMass = tmpDiffusionMass;
+		tmpCell[i].boundaryMass = tmpBoundaryMass;
+
+		//resetBoundary
+		tmpCell[i].horizontalNeighbourNum = 0;
+		tmpCell[i].verticalNeighbourNum = 0;
+		setFlagFalse(i, ISEDGEBOUNDARY);
+		setFlagTrue(i, ISBOUNDARY);
+
+	}
+}

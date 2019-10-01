@@ -177,8 +177,6 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glUseProgram(computeProgramObj);
 	//引数は３次元でx, y, zのワークグループを起動する数
 	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
-
-	
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
 
@@ -187,7 +185,6 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glUseProgram(diffusion1ComProgObj);
 	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
-
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
 
@@ -196,9 +193,33 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glUseProgram(diffusion2ComProgObj);
 	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
-
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
+
+	//freezing
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
+	glUseProgram(freezingComProgObj);
+	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
+	//更新後SSBOを読み取り用SSBOにコピー
+	copySSBO(tmpSsbo, ssbo);
+	
+	//attachment
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
+	glUseProgram(attachmentComProgObj);
+	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
+	//更新後SSBOを読み取り用SSBOにコピー
+	copySSBO(tmpSsbo, ssbo);
+
+	//melting
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
+	glUseProgram(meltingComProgObj);
+	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
+	//更新後SSBOを読み取り用SSBOにコピー
+	copySSBO(tmpSsbo, ssbo);
+	
 }
 
 void CellularAutomata::SetEdgeCry(int cellNum) {

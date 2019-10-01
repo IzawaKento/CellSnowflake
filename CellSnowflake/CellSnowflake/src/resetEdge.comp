@@ -1,0 +1,93 @@
+#version 450 core
+
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+
+//フラグの代わり.....
+const uint ISCRYSTAL = 1;	//ISCRYSTAL
+const uint ISEDGECRYSTAL = 2;	//ISEDGECRYSTAL
+const uint ISBOUNDARY = 4;	//ISBOUNDARY
+const uint ISEDGEBOUNDARY = 8;	//ISEDGEBOUNDARY
+const uint MZISODD = 16;	//セル番号のZ値が奇数である
+const uint ISENDOFCELLS = 32;
+
+class Cell
+{
+	vec4 position;
+	vec4 color;
+	uint flags;
+	float diffusionMass;
+	float boundaryMass;
+	int horizontalNeighbourNum;
+	int verticalNeighbourNum;
+};
+
+layout(std430, binding = 0) buffer Cells
+{
+	Cell cell[];
+};
+
+layout(std430, binding = 1) buffer tmpCells
+{
+	Cell tmpCell[];
+};
+
+//flagIDは2進数の値
+//flagsのビットのfragID番目（0から）が1ならtrue
+bool isFlag(uint i, uint flagID) {
+	return ((cell[i].flags & flagID) != 0);
+}
+void setFlagTrue(uint i, uint flagID) {
+	tmpCell[i].flags |= flagID;
+}
+void setFlagFalse(uint i, uint flagID) {
+	tmpCell[i].flags &= ~flagID;
+}
+
+void setEdgeCry(uint i){
+	setFlagTrue(i, ISCRYSTAL);
+	setFlagTrue(i, ISEDGECRYSTAL);
+	setFlagFalse(i, ISBOUNDARY);
+	setFlagFalse(i, ISEDGEBOUNDARY);
+	tmpCell[i].diffusionMass = 0.0;
+	tmpCell[i].boundaryMass = 1.0;
+}
+
+void setEdgeBoundary(uint i){
+	if(isFlag(i, ISCRYSTAL) || isFlag(i, ISEDGEBOUNDARY)) return;
+	setFlagFalse(i, ISBOUNDARY);
+	setFlagTrue(i, ISEDGEBOUNDARY);
+}
+
+void main()
+{
+	const uint i = gl_WorkGroupID.x;
+	const float colorValue = float(i) / float(gl_NumWorkGroups.x);
+	int zOddNum = int(isFlag(i, MZISODD)) * 2 - 1;	//名前思いつかん
+
+	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + 50, i - 50, i + 50 + zOddNum, i - 50 + zOddNum);
+	
+	//set_boundary
+	if(isFlag(i, ISEDGECRYSTAL)){
+		//水平
+		setEdgeBoundary(aroundCellIDs[0]);
+		setEdgeBoundary(aroundCellIDs[1]);
+		setEdgeBoundary(aroundCellIDs[2]);
+		setEdgeBoundary(aroundCellIDs[3]);
+		setEdgeBoundary(aroundCellIDs[4]);
+		setEdgeBoundary(aroundCellIDs[5]);
+		tmpCell[aroundCellIDs[0]].horizontalNeighbourNum++;
+		tmpCell[aroundCellIDs[1]].horizontalNeighbourNum++;
+		tmpCell[aroundCellIDs[2]].horizontalNeighbourNum++;
+		tmpCell[aroundCellIDs[3]].horizontalNeighbourNum++;
+		tmpCell[aroundCellIDs[4]].horizontalNeighbourNum++;
+		tmpCell[aroundCellIDs[5]].horizontalNeighbourNum++;
+		//垂直
+		setEdgeBoundary(i + 50 * 50);
+		setEdgeBoundary(i - 50 * 50);
+		tmpCell[i + 50*50].verticalNeighbourNum++;
+		tmpCell[i - 50*50].verticalNeighbourNum++;
+	}
+
+}
+
+

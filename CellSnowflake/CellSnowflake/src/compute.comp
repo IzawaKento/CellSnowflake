@@ -84,7 +84,10 @@ void main()
 	*/
 
 	//diffusionMass‚Ì‚Ý‰ÂŽ‹‰»
-	tmpCell[i].color.rgba = vec4(abs(cell[i].diffusionMass - 0.1) * 30.0, 0.0, 0.0, 1.0);
+	//tmpCell[i].color.rgba = vec4(abs(cell[i].diffusionMass - 0.1) * 30.0, cell[i].boundaryMass, 0.0, 1.0);
+
+	tmpCell[i].color.rgba = vec4(cell[i].diffusionMass, cell[i].boundaryMass * 0.1, 0.0, 1.0);
+
 	/*
 	if(isFlag(i, ISENDOFCELLS)){
 		tmpCell[i].color.rgba = vec4(0.0, 0.0, 0.0, 1.0);
