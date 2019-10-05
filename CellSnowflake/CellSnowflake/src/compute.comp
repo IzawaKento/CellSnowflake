@@ -86,16 +86,25 @@ void main()
 	//diffusionMassÇÃÇ›â¬éãâª
 	//tmpCell[i].color.rgba = vec4(abs(cell[i].diffusionMass - 0.1) * 30.0, cell[i].boundaryMass, 0.0, 1.0);
 
-	tmpCell[i].color.rgba = vec4(cell[i].diffusionMass, cell[i].boundaryMass * 0.1, 0.0, 1.0);
+	//tmpCell[i].color.rgba = vec4(cell[i].diffusionMass, cell[i].boundaryMass * 0.1, 0.0, 1.0);
 
-	/*
-	if(isFlag(i, ISENDOFCELLS)){
-		tmpCell[i].color.rgba = vec4(0.0, 0.0, 0.0, 1.0);
+	
+
+	
+	tmpCell[i].color.rgba = vec4(cell[i].horizontalNeighbourNum % 2,
+		cell[i].horizontalNeighbourNum % 1, 
+		cell[i].horizontalNeighbourNum % 3, 1.0);
+	
+	
+	if(isFlag(i, ISBOUNDARY) && !isFlag(i, ISENDOFCELLS)){
+		tmpCell[i].color.rgba += vec4(0.0, 1.0, 0.0, 1.0);
 	}
-	*/
+	
+	/*
 	if(isFlag(i, ISCRYSTAL)){
 		tmpCell[i].color.rgba += vec4(1.0, 0.0, 1.0, 1.0);
 	}
+	*/
 	
 
 	//set_boundary
@@ -106,46 +115,19 @@ void main()
 			uint id = aroundCellIDs[i];
 			setEdgeBoundary(id);
 
-			//if(isFlag(id, ISCRYSTAL)) continue;
+			if(isFlag(id, ISCRYSTAL)) continue;
 			tmpCell[id].horizontalNeighbourNum++;
 		}
 		//êÇíº
 		setEdgeBoundary(i + 50 * 50);
-		//if(isFlag(i + 50 * 50, ISCRYSTAL)){
-			tmpCell[i + 50*50].verticalNeighbourNum++;
-		//}
+		if(!isFlag(i + 50 * 50, ISCRYSTAL)){
+			//tmpCell[i + 50*50].verticalNeighbourNum++;
+		}
 		setEdgeBoundary(i - 50 * 50);
-		//if(isFlag(i - 50 * 50, ISCRYSTAL)){
-			tmpCell[i - 50*50].verticalNeighbourNum++;
-		//}
+		if(!isFlag(i - 50 * 50, ISCRYSTAL)){
+			//tmpCell[i - 50*50].verticalNeighbourNum++;
+		}
 	}
-
-	//edgeçƒåvéZÇÕè»ó™
-	/*
-	//diffusion_1
-	if(!isFlag(i, ISCRYSTAL) && !isFlag(i, ISENDOFCELLS)){		//ãCëÃÇ≈Ç†ÇËí[Ç¡Ç±Ç≈Ç»Ç¢
-		float tmpDiffusionMass = 0.0;
-		//êÖïΩ
-		float horiDiffMass = 0.0;
-		horiDiffMass = cell[i].diffusionMass +
-			cell[aroundCellIDs[0]].diffusionMass + 
-			cell[aroundCellIDs[1]].diffusionMass + 
-			cell[aroundCellIDs[2]].diffusionMass + 
-			cell[aroundCellIDs[3]].diffusionMass + 
-			cell[aroundCellIDs[4]].diffusionMass + 
-			cell[aroundCellIDs[5]].diffusionMass;
-		horiDiffMass /= 7.0;
-
-		//êÇíº
-		float verDiffMass =  0.0;//cell[i].diffusionMass;
-		verDiffMass += cell[i + 50 * 50].diffusionMass +
-			cell[i - 50 * 50].diffusionMass;	//Ç«Ç§Ç‡ë´Ç∑ÇæÇØ
-		//ägéUéøó åvéZ
-		tmpDiffusionMass = horiDiffMass * 4.0 / 7.0 + verDiffMass * 3.0 / 14.0;	//ägéUÇ™ë¨Ç∑Ç¨ÇÈ
-		tmpCell[i].diffusionMass = tmpDiffusionMass;
-	}
-	*/
-
 }
 
 
