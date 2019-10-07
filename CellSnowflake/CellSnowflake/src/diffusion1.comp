@@ -9,8 +9,6 @@ const uint ISBOUNDARY = 4;	//ISBOUNDARY
 const uint ISEDGEBOUNDARY = 8;	//ISEDGEBOUNDARY
 const uint MZISODD = 16;	//セル番号のZ値が奇数である
 const uint ISENDOFCELLS = 32;
-//パラメータ
-const float phi = 0.0;
 
 class Cell
 {

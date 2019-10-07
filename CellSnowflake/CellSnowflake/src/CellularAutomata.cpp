@@ -86,6 +86,11 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	//中心点を結晶に
 	int centerCellNum = (gridNumX / 2) + (gridNumZ / 2 * gridNumX) + (gridNumY / 2 * gridNumX * gridNumZ);
 	cells[centerCellNum].SetFlagTrue(CellFlags::ISCRYSTAL);
+	cells[centerCellNum].SetFlagFalse(CellFlags::ISEDGECRYSTAL);
+	cells[centerCellNum].SetFlagFalse(CellFlags::ISBOUNDARY);
+	cells[centerCellNum].SetFlagFalse(CellFlags::ISEDGEBOUNDARY);
+	cells[centerCellNum].diffusionMass = 0.0f;
+	cells[centerCellNum].boundaryMass = 1.0f;
 	
 	//中心点の周りを結晶に
 	SetEdgeCry(centerCellNum + 1);
@@ -168,16 +173,34 @@ void CellularAutomata::copySSBO(GLuint readBuffer, GLuint writeBuffer) {
 //毎フレーム行うコンピュートシェーダの実行
 void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ) {
 
-	//setBoundary
+	//resetEdge
 	// シェーダストレージバッファオブジェクトを 0 番の結合ポイントに結合する
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	// 書き込み用SSBOを 1 番の結合ポイントに結合する
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	// 更新用のシェーダプログラムの使用開始
-	glUseProgram(computeProgramObj);
+	glUseProgram(resetEdgeComProgObj);
 	//引数は３次元でx, y, zのワークグループを起動する数
 	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
 	//メモリへのアクセスを止める
+	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+	//更新後SSBOを読み取り用SSBOにコピー
+	copySSBO(tmpSsbo, ssbo);
+
+	//setBoundary
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
+	glUseProgram(computeProgramObj);
+	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
+	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+	//更新後SSBOを読み取り用SSBOにコピー
+	copySSBO(tmpSsbo, ssbo);
+
+	//setNeighbourCryNum
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
+	glUseProgram(neighbourCryNumComProgObj);
+	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);

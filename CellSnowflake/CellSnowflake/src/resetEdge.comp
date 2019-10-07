@@ -66,26 +66,82 @@ void main()
 
 	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + 50, i - 50, i + 50 + zOddNum, i - 50 + zOddNum);
 	
-	//set_boundary
+	//とりあえず色付ける
+	//デフォ色
+	tmpCell[i].color.rgba = vec4(0.0, 0.0, 0.0, 1.0);
+
+	//diffusionMassのみ可視化
+	//tmpCell[i].color.rgba = vec4(abs(cell[i].diffusionMass - 0.1) * 30.0, cell[i].boundaryMass, 0.0, 1.0);
+
+	//状態
+	
+	if(isFlag(i, ISCRYSTAL)){
+		tmpCell[i].color.rgba += vec4(0.5, 0.0, 0.0, 1.0);
+	}
 	if(isFlag(i, ISEDGECRYSTAL)){
-		//水平
-		setEdgeBoundary(aroundCellIDs[0]);
-		setEdgeBoundary(aroundCellIDs[1]);
-		setEdgeBoundary(aroundCellIDs[2]);
-		setEdgeBoundary(aroundCellIDs[3]);
-		setEdgeBoundary(aroundCellIDs[4]);
-		setEdgeBoundary(aroundCellIDs[5]);
-		tmpCell[aroundCellIDs[0]].horizontalNeighbourNum++;
-		tmpCell[aroundCellIDs[1]].horizontalNeighbourNum++;
-		tmpCell[aroundCellIDs[2]].horizontalNeighbourNum++;
-		tmpCell[aroundCellIDs[3]].horizontalNeighbourNum++;
-		tmpCell[aroundCellIDs[4]].horizontalNeighbourNum++;
-		tmpCell[aroundCellIDs[5]].horizontalNeighbourNum++;
-		//垂直
-		setEdgeBoundary(i + 50 * 50);
-		setEdgeBoundary(i - 50 * 50);
-		tmpCell[i + 50*50].verticalNeighbourNum++;
-		tmpCell[i - 50*50].verticalNeighbourNum++;
+		tmpCell[i].color.rgba += vec4(0.0, 0.5, 0.0, 1.0);
+	}
+	if(isFlag(i, ISBOUNDARY)){
+		tmpCell[i].color.rgba += vec4(0.0, 0.5, 0.5, 1.0);
+	}
+	if(isFlag(i, ISEDGEBOUNDARY)){
+		tmpCell[i].color.rgba += vec4(0.0, 0.0, 0.5, 1.0);
+	}
+	
+	/*
+	//平行隣接結晶数
+	int hNeighbourNum = cell[i].horizontalNeighbourNum;
+	switch(hNeighbourNum){
+		case 0:
+			tmpCell[i].color.rgba = vec4(0.5, 0.5, 0.5, 1.0);
+			break;
+		case 1:
+			tmpCell[i].color.rgba = vec4(1.0, 0.0, 0.0, 1.0);
+			break;
+		case 2:
+			tmpCell[i].color.rgba = vec4(0.0, 1.0, 0.0, 1.0);
+			break;
+		case 3:
+			tmpCell[i].color.rgba = vec4(0.0, 0.0, 1.0, 1.0);
+			break;
+		case 4:
+			tmpCell[i].color.rgba = vec4(1.0, 1.0, 0.0, 1.0);
+			break;
+		case 5:
+			tmpCell[i].color.rgba = vec4(1.0, 0.0, 1.0, 1.0);
+			break;
+		case 6:
+			tmpCell[i].color.rgba = vec4(0.0, 1.0, 1.0, 1.0);
+			break;
+	}
+	*/
+	
+
+	//tmpCell[i].color.rgba = vec4(cell[i].diffusionMass * 10.0, 0.0, 0.0, 1.0);
+	/*
+	if(isFlag(i, ISEDGEBOUNDARY)){
+		tmpCell[i].color.rgba += vec4(0.0, cell[i].diffusionMass * 40.0, 0.0, 1.0);
+	}
+	*/
+	
+	//端っこを黒くしてみやすく
+	if(isFlag(i, ISENDOFCELLS)){
+		tmpCell[i].color.rgba = vec4(0.0, 0.0, 0.0, 1.0);
+	}
+
+	//resetEdge
+	if(isFlag(i, ISEDGECRYSTAL) && isFlag(i, ISCRYSTAL)){
+		int isEdge = 0;
+		for(int i = 0; i < 6; ++i){
+			if(!isFlag(aroundCellIDs[i], ISCRYSTAL)){
+				isEdge = 1;
+				break;
+			}
+		}
+		if(isEdge == 0){
+			setFlagFalse(i, ISEDGECRYSTAL);
+
+		}
 	}
 
 }

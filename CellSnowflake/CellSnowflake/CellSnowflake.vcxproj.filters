@@ -25,6 +25,7 @@
     <None Include="src\attachment.comp" />
     <None Include="src\melt.comp" />
     <None Include="src\resetEdge.comp" />
+    <None Include="src\neighbourCryNum.comp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">

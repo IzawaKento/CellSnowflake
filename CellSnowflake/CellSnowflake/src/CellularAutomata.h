@@ -63,7 +63,9 @@ private:
 	GLuint tmpSsbo;		//名前これでいいんかなあ
 
 	//コンピュートシェーダー用プログラムオブジェクト
+	GLuint resetEdgeComProgObj = Program::loadCompProgramObj("src\\resetEdge.comp");
 	GLuint computeProgramObj = Program::loadCompProgramObj("src\\compute.comp");
+	GLuint neighbourCryNumComProgObj = Program::loadCompProgramObj("src\\neighbourCryNum.comp");
 	GLuint diffusion1ComProgObj = Program::loadCompProgramObj("src\\diffusion1.comp");
 	GLuint diffusion2ComProgObj = Program::loadCompProgramObj("src\\diffusion2.comp");
 	GLuint freezingComProgObj = Program::loadCompProgramObj("src\\freezing.comp");

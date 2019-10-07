@@ -10,8 +10,13 @@ const uint ISEDGEBOUNDARY = 8;	//ISEDGEBOUNDARY
 const uint MZISODD = 16;	//セル番号のZ値が奇数である
 const uint ISENDOFCELLS = 32;
 //パラメータ
-const float mu01 = 0.001, mu10 = 0.001, mu11 = 0.001, 
-	mu20 = 0.001, mu21 = 0.001, mu30 = 0.001, mu31 = 0.001;
+const float mu01 = 0.001,
+			mu10 = 0.001,
+			mu11 = 0.001, 
+			mu20 = 0.001,
+			mu21 = 0.001,
+			mu30 = 0.001,
+			mu31 = 0.001;
 
 class Cell
 {
@@ -83,7 +88,7 @@ void main(){
 		//resetBoundary
 		tmpCell[i].horizontalNeighbourNum = 0;
 		tmpCell[i].verticalNeighbourNum = 0;
-		setFlagFalse(i, ISEDGEBOUNDARY);
+		setFlagFalse(i, ISEDGEBOUNDARY);	//一時的にコメントアウト
 		setFlagTrue(i, ISBOUNDARY);
 
 	}
