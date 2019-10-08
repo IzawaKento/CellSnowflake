@@ -47,15 +47,17 @@ void setFlagFalse(uint i, uint flagID) {
 
 void main(){
 	
-	const uint i = gl_WorkGroupID.x;
-
+	const uint i = gl_WorkGroupID.y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
+		gl_WorkGroupID.z * gl_NumWorkGroups.x +
+		gl_WorkGroupID.x;
+	const uint gridNumX = gl_NumWorkGroups.x, gridNumZ = gl_NumWorkGroups.z;
 
 	if(!isFlag(i, ISCRYSTAL) && !isFlag(i, ISENDOFCELLS)){
 		float tmpDiffusionMass = 0.0;
-		int ad = isFlag(i - 50 * 50, ISCRYSTAL) ? 1 : 0;	//下のセルが結晶なら1, 気体なら0
-		int au = isFlag(i + 50 * 50, ISCRYSTAL) ? 1 : 0;
+		int ad = isFlag(i - gridNumX * gridNumZ, ISCRYSTAL) ? 1 : 0;	//下のセルが結晶なら1, 気体なら0
+		int au = isFlag(i + gridNumX * gridNumZ, ISCRYSTAL) ? 1 : 0;
 		float dmx = cell[i].diffusionMass;
-		float dmxu = cell[i + 50 * 50].diffusionMass;
+		float dmxu = cell[i + gridNumX * gridNumZ].diffusionMass;
 
 		tmpDiffusionMass = (1 - phi * (1 - ad)) * dmx + phi * (1 - au) * dmxu;
 		tmpCell[i].diffusionMass = tmpDiffusionMass;

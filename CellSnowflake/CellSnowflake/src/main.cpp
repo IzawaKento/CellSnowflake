@@ -37,11 +37,11 @@ const float pi = 3.1415926535f;
 // 水蒸気セルの初期拡散質量
 const float rho = 0.1f;
 
-const int gridNumX = 50;
-const int gridNumY = 3;
-const int gridNumZ = 50;
+const int gridNumX = 100;
+const int gridNumY = 15;
+const int gridNumZ = 90;
 
-const float cellSizeX = 0.05f;
+const float cellSizeX = 0.03f;
 const float cellSizeZ = cellSizeX * sin(60.0f * pi / 180.0f);		//√3 / 2
 const float cellSizeY = cellSizeX;
 
@@ -72,7 +72,7 @@ int main() {
 	*/
 
 
-	Window window(640, 480, "Test");
+	Window window(640, 480, "CellSnowFlake");
 	
 	//ワークグループ内で起動可能なスレッドの数	1536　少な！！
 	GLint workgroupInvocations = 0;
@@ -116,11 +116,13 @@ int main() {
 	while (window.shouldClose() == GL_FALSE)
 	{
 		//リプレイ
-		if (glfwGetTime() > 20.0f)
+		if (glfwGetTime() > 40.0f)
 		{
 			std::cout << "RePlay" << std::endl;
 			cellularAutomata.initialize();
 			glfwSetTime(0.0);
+
+			previousTime = glfwGetTime();
 		}
 
 		// ウィンドウを消去する

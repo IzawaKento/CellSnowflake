@@ -37,13 +37,13 @@ public:
 	//てすと
 	Cell* GetCells() { return cells; }
 
-	//旧Cellクラスからの移行
+	//旧Cellクラスからの移行	boundaryを気体と間違えてしまった
 	enum CellFlags {
 		ISCRYSTAL = 1,				//元のsnowflakeにあたる
 		ISEDGECRYSTAL = (1 << 1),	//edge_snowflake
 		ISBOUNDARY = (1 << 2),		//non_boundary
 		ISEDGEBOUNDARY = (1 << 3),	//boundary
-		MZISODD = (1 << 4),
+		MZISODD = (1 << 4),			//6角形セル周囲アクセス用
 		ISENDOFCELLS = (1 << 5),
 	};
 private:

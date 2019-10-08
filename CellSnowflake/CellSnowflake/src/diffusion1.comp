@@ -45,9 +45,14 @@ void setFlagFalse(uint i, uint flagID) {
 
 void main(){
 	
-	const uint i = gl_WorkGroupID.x;
+	const uint i = gl_WorkGroupID.y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
+		gl_WorkGroupID.z * gl_NumWorkGroups.x +
+		gl_WorkGroupID.x;
+	const uint gridNumX = gl_NumWorkGroups.x, gridNumZ = gl_NumWorkGroups.z;
+
 	int zOddNum = int(isFlag(i, MZISODD)) * 2 - 1;	//ñºëOévÇ¢Ç¬Ç©ÇÒ
-	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + 50, i - 50, i + 50 + zOddNum, i - 50 + zOddNum);
+	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX,
+		i + gridNumX + zOddNum, i - gridNumX + zOddNum);
 	
 	//diffusion_1
 	if(!isFlag(i, ISCRYSTAL) && !isFlag(i, ISENDOFCELLS)){		//ãCëÃÇ≈Ç†ÇËí[Ç¡Ç±Ç≈Ç»Ç¢
@@ -65,10 +70,10 @@ void main(){
 
 		//êÇíº
 		float verDiffMass = 0.0;// cell[i].diffusionMass;
-		verDiffMass += cell[i + 50 * 50].diffusionMass +
-			cell[i - 50 * 50].diffusionMass;	//Ç«Ç§Ç‡ë´Ç∑ÇæÇØ
+		verDiffMass += cell[i + gridNumX * gridNumZ].diffusionMass +
+			cell[i - gridNumX * gridNumZ].diffusionMass;	//Ç«Ç§Ç‡ë´Ç∑ÇæÇØ
 		//ägéUéøó åvéZ
-		tmpDiffusionMass = horiDiffMass * 4.0 / 7.0 + verDiffMass * 3.0 / 14.0;	//ägéUÇ™ë¨Ç∑Ç¨ÇÈ
+		tmpDiffusionMass = horiDiffMass * 4.0 / 7.0 + verDiffMass * 3.0 / 14.0;
 		tmpCell[i].diffusionMass = tmpDiffusionMass;
 	}
 }

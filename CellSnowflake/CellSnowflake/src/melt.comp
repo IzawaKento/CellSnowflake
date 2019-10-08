@@ -53,7 +53,9 @@ void setFlagFalse(uint i, uint flagID) {
 
 void main(){
 	
-	const uint i = gl_WorkGroupID.x;
+	const uint i = gl_WorkGroupID.y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
+		gl_WorkGroupID.z * gl_NumWorkGroups.x +
+		gl_WorkGroupID.x;
 
 	if(isFlag(i, ISEDGEBOUNDARY) && !isFlag(i, ISENDOFCELLS)){
 		const int h = min(3, cell[i].horizontalNeighbourNum);
@@ -88,7 +90,7 @@ void main(){
 		//resetBoundary
 		tmpCell[i].horizontalNeighbourNum = 0;
 		tmpCell[i].verticalNeighbourNum = 0;
-		setFlagFalse(i, ISEDGEBOUNDARY);	//一時的にコメントアウト
+		setFlagFalse(i, ISEDGEBOUNDARY);
 		setFlagTrue(i, ISBOUNDARY);
 
 	}

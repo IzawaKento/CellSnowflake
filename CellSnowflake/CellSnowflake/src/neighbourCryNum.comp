@@ -59,51 +59,36 @@ void setEdgeBoundary(uint i){
 
 void main()
 {
-	const uint i = gl_WorkGroupID.x;
+	const uint i = gl_WorkGroupID.y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
+		gl_WorkGroupID.z * gl_NumWorkGroups.x +
+		gl_WorkGroupID.x;
+	const uint gridNumX = gl_NumWorkGroups.x, gridNumZ = gl_NumWorkGroups.z;
+
 	const float colorValue = float(i) / float(gl_NumWorkGroups.x);
 	int zOddNum = int(isFlag(i, MZISODD)) * 2 - 1;	//–¼‘Ov‚¢‚Â‚©‚ñ
 
-	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + 50, i - 50, i + 50 + zOddNum, i - 50 + zOddNum);
+	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX,	
+		i + gridNumX + zOddNum, i - gridNumX + zOddNum);
 
 
 	//—×ÚŒ‹»”Ši”[
 	if(!isFlag(i, ISCRYSTAL)){
 		//…•½
-		for(int i = 0; i < 6; ++i){
-			uint id = aroundCellIDs[i];
+		for(int aro_i = 0; aro_i < 6; ++aro_i){				//i‚É‚µ‚½‚¢‚¯‚Ç‚ß‚ñ‚Ç‚¢
+			uint id = aroundCellIDs[aro_i];
 			if(isFlag(id, ISCRYSTAL)){
 				tmpCell[i].horizontalNeighbourNum++;
+				
 			}
 		}
 		//‚’¼
-		if(isFlag(i + 50 * 50, ISCRYSTAL)){
-			//tmpCell[i].verticalNeighbourNum++;
+		if(isFlag(i + gridNumX * gridNumZ, ISCRYSTAL)){
+			tmpCell[i].verticalNeighbourNum++;
 		}
-		if(isFlag(i - 50 * 50, ISCRYSTAL)){
-			//tmpCell[i].verticalNeighbourNum++;
-		}
-	}
-	
-
-	/*
-	//set_boundary
-	if(isFlag(i, ISEDGECRYSTAL)){
-		//…•½
-		for(int i = 0; i < 6; ++i){
-			uint id = aroundCellIDs[i];
-			if(!isFlag(id, ISCRYSTAL)){
-				tmpCell[id].horizontalNeighbourNum++;
-			}
-		}
-		//‚’¼
-		if(!isFlag(i + 50 * 50, ISCRYSTAL)){
-			//tmpCell[i + 50*50].verticalNeighbourNum++;
-		}
-		if(!isFlag(i - 50 * 50, ISCRYSTAL)){
-			//tmpCell[i - 50*50].verticalNeighbourNum++;
+		if(isFlag(i - gridNumX * gridNumZ, ISCRYSTAL)){
+			tmpCell[i].verticalNeighbourNum++;
 		}
 	}
-	*/
 }
 
 

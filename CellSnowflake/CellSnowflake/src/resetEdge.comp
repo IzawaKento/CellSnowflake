@@ -60,14 +60,18 @@ void setEdgeBoundary(uint i){
 
 void main()
 {
-	const uint i = gl_WorkGroupID.x;
+	const uint i = gl_WorkGroupID.y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
+		gl_WorkGroupID.z * gl_NumWorkGroups.x +
+		gl_WorkGroupID.x;
+	const uint gridNumX = gl_NumWorkGroups.x, gridNumZ = gl_NumWorkGroups.z;
+	
 	const float colorValue = float(i) / float(gl_NumWorkGroups.x);
 	int zOddNum = int(isFlag(i, MZISODD)) * 2 - 1;	//名前思いつかん
 
-	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + 50, i - 50, i + 50 + zOddNum, i - 50 + zOddNum);
+	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX,
+		i + gridNumX + zOddNum, i - gridNumX + zOddNum);
 	
 	//とりあえず色付ける
-	//デフォ色
 	tmpCell[i].color.rgba = vec4(0.0, 0.0, 0.0, 1.0);
 
 	//diffusionMassのみ可視化
@@ -76,16 +80,16 @@ void main()
 	//状態
 	
 	if(isFlag(i, ISCRYSTAL)){
-		tmpCell[i].color.rgba += vec4(0.5, 0.0, 0.0, 1.0);
+		tmpCell[i].color.rgba = vec4(0.0, 0.7, 0.7, 1.0);
 	}
 	if(isFlag(i, ISEDGECRYSTAL)){
-		tmpCell[i].color.rgba += vec4(0.0, 0.5, 0.0, 1.0);
+		tmpCell[i].color.rgba = vec4(0.7, 0.0, 0.7, 1.0);
 	}
 	if(isFlag(i, ISBOUNDARY)){
-		tmpCell[i].color.rgba += vec4(0.0, 0.5, 0.5, 1.0);
+		tmpCell[i].color.rgba = vec4(0.0, 0.0, 0.0, 1.0);
 	}
 	if(isFlag(i, ISEDGEBOUNDARY)){
-		tmpCell[i].color.rgba += vec4(0.0, 0.0, 0.5, 1.0);
+		tmpCell[i].color.rgba = vec4(0.3, 0.3, 0.3, 1.0);
 	}
 	
 	/*
@@ -123,13 +127,19 @@ void main()
 		tmpCell[i].color.rgba += vec4(0.0, cell[i].diffusionMass * 40.0, 0.0, 1.0);
 	}
 	*/
+
+	//気体を黒くする
 	
+	if(!isFlag(i, ISCRYSTAL)){
+		tmpCell[i].color.rgba = vec4(0.0, 0.0, 0.0, 1.0);
+	}
 	//端っこを黒くしてみやすく
 	if(isFlag(i, ISENDOFCELLS)){
 		tmpCell[i].color.rgba = vec4(0.0, 0.0, 0.0, 1.0);
 	}
+	
 
-	//resetEdge
+	//resetCrystalEdge
 	if(isFlag(i, ISEDGECRYSTAL) && isFlag(i, ISCRYSTAL)){
 		int isEdge = 0;
 		for(int i = 0; i < 6; ++i){
@@ -140,7 +150,6 @@ void main()
 		}
 		if(isEdge == 0){
 			setFlagFalse(i, ISEDGECRYSTAL);
-
 		}
 	}
 

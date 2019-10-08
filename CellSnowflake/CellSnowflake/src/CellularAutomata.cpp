@@ -73,8 +73,7 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 					|| i_z == 0 || i_z == gridNumZ - 1
 					|| i_x == 0 || i_x == gridNumX - 1) {
 					cells[pointNum].SetFlagTrue(CellFlags::ISENDOFCELLS);
-					//拡散確認、試しに0にしてみる
-					//cells[pointNum].diffusionMass = 0.0f;
+
 				}
 				else {
 					cells[pointNum].SetFlagFalse(CellFlags::ISENDOFCELLS);
@@ -181,9 +180,9 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	// 更新用のシェーダプログラムの使用開始
 	glUseProgram(resetEdgeComProgObj);
 	//引数は３次元でx, y, zのワークグループを起動する数
-	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
+	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
 	//メモリへのアクセスを止める
-	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+	//glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
 
@@ -191,8 +190,8 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glUseProgram(computeProgramObj);
-	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
-	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
+	//glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
 
@@ -200,8 +199,8 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glUseProgram(neighbourCryNumComProgObj);
-	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
-	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
+	//glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
 
@@ -209,8 +208,8 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glUseProgram(diffusion1ComProgObj);
-	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
-	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
+	//glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
 
@@ -218,8 +217,8 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glUseProgram(diffusion2ComProgObj);
-	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
-	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
+	//glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
 
@@ -227,8 +226,8 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glUseProgram(freezingComProgObj);
-	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
-	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
+	//glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
 	
@@ -236,8 +235,8 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glUseProgram(attachmentComProgObj);
-	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
-	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
+	//glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
 
@@ -245,8 +244,8 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glUseProgram(meltingComProgObj);
-	glDispatchCompute(gridNumX *gridNumY * gridNumZ, 1, 1);
-	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);	//なくていいかも
+	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
+	//glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);	//なくていいかも
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
 	
