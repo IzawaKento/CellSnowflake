@@ -273,6 +273,7 @@ void CellularAutomata::SetEdgeCry(int cellNum) {
 
 
 void CellularAutomata::drawCell(int count, GLuint vfProgObj) {
+	èëÇ´Ç©ÇØ
 	/*Cell* dc(static_cast<Cell*>(glMapNamedBufferEXT(ssbo, GL_WRITE_ONLY)));
 	for (auto cell : particles)
 	{
