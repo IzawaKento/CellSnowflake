@@ -135,7 +135,7 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	glGenBuffers(1, &ssbo);
 	glBindBuffer(GL_ARRAY_BUFFER, ssbo);
 	glBufferData(GL_ARRAY_BUFFER,
-		gridNumX*gridNumY*gridNumZ * sizeof(Cell), cells, GL_STATIC_DRAW);
+		gridNumX*gridNumY*gridNumZ * sizeof(Cell), cells, GL_DYNAMIC_DRAW);
 
 	// 結合されている頂点バッファオブジェクトを in 変数から参照できるようにする
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Cell), &static_cast<const Cell *>(0)->position);
@@ -148,9 +148,14 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	//結合ポイントは1番でいいのか？
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glBufferData(GL_SHADER_STORAGE_BUFFER,
-		gridNumX*gridNumY*gridNumZ * sizeof(Cell), cells, GL_STATIC_DRAW);
+		gridNumX*gridNumY*gridNumZ * sizeof(Cell), cells, GL_DYNAMIC_DRAW);
 
-	//続きはシェーダで書く
+	//もっといい感じに書けたらいいのになあ
+	glGenBuffers(1, &drawVbo);
+	glBindBuffer(GL_ARRAY_BUFFER, drawVbo);
+	glBufferData(GL_ARRAY_BUFFER,
+		gridNumX * gridNumY * gridNumZ * sizeof(Cell), nullptr, GL_DYNAMIC_DRAW);	//とりまCellクラス
+
 
 }
 
@@ -158,6 +163,9 @@ CellularAutomata::~CellularAutomata() {
 	delete[] cells;
 	//ssbo削除
 	glDeleteBuffers(1, &ssbo);
+	glDeleteBuffers(1, &tmpSsbo);
+
+	glDeleteBuffers(1, &drawVbo);
 }
 
 void CellularAutomata::copySSBO(GLuint readBuffer, GLuint writeBuffer) {
@@ -265,6 +273,15 @@ void CellularAutomata::SetEdgeCry(int cellNum) {
 
 
 void CellularAutomata::drawCell(int count, GLuint vfProgObj) {
+	/*Cell* dc(static_cast<Cell*>(glMapNamedBufferEXT(ssbo, GL_WRITE_ONLY)));
+	for (auto cell : particles)
+	{
+		p->position = particle.position;
+		p->velocity = particle.velocity;
+		++p;
+	}*/
+	glUnmapBuffer(GL_ARRAY_BUFFER);
+
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, ssbo);
 	glUseProgram(vfProgObj);

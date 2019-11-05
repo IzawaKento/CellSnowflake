@@ -87,6 +87,14 @@ int main() {
 	// 背景色を指定する
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
+	
+
+	/* アルファテスト開始 */
+	glEnable(GL_ALPHA_TEST);
+	/* アルファテストの比較関数 */
+	glAlphaFunc(GL_ALWAYS, 0.5);
+
+
 	//// シェーダのソースファイルを読み込んでプログラムオブジェクトを作成する
 	//Program program("src\\point.vert", "src\\point.frag");
 	GLuint vertfragProgramObj = Program::loadProgramObj("src\\point.vert", "src\\point.frag");
@@ -182,7 +190,7 @@ int main() {
 		//セルオートマトン処理
 		cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
 
-		cellularAutomata.drawCell(gridNumX*gridNumY*gridNumZ, vertfragProgramObj);
+		cellularAutomata.drawCell(gridNumX * gridNumY * gridNumZ, vertfragProgramObj);
 		
 		// カラーバッファを入れ替える
 		window.swapBuffers();
