@@ -101,6 +101,9 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	SetEdgeCry(centerCellNum + gridNumX + zOddNum);
 	SetEdgeCry(centerCellNum - gridNumX + zOddNum);
 
+	//è„â∫Ç‡
+	SetEdgeCry(centerCellNum + gridNumX * gridNumZ);
+	SetEdgeCry(centerCellNum - gridNumX * gridNumZ);
 	////ifÇÕÇ¬Ç©Ç¡ÇƒÇ»Ç¢ÇØÇ«ÇﬂÇ¡ÇøÇ·Ç≠ÇªÇ‚Ç∆évÇ§
 	//SetEdgeCry((cells[centerCellNum].hexMapNum + gridNumX * 2 + 1) / 2);
 	//SetEdgeCry((cells[centerCellNum].hexMapNum + gridNumX * 2 - 1) / 2);
@@ -265,7 +268,7 @@ void CellularAutomata::drawCell(int count, GLuint vfProgObj) {
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, ssbo);
 	glUseProgram(vfProgObj);
-	glDrawArrays(GL_POINTS, 0, count);
+	glDrawArrays(GL_POINTS, 150000, count-150000);
 }
 
 void CellularAutomata::initialize() {

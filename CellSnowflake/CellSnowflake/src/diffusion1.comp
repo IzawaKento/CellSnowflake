@@ -66,14 +66,19 @@ void main(){
 			cell[aroundCellIDs[3]].diffusionMass + 
 			cell[aroundCellIDs[4]].diffusionMass + 
 			cell[aroundCellIDs[5]].diffusionMass;
-		horiDiffMass /= 7.0;
+		//ÇƒÇ∑Ç∆horiDiffMass /= 7.0;
 
 		//êÇíº
-		float verDiffMass = 0.0;// cell[i].diffusionMass;
+		float verDiffMass = 0.0;
 		verDiffMass += cell[i + gridNumX * gridNumZ].diffusionMass +
 			cell[i - gridNumX * gridNumZ].diffusionMass;	//Ç«Ç§Ç‡ë´Ç∑ÇæÇØ
+		
 		//ägéUéøó åvéZ
-		tmpDiffusionMass = horiDiffMass * 4.0 / 7.0 + verDiffMass * 3.0 / 14.0;
+		//tmpDiffusionMass = horiDiffMass * 4.0 / 7.0 + verDiffMass * 3.0 / 14.0;
+		
+		//ÉeÉXÉg
+		tmpDiffusionMass = (horiDiffMass + verDiffMass) / 9.0;
+		
 		tmpCell[i].diffusionMass = tmpDiffusionMass;
 	}
 }
