@@ -273,15 +273,13 @@ void CellularAutomata::SetEdgeCry(int cellNum) {
 
 
 void CellularAutomata::drawCell(int count, GLuint vfProgObj) {
-	èëÇ´Ç©ÇØ
+	
 	/*Cell* dc(static_cast<Cell*>(glMapNamedBufferEXT(ssbo, GL_WRITE_ONLY)));
-	for (auto cell : particles)
+	for (int i = 0; i < count; ++i)
 	{
-		p->position = particle.position;
-		p->velocity = particle.velocity;
-		++p;
-	}*/
-	glUnmapBuffer(GL_ARRAY_BUFFER);
+		dc[i].flags = cells[i].flags;
+	}
+	glUnmapBuffer(GL_ARRAY_BUFFER);*/
 
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, ssbo);

@@ -85,10 +85,9 @@ int main() {
 
 
 	// 背景色を指定する
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClearColor(0.3f, 0.0f, 0.0f, 1.0f);
 
-	
-
+	//いみないし
 	/* アルファテスト開始 */
 	glEnable(GL_ALPHA_TEST);
 	/* アルファテストの比較関数 */
@@ -97,7 +96,7 @@ int main() {
 
 	//// シェーダのソースファイルを読み込んでプログラムオブジェクトを作成する
 	//Program program("src\\point.vert", "src\\point.frag");
-	GLuint vertfragProgramObj = Program::loadProgramObj("src\\point.vert", "src\\point.frag");
+	GLuint vertfragProgramObj = Program::loadProgramObj("src\\point.vert", "src\\point.geom", "src\\point.frag");
 
 	// uniform 変数の場所を取得する
 	const GLint modelviewLoc(glGetUniformLocation(vertfragProgramObj, "modelview"));

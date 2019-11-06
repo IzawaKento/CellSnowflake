@@ -26,6 +26,7 @@
     <None Include="src\melt.comp" />
     <None Include="src\resetEdge.comp" />
     <None Include="src\neighbourCryNum.comp" />
+    <None Include="src\point.geom" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">

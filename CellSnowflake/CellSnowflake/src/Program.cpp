@@ -51,7 +51,7 @@ GLboolean Program::printProgramInfoLog(GLuint program)
 }
 
 //プログラムオブジェクトを作成する
-GLuint Program::createProgramObj(const char *vsrc, const char *fsrc) {
+GLuint Program::createProgramObj(const char *vsrc, const char *gsrc, const char *fsrc) {
 	// 空のプログラムオブジェクトを作成する
 	const GLuint program(glCreateProgram());
 
@@ -71,6 +71,30 @@ GLuint Program::createProgramObj(const char *vsrc, const char *fsrc) {
 		if (printShaderInfoLog(vobj, "vertex shader"))
 			glAttachShader(program, vobj);
 		glDeleteShader(vobj);
+	}
+	if (gsrc != NULL)
+	{
+		// ジオメトリシェーダのシェーダオブジェクトを作成する
+		//戻り値は作成されたシェーダオブジェクトのハンドル (識別名) 
+		const GLuint gobj(glCreateShader(GL_GEOMETRY_SHADER));
+		//			shader, count, **string, *length
+		/*
+		glShaderSource() の引数 string に渡す配列の各要素が終端にヌル文字
+		('\0') をもつ通常の文字列なら, 引数 length を 0 (NULL) にします.
+		*/
+		glShaderSource(gobj, 1, &gsrc, NULL);
+		glCompileShader(gobj);
+		// ジオメトリシェーダのシェーダオブジェクトをプログラムオブジェクトに組み込む
+		if (printShaderInfoLog(gobj, "geometry shader")) {
+			glAttachShader(program, gobj);
+			// ジオメトリシェーダへの入出力
+			glProgramParameteriEXT(program, GL_GEOMETRY_INPUT_TYPE_EXT, GL_POINTS);
+			glProgramParameteriEXT(program, GL_GEOMETRY_OUTPUT_TYPE_EXT, GL_POINTS);
+			//最大頂点数制限
+			//glProgramParameteriEXT(program, GL_GEOMETRY_VERTICES_OUT_EXT, vertex_out);
+		}
+			
+		glDeleteShader(gobj);
 	}
 	if (fsrc != NULL)
 	{
@@ -134,13 +158,15 @@ bool Program::readShaderSource(const char *name, std::vector<GLchar> &buffer) {
 	return true;
 }
 
-GLuint Program::loadProgramObj(const char* vert, const char* frag) {
+GLuint Program::loadProgramObj(const char* vert, const char* geom, const char* frag) {
 	std::vector<GLchar> vsrc;
 	const bool vstat(readShaderSource(vert, vsrc));
+	std::vector<GLchar> gsrc;
+	const bool gstat(readShaderSource(geom, gsrc));
 	std::vector<GLchar> fsrc;
 	const bool fstat(readShaderSource(frag, fsrc));
 	// プログラムオブジェクトを作成する
-	return vstat && fstat ? createProgramObj(vsrc.data(), fsrc.data()) : 0;
+	return vstat && gstat && fstat ? createProgramObj(vsrc.data(), gsrc.data(), fsrc.data()) : 0;
 }
 
 //プログラムオブジェクトを作成する

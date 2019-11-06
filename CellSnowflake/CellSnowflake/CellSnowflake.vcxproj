@@ -127,6 +127,7 @@
     <None Include="src\melt.comp" />
     <None Include="src\neighbourCryNum.comp" />
     <None Include="src\point.frag" />
+    <None Include="src\point.geom" />
     <None Include="src\point.vert" />
     <None Include="src\resetEdge.comp" />
   </ItemGroup>
