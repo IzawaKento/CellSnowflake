@@ -22,16 +22,16 @@ bool isFlag(uint flagID) {
 
 void main()
 {
-	//そもそもflagsの値で判断すべきやけど
+	//そもそもvFlagsの値で判断したいやけど、とりあえず、
 	for(int i = 0; i < gl_in.length(); ++i){
 		gl_Position = gl_in[i].gl_Position;
 		gColor = vColor[i];
 		
-		gColor[3] = 0.9999;		//0.0~0.999.. これを入れると動く、訳が分からない
-		//gColor[1] = 0.5555;		//0.01~1.0    これを入れても動く、訳が分からない
+		//gColor[3] = 0.9999;		//0.0~0.999.. これを入れると動く、訳が分からない
+		gColor[1] = 0.5555;		//0.01~1.0    これを入れても動く、訳が分からない
 		
 		//不透明に設定したセルだけ作る
-		if((vColor[i][3] > 0.0) && (vColor[i][3] <= 1.0)){
+		if(vColor[i][3] > 0.0){	//gColor[3] > 0.0でも同じ
 			EmitVertex();
 		}
 	}

@@ -62,8 +62,8 @@ private:
 	//更新データ書き込み用SSBO、更新後↑にバッファをコピーする
 	GLuint tmpSsbo;		//名前これでいいんかなあ
 
-	//一部描画用
-	GLuint drawVbo;
+	////一部描画用
+	//GLuint drawVbo;
 
 	//コンピュートシェーダー用プログラムオブジェクト
 	GLuint resetEdgeComProgObj = Program::loadCompProgramObj("src\\resetEdge.comp");

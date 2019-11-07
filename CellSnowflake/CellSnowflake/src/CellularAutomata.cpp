@@ -152,11 +152,11 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	glBufferData(GL_SHADER_STORAGE_BUFFER,
 		gridNumX*gridNumY*gridNumZ * sizeof(Cell), cells, GL_DYNAMIC_DRAW);
 
-	//もっといい感じに書けたらいいのになあ
-	glGenBuffers(1, &drawVbo);
-	glBindBuffer(GL_ARRAY_BUFFER, drawVbo);
-	glBufferData(GL_ARRAY_BUFFER,
-		gridNumX * gridNumY * gridNumZ * sizeof(Cell), nullptr, GL_DYNAMIC_DRAW);	//とりまCellクラス
+	////もっといい感じに書けたらいいのになあ
+	//glGenBuffers(1, &drawVbo);
+	//glBindBuffer(GL_ARRAY_BUFFER, drawVbo);
+	//glBufferData(GL_ARRAY_BUFFER,
+	//	gridNumX * gridNumY * gridNumZ * sizeof(Cell), nullptr, GL_DYNAMIC_DRAW);	//とりまCellクラス
 
 
 }
@@ -166,8 +166,8 @@ CellularAutomata::~CellularAutomata() {
 	//ssbo削除
 	glDeleteBuffers(1, &ssbo);
 	glDeleteBuffers(1, &tmpSsbo);
-
-	glDeleteBuffers(1, &drawVbo);
+/*
+	glDeleteBuffers(1, &drawVbo);*/
 }
 
 void CellularAutomata::copySSBO(GLuint readBuffer, GLuint writeBuffer) {
