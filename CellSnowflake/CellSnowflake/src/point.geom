@@ -1,9 +1,10 @@
 #version 430 core
-layout (points) in;
-layout (points, max_vertices = 1) out;
+
 in vec4 vColor[];
 in uint vFlags[];
 out vec4 gColor;
+layout (points) in;
+layout (points, max_vertices = 1) out;
 
 //フラグの代わり.....
 const uint ISCRYSTAL = 1;
@@ -21,12 +22,18 @@ bool isFlag(uint flagID) {
 
 void main()
 {
-	gl_Position = gl_in[0].gl_Position;
-	gColor = vColor[0].rgba;
-	gColor.a = vColor[0].a;
-	if(vColor[0].a > 0.01){
-		EmitVertex();
+	//そもそもflagsの値で判断すべきやけど
+	for(int i = 0; i < gl_in.length(); ++i){
+		gl_Position = gl_in[i].gl_Position;
+		gColor = vColor[i];
+		
+		gColor[3] = 0.9999;		//0.0~0.999.. これを入れると動く、訳が分からない
+		//gColor[1] = 0.5555;		//0.01~1.0    これを入れても動く、訳が分からない
+		
+		//不透明に設定したセルだけ作る
+		if((vColor[i][3] > 0.0) && (vColor[i][3] <= 1.0)){
+			EmitVertex();
+		}
 	}
-	//EmitVertex();
 	EndPrimitive();
 }
