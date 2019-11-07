@@ -142,6 +142,8 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Cell), &static_cast<const Cell *>(0)->color);
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(Cell), &static_cast<const Cell *>(0)->flags);
+	glEnableVertexAttribArray(2);
 	
 	//‘‚«‚İ—pSSBOì¬
 	glGenBuffers(1, &tmpSsbo);

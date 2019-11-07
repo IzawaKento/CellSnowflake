@@ -86,7 +86,7 @@ void main()
 		tmpCell[i].color.rgba = vec4(0.7, 0.0, 0.7, 1.0);
 	}
 	if(isFlag(i, ISBOUNDARY)){
-		tmpCell[i].color.rgba = vec4(0.0, 0.0, 0.0, 0.0);
+		tmpCell[i].color.rgba = vec4(0.0, 0.1, 0.0, 0.0);
 	}
 	if(isFlag(i, ISEDGEBOUNDARY)){
 		tmpCell[i].color.rgba = vec4(0.3, 0.3, 0.3, 1.0);
@@ -129,7 +129,7 @@ void main()
 	*/
 
 	//ãCëÃÇçïÇ≠Ç∑ÇÈ
-	
+	/*
 	if(!isFlag(i, ISCRYSTAL)){
 		tmpCell[i].color.rgba = vec4(0.0, 0.0, 0.0, 0.0);
 	}
@@ -137,6 +137,7 @@ void main()
 	if(isFlag(i, ISENDOFCELLS)){
 		tmpCell[i].color.rgba = vec4(0.0, 0.0, 0.0, 0.0);
 	}
+	*/
 	
 
 	//resetCrystalEdge

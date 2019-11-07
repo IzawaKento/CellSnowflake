@@ -87,11 +87,12 @@ int main() {
 	// 背景色を指定する
 	glClearColor(0.3f, 0.0f, 0.0f, 1.0f);
 
+	glPointSize(2.0);
 	//いみないし
-	/* アルファテスト開始 */
-	glEnable(GL_ALPHA_TEST);
-	/* アルファテストの比較関数 */
-	glAlphaFunc(GL_ALWAYS, 0.5);
+	///* アルファテスト開始 */
+	//glEnable(GL_ALPHA_TEST);
+	///* アルファテストの比較関数 */
+	//glAlphaFunc(GL_ALWAYS, 0.5);
 
 
 	//// シェーダのソースファイルを読み込んでプログラムオブジェクトを作成する
