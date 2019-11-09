@@ -2,9 +2,13 @@
 
 in vec4 vColor[];
 in uint vFlags[];
+in mat4 vModelview[];
+in mat4 vProjection[];
 out vec4 gColor;
 layout (points) in;
-layout (points, max_vertices = 1) out;
+layout (triangle_strip, max_vertices = 6) out;
+
+const float pi = 3.1415926;
 
 //フラグの代わり.....
 const uint ISCRYSTAL = 1;
@@ -20,6 +24,11 @@ bool isFlag(uint flagID) {
 	return ((vFlags[0] & flagID) != 0);
 }
 
+void emitAdditiveVert(int i, vec3 additivePos){
+	gl_Position = vProjection[i] * vModelview[i] * (gl_in[i].gl_Position + vec4(additivePos, 0.0));
+	EmitVertex();
+}
+
 void main()
 {
 	//そもそもvFlagsの値で判断したいやけど、とりあえず、
@@ -32,7 +41,14 @@ void main()
 		
 		//不透明に設定したセルだけ作る
 		if(vColor[i][3] > 0.0){	//gColor[3] > 0.0でも同じ
-			EmitVertex();
+		
+			emitAdditiveVert(i,vec3(0.0, 0.0, 0.015/cos(radians(30.0)) ));
+			emitAdditiveVert(i,vec3(0.015, 0.0, 0.015*tan(radians(30.0))));
+			emitAdditiveVert(i,vec3(-0.015, 0.0, 0.015*tan(radians(30.0))));
+			emitAdditiveVert(i,vec3(0.015, 0.0, -0.015*tan(radians(30.0))));
+			emitAdditiveVert(i,vec3(-0.015, 0.0, -0.015*tan(radians(30.0))));
+			emitAdditiveVert(i,vec3(0.0, 0.0, -0.015/cos(radians(30.0)) ));
+
 		}
 	}
 	EndPrimitive();
