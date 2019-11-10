@@ -67,27 +67,20 @@ void main()
 	const float colorValue = float(i) / float(gl_NumWorkGroups.x);
 	int zOddNum = int(isFlag(i, MZISODD)) * 2 - 1;	//名前思いつかん
 	
-	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX, 
-		i + gridNumX + zOddNum, i - gridNumX + zOddNum);
+	const uint[8] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX, 
+		i + gridNumX + zOddNum, i - gridNumX + zOddNum,
+		i + gridNumX * gridNumZ, i - gridNumX * gridNumZ);
 
 	//set_boundary
+	//EDGECRYSTALの周囲の気体をEDGEBOUNDARYに変える
 	if(isFlag(i, ISEDGECRYSTAL)){
 		//うーん読みにくい。。
-		//水平
-		for(int aro_i = 0; aro_i < 6; ++aro_i){
+
+		for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
 			uint id = aroundCellIDs[aro_i];
 			if(!isFlag(id, ISCRYSTAL) && !isFlag(id, ISEDGEBOUNDARY)){
 				setEdgeBoundary(id);
 			}
-		}
-
-		//垂直
-		if(!isFlag(i + gridNumX * gridNumZ, ISCRYSTAL) && !isFlag(i + gridNumX * gridNumZ, ISEDGEBOUNDARY)){
-			setEdgeBoundary(i + gridNumX * gridNumZ);
-		}
-
-		if(!isFlag(i - gridNumX * gridNumZ, ISCRYSTAL) && !isFlag(i - gridNumX * gridNumZ, ISEDGEBOUNDARY)){
-			setEdgeBoundary(i - gridNumX * gridNumZ);
 		}
 	}
 }

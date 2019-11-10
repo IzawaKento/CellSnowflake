@@ -82,48 +82,9 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 		}
 	}
 	
-	//中心点を結晶に
-	int centerCellNum = (gridNumX / 2) + (gridNumZ / 2 * gridNumX) + (gridNumY / 2 * gridNumX * gridNumZ);
-	cells[centerCellNum].SetFlagTrue(CellFlags::ISCRYSTAL);
-	cells[centerCellNum].SetFlagFalse(CellFlags::ISEDGECRYSTAL);
-	cells[centerCellNum].SetFlagFalse(CellFlags::ISBOUNDARY);
-	cells[centerCellNum].SetFlagFalse(CellFlags::ISEDGEBOUNDARY);
-	cells[centerCellNum].diffusionMass = 0.0f;
-	cells[centerCellNum].boundaryMass = 1.0f;
-	
-	//中心点の周りを結晶に
-	SetEdgeCry(centerCellNum + 1);
-	SetEdgeCry(centerCellNum - 1);
-	//いいのかわからん
-	SetEdgeCry(centerCellNum + gridNumX);
-	SetEdgeCry(centerCellNum - gridNumX);
-	int zOddNum = static_cast<int>(cells[centerCellNum].isFlag(CellFlags::MZISODD)) * 2 - 1;
-	SetEdgeCry(centerCellNum + gridNumX + zOddNum);
-	SetEdgeCry(centerCellNum - gridNumX + zOddNum);
-
-	//上下も
-	SetEdgeCry(centerCellNum + gridNumX * gridNumZ);
-	SetEdgeCry(centerCellNum - gridNumX * gridNumZ);
-	////ifはつかってないけどめっちゃくそやと思う
-	//SetEdgeCry((cells[centerCellNum].hexMapNum + gridNumX * 2 + 1) / 2);
-	//SetEdgeCry((cells[centerCellNum].hexMapNum + gridNumX * 2 - 1) / 2);
-	//SetEdgeCry((cells[centerCellNum].hexMapNum - gridNumX * 2 + 1) / 2);
-	//SetEdgeCry((cells[centerCellNum].hexMapNum - gridNumX * 2 - 1) / 2);
-	
-	//過去
-	//SetEdgeCry(centerCellNum + gridNumX);
-	//SetEdgeCry(centerCellNum - gridNumX);
-	////なんかできそうやけど凝ったことはしない
-	//int cellNumZ = getCellNumZ(centerCellNum);
-	//if (!(cellNumZ && 0b1)) {
-	//	SetEdgeCry(centerCellNum + gridNumX - 1);
-	//	SetEdgeCry(centerCellNum - gridNumX - 1);
-	//}
-	//else {
-	//	SetEdgeCry(centerCellNum + gridNumX + 1);
-	//	SetEdgeCry(centerCellNum - gridNumX + 1);
-	//}
-	
+	//中心初期セル作成
+	int centerCellNum = (mGridNumX / 2) + (mGridNumZ / 2 * mGridNumX) + ((mGridNumY / 2 - 10) * mGridNumX * mGridNumZ);
+	setInitialCells(centerCellNum);
 	
 	//Houdiniの隣り合うセル数格納処理は省略
 
@@ -168,6 +129,50 @@ CellularAutomata::~CellularAutomata() {
 	glDeleteBuffers(1, &tmpSsbo);
 /*
 	glDeleteBuffers(1, &drawVbo);*/
+}
+
+void CellularAutomata::setInitialCells(int centerCellNum) {
+	//中心点を結晶に
+	
+	cells[centerCellNum].SetFlagTrue(CellFlags::ISCRYSTAL);
+	cells[centerCellNum].SetFlagFalse(CellFlags::ISEDGECRYSTAL);
+	cells[centerCellNum].SetFlagFalse(CellFlags::ISBOUNDARY);
+	cells[centerCellNum].SetFlagFalse(CellFlags::ISEDGEBOUNDARY);
+	cells[centerCellNum].diffusionMass = 0.0f;
+	cells[centerCellNum].boundaryMass = 1.0f;
+
+	//中心点の周りを結晶に
+	SetEdgeCry(centerCellNum + 1);
+	SetEdgeCry(centerCellNum - 1);
+	//いいのかわからん
+	SetEdgeCry(centerCellNum + mGridNumX);
+	SetEdgeCry(centerCellNum - mGridNumX);
+	int zOddNum = static_cast<int>(cells[centerCellNum].isFlag(CellFlags::MZISODD)) * 2 - 1;
+	SetEdgeCry(centerCellNum + mGridNumX + zOddNum);
+	SetEdgeCry(centerCellNum - mGridNumX + zOddNum);
+
+	//上下も
+	SetEdgeCry(centerCellNum + mGridNumX * mGridNumZ);
+	SetEdgeCry(centerCellNum - mGridNumX * mGridNumZ);
+	////ifはつかってないけどめっちゃくそやと思う
+	//SetEdgeCry((cells[centerCellNum].hexMapNum + gridNumX * 2 + 1) / 2);
+	//SetEdgeCry((cells[centerCellNum].hexMapNum + gridNumX * 2 - 1) / 2);
+	//SetEdgeCry((cells[centerCellNum].hexMapNum - gridNumX * 2 + 1) / 2);
+	//SetEdgeCry((cells[centerCellNum].hexMapNum - gridNumX * 2 - 1) / 2);
+
+	//過去
+	//SetEdgeCry(centerCellNum + gridNumX);
+	//SetEdgeCry(centerCellNum - gridNumX);
+	////なんかできそうやけど凝ったことはしない
+	//int cellNumZ = getCellNumZ(centerCellNum);
+	//if (!(cellNumZ && 0b1)) {
+	//	SetEdgeCry(centerCellNum + gridNumX - 1);
+	//	SetEdgeCry(centerCellNum - gridNumX - 1);
+	//}
+	//else {
+	//	SetEdgeCry(centerCellNum + gridNumX + 1);
+	//	SetEdgeCry(centerCellNum - gridNumX + 1);
+	//}
 }
 
 void CellularAutomata::copySSBO(GLuint readBuffer, GLuint writeBuffer) {
@@ -286,7 +291,7 @@ void CellularAutomata::drawCell(int count, GLuint vfProgObj) {
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, ssbo);
 	glUseProgram(vfProgObj);
-	glDrawArrays(GL_POINTS, 150000, count-150000);
+	glDrawArrays(GL_POINTS, 0, count);
 }
 
 void CellularAutomata::initialize() {

@@ -17,11 +17,11 @@ const uint ISENDOFCELLS = 32;
 
 */
 //ƒpƒ‰ƒ[ƒ^
-const float beta01 = 0.9, 
+const float beta01 = 0.8, 
 			beta10 = 1.5, 
 			beta11 = 0.5, 
 			beta20 = 1.5, 
-			beta21 = 0.5, 
+			beta21 = 0.5,
 			beta30 = 0.5, 
 			beta31 = 0.1;
 

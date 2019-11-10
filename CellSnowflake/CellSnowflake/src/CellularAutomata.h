@@ -13,6 +13,8 @@ public:
 		float cellSizeX, float cellSizeZ, float cellSizeY);
 	~CellularAutomata();
 
+	void setInitialCells(int centerNum);
+
 	void copySSBO(GLuint readBuffer, GLuint writeBuffer);
 
 	void DispatchCompute(int gridNumX, int gridNumY, int gridNumZ);

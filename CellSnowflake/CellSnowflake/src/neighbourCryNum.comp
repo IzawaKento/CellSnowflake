@@ -74,7 +74,7 @@ void main()
 	//—×ÚŒ‹»”Ši”[
 	if(!isFlag(i, ISCRYSTAL)){
 		//…•½
-		for(int aro_i = 0; aro_i < 6; ++aro_i){				//i‚É‚µ‚½‚¢‚¯‚Ç‚ß‚ñ‚Ç‚¢
+		for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){				//i‚É‚µ‚½‚¢‚¯‚Ç‚ß‚ñ‚Ç‚¢
 			uint id = aroundCellIDs[aro_i];
 			if(isFlag(id, ISCRYSTAL)){
 				tmpCell[i].horizontalNeighbourNum++;

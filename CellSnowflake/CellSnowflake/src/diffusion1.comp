@@ -51,8 +51,9 @@ void main(){
 	const uint gridNumX = gl_NumWorkGroups.x, gridNumZ = gl_NumWorkGroups.z;
 
 	int zOddNum = int(isFlag(i, MZISODD)) * 2 - 1;	//名前思いつかん
-	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX,
-		i + gridNumX + zOddNum, i - gridNumX + zOddNum);
+	const uint[8] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX,
+		i + gridNumX + zOddNum, i - gridNumX + zOddNum,
+		i + gridNumX * gridNumZ, i - gridNumX * gridNumZ);
 	
 	//diffusion_1
 	if(!isFlag(i, ISCRYSTAL) && !isFlag(i, ISENDOFCELLS)){		//気体であり端っこでない
@@ -66,17 +67,16 @@ void main(){
 			cell[aroundCellIDs[3]].diffusionMass + 
 			cell[aroundCellIDs[4]].diffusionMass + 
 			cell[aroundCellIDs[5]].diffusionMass;
-		//てすとhoriDiffMass /= 7.0;
 
 		//垂直
 		float verDiffMass = 0.0;
-		verDiffMass += cell[i + gridNumX * gridNumZ].diffusionMass +
-			cell[i - gridNumX * gridNumZ].diffusionMass;	//どうも足すだけ
+		verDiffMass += cell[aroundCellIDs[6]].diffusionMass +
+			cell[aroundCellIDs[7]].diffusionMass;	//どうも足すだけ
 		
 		//拡散質量計算
 		//tmpDiffusionMass = horiDiffMass * 4.0 / 7.0 + verDiffMass * 3.0 / 14.0;
 		
-		//テスト
+		//テスト 垂直水平関係なく拡散
 		tmpDiffusionMass = (horiDiffMass + verDiffMass) / 9.0;
 		
 		tmpCell[i].diffusionMass = tmpDiffusionMass;

@@ -68,8 +68,9 @@ void main()
 	const float colorValue = float(i) / float(gl_NumWorkGroups.x);
 	int zOddNum = int(isFlag(i, MZISODD)) * 2 - 1;	//名前思いつかん
 
-	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX,
-		i + gridNumX + zOddNum, i - gridNumX + zOddNum);
+	const uint[8] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX,
+		i + gridNumX + zOddNum, i - gridNumX + zOddNum,
+		i + gridNumX * gridNumZ, i - gridNumX * gridNumZ);
 	
 	//とりあえず色付ける
 	tmpCell[i].color.rgba = vec4(0.0, 0.0, 0.0, 1.0);
@@ -143,7 +144,7 @@ void main()
 	//resetCrystalEdge
 	if(isFlag(i, ISEDGECRYSTAL) && isFlag(i, ISCRYSTAL)){
 		int isEdge = 0;
-		for(int i = 0; i < 6; ++i){
+		for(int i = 0; i < aroundCellIDs.length; ++i){
 			if(!isFlag(aroundCellIDs[i], ISCRYSTAL)){
 				isEdge = 1;
 				break;
