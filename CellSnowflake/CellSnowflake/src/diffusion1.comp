@@ -68,13 +68,14 @@ void main(){
 			cell[aroundCellIDs[3]].diffusionMass + 
 			cell[aroundCellIDs[4]].diffusionMass + 
 			cell[aroundCellIDs[5]].diffusionMass;
-
+		//horiDiffMass /= 7.0;
 		//‚’¼
 		float verDiffMass = 0.0;
 		verDiffMass += cell[aroundCellIDs[6]].diffusionMass +
 			cell[aroundCellIDs[7]].diffusionMass;	//‚Ç‚¤‚à‘«‚·‚¾‚¯
 		
-		//ŠgU¿—ÊŒvZ
+		//ŠgU¿—ÊŒvZ@…•½4/7 ‚’¼ 3/7 («‚Ì®‚Å‚Í‚’¼‚Ì‚Q‚ÅŠ„‚é‚Ì‚ğŠÜ‚ß‚Ä‚¢‚é)
+		//‚È‚º‚©‚’¼‚ÌŠ„‡‚ğ‘‚â‚·‚Æ…•½•ûŒü‚Ì¬’·‚ªi‚Ş
 		//tmpDiffusionMass = horiDiffMass * 4.0 / 7.0 + verDiffMass * 3.0 / 14.0;
 		
 		//ƒeƒXƒg ‚’¼…•½ŠÖŒW‚È‚­ŠgU

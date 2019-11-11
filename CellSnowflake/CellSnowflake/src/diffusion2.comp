@@ -1,5 +1,7 @@
 #version 450 core
 
+//この処理は雪の上下移動による拡散のずれをモデル化しているので水晶では削除
+
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
 //フラグの代わり.....
@@ -9,7 +11,7 @@ const uint ISBOUNDARY = 4;	//ISBOUNDARY
 const uint ISEDGEBOUNDARY = 8;	//ISEDGEBOUNDARY
 const uint MZISODD = 16;	//セル番号のZ値が奇数である
 const uint ISENDOFCELLS = 32;
-//パラメータ
+//パラメータ 
 const float phi = 0.0;
 
 class Cell
