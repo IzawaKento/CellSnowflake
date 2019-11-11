@@ -8,6 +8,8 @@ public:
 	alignas(16) Vector4 position;	//4byte * 4
 	//頂点カラー
 	alignas(16) GLfloat color[4] = {0.1f, 0.3f, 0.4f, 1.0f};
+	//推定された近傍面方向
+	alignas(16) Vector3 neighbourSurfaceDir = { 0,0,0 };
 	/*
 	1桁: isCrystal
 	2桁: isEdgeCrystal

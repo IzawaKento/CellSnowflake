@@ -14,6 +14,7 @@ class Cell
 {
 	vec4 position;
 	vec4 color;
+	vec3 neighbourSurfaceDir;
 	uint flags;
 	float diffusionMass;
 	float boundaryMass;
@@ -57,6 +58,14 @@ void setEdgeBoundary(uint i){
 	setFlagTrue(i, ISEDGEBOUNDARY);
 }
 
+vec3 getCellCoordinate(uint cellID, uint gridNumX, uint gridNumZ){
+	uint y = cellID / (gridNumX * gridNumZ);
+	uint a = cellID % (gridNumX * gridNumZ);
+	uint x = a % gridNumX;
+	uint z = a / gridNumX;
+	return vec3(x,y,z);
+}
+
 void main()
 {
 	const uint i = gl_WorkGroupID.y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
@@ -70,9 +79,8 @@ void main()
 	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX,	
 		i + gridNumX + zOddNum, i - gridNumX + zOddNum);
 
-
 	//隣接結晶数格納
-	if(!isFlag(i, ISCRYSTAL)){
+	if(isFlag(i, ISEDGEBOUNDARY)){
 		//水平
 		for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){				//iにしたいけどめんどい
 			uint id = aroundCellIDs[aro_i];
@@ -89,6 +97,21 @@ void main()
 			tmpCell[i].verticalNeighbourNum++;
 		}
 	}
+
+	//テスト 周囲の結晶状況をベクトルとして保持 
+	/*めっちゃかきかけ
+	if(isFlag(i, ISEDGEBOUNDARY)){
+		for(int j = -1; j < 2; ++j){
+			for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
+				uint id = aroundCellIDs[aro_i] + j * gridNumX * gridNumZ;
+				if(isFlag(id, ISCRYSTAL)){
+					tmpCell[i].neighbourSurfaceDir += 
+				}
+			}
+		}
+	}
+	*/
+
 }
 
 

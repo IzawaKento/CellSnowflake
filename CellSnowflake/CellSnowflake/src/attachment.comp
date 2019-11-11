@@ -29,6 +29,7 @@ class Cell
 {
 	vec4 position;
 	vec4 color;
+	vec3 neighbourSurfaceDir;
 	uint flags;
 	float diffusionMass;
 	float boundaryMass;
