@@ -40,7 +40,7 @@ void main()
 		uint tmpFlags = vFlags[i];
 
 		/*
-		uint vFlagsの値　想定と違う値になってしまっている
+		uint vFlagsの値　想定と違う値になってしまっている glvertexattribpointer	ぽいんたちゃんと取れてない説
 		1099431936 crystal      0100 0001 1000 1000
 		1100480512 edgeCrystal  0100 0001 1001 1000
 		1101004800 boundary		0100 0001 1010 0000

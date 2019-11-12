@@ -107,12 +107,13 @@ void main()
 		}
 	}
 
-	//テスト 周囲の結晶状況をベクトルとして保持 
+	//テスト 周囲の結晶の平均の向きのベクトルを作る
 	vec3 tmpNeighSurDir = vec3(0,0,0);
 	if(isFlag(i, ISEDGEBOUNDARY)){
+		uint id;
 		for(int j = -1; j < 2; ++j){
 			for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
-				uint id = aroundCellIDs[aro_i] + j * gridNumX * gridNumZ;
+				id = aroundCellIDs[aro_i] + j * gridNumX * gridNumZ;
 				if(isFlag(id, ISCRYSTAL)){
 					//tmpCell[i].horizontalNeighbourNum++;	//隣接数をとりあえずこれに格納する
 					//ベクトルを足す
@@ -120,7 +121,15 @@ void main()
 				}
 			}
 		}
-		//てすと ベクトル正規化とずらし
+		//真上真下
+		if(isFlag(i + gridNumX * gridNumZ, ISCRYSTAL)){
+			tmpNeighSurDir += vec3(0.0, 1.0, 0.0);
+		}
+		if(isFlag(i - gridNumX * gridNumZ, ISCRYSTAL)){
+			tmpNeighSurDir += vec3(0.0, -1.0, 0.0);
+		}
+
+		//ベクトル反転
 		tmpCell[i].neighbourSurfaceDir = tmpNeighSurDir * -1;
 	}
 	

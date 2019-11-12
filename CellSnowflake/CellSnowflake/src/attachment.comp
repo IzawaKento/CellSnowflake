@@ -31,22 +31,22 @@ beta01 = 0.1,
 			beta30 = 0.7, 
 			beta31 = 0.7;
 //平面
-beta01 = 10.0, 
-			beta10 = 3.0,
-			beta11 = 3.0, 
-			beta20 = 2.0, 
-			beta21 = 2.0,
-			beta30 = 1.0, 
-			beta31 = 1.0;
-*/
-//パラメータ
-const float beta01 = 1.0, 
+beta01 = 1.0, 
 			beta10 = 1.0,
 			beta11 = 1.0, 
 			beta20 = 0.5, 
 			beta21 = 0.5,
 			beta30 = 0.3, 
 			beta31 = 0.3;
+*/
+//パラメータ
+const float beta01 = 0.9,
+			beta10 = 1.5,
+			beta11 = 0.5, 
+			beta20 = 1.5, 
+			beta21 = 0.5,
+			beta30 = 0.5, 
+			beta31 = 0.1;
 
 class Cell
 {
@@ -123,6 +123,9 @@ void main(){
 			beta = 999;
 		}
 
+		//てすと
+		float neighSurDirLen = length(cell[i].neighbourSurfaceDir);
+		//没　ベクの長さ(1~6)を(0~1)になおしてたす（正直意図がはっきりしていない）beta + (7-neighSurDirLen) / 6.0
 		if(cell[i].boundaryMass >= beta || (h >= 4 && v >= 1)){
 			setEdgeCry(i);
 		}

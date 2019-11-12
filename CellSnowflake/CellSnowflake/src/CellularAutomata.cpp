@@ -154,8 +154,8 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 	SetEdgeCry(centerCellNum - mGridNumX + zOddNum);
 
 	//è„â∫Ç‡
-	//SetEdgeCry(centerCellNum + mGridNumX * mGridNumZ);
-	//SetEdgeCry(centerCellNum - mGridNumX * mGridNumZ);
+	SetEdgeCry(centerCellNum + mGridNumX * mGridNumZ);
+	SetEdgeCry(centerCellNum - mGridNumX * mGridNumZ);
 
 	//à»â∫ïsóv
 	////ifÇÕÇ¬Ç©Ç¡ÇƒÇ»Ç¢ÇØÇ«ÇﬂÇ¡ÇøÇ·Ç≠ÇªÇ‚Ç∆évÇ§

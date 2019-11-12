@@ -93,9 +93,6 @@ void main()
 	if(isFlag(i, ISEDGEBOUNDARY)){	//この段階では存在しないのででない
 		tmpCell[i].color.rgba = vec4(0.3, 0.3, 0.3, 1.0);
 	}
-	if(isFlag(i, ISENDOFCELLS)){	//この段階では存在しないのででない
-		tmpCell[i].color.rgba = vec4(0.5, 0.5, 0.3, 1.0);
-	}
 	
 	/*
 	//平行隣接結晶数
@@ -127,8 +124,11 @@ void main()
 	
 
 	//隣接面方向ベクトル確認
-	tmpCell[i].color.rgba = vec4((normalize(cell[i].neighbourSurfaceDir) + vec3(1,1,1)) * 0.5, 1.0);
-
+	//tmpCell[i].color.rgba = vec4((normalize(cell[i].neighbourSurfaceDir) + vec3(1,1,1)) * 0.5, 1.0);
+	/*
+	float neighSurDirLen = length(cell[i].neighbourSurfaceDir);
+	tmpCell[i].color.rgba = vec4(0.0, neighSurDirLen, 0.0, 1.0);
+	*/
 	//座標確認
 	//tmpCell[i].color.rgba = vec4(cell[i].position.rgb, 1.0);
 
