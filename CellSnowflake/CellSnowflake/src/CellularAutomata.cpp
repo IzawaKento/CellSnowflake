@@ -105,6 +105,8 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(2, 1, GL_UNSIGNED_INT, GL_FALSE, sizeof(Cell), &static_cast<const Cell *>(0)->flags);
 	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Cell), &static_cast<const Cell *>(0)->neighbourSurfaceDir);
+	glEnableVertexAttribArray(3);
 	
 	//書き込み用SSBO作成
 	glGenBuffers(1, &tmpSsbo);
@@ -152,8 +154,10 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 	SetEdgeCry(centerCellNum - mGridNumX + zOddNum);
 
 	//上下も
-	SetEdgeCry(centerCellNum + mGridNumX * mGridNumZ);
-	SetEdgeCry(centerCellNum - mGridNumX * mGridNumZ);
+	//SetEdgeCry(centerCellNum + mGridNumX * mGridNumZ);
+	//SetEdgeCry(centerCellNum - mGridNumX * mGridNumZ);
+
+	//以下不要
 	////ifはつかってないけどめっちゃくそやと思う
 	//SetEdgeCry((cells[centerCellNum].hexMapNum + gridNumX * 2 + 1) / 2);
 	//SetEdgeCry((cells[centerCellNum].hexMapNum + gridNumX * 2 - 1) / 2);

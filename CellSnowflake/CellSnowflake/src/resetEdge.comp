@@ -90,8 +90,11 @@ void main()
 	if(isFlag(i, ISBOUNDARY)){
 		tmpCell[i].color.rgba = vec4(0.0, 0.1, 0.0, 0.0);
 	}
-	if(isFlag(i, ISEDGEBOUNDARY)){
+	if(isFlag(i, ISEDGEBOUNDARY)){	//この段階では存在しないのででない
 		tmpCell[i].color.rgba = vec4(0.3, 0.3, 0.3, 1.0);
+	}
+	if(isFlag(i, ISENDOFCELLS)){	//この段階では存在しないのででない
+		tmpCell[i].color.rgba = vec4(0.5, 0.5, 0.3, 1.0);
 	}
 	
 	/*
@@ -123,6 +126,12 @@ void main()
 	*/
 	
 
+	//隣接面方向ベクトル確認
+	tmpCell[i].color.rgba = vec4((normalize(cell[i].neighbourSurfaceDir) + vec3(1,1,1)) * 0.5, 1.0);
+
+	//座標確認
+	//tmpCell[i].color.rgba = vec4(cell[i].position.rgb, 1.0);
+
 	//tmpCell[i].color.rgba = vec4(cell[i].diffusionMass * 10.0, 0.0, 0.0, 1.0);
 	/*
 	if(isFlag(i, ISEDGEBOUNDARY)){
@@ -131,7 +140,7 @@ void main()
 	*/
 
 	//気体を黒くする
-	/*
+	
 	if(!isFlag(i, ISCRYSTAL)){
 		tmpCell[i].color.rgba = vec4(0.0, 0.0, 0.0, 0.0);
 	}
@@ -139,7 +148,7 @@ void main()
 	if(isFlag(i, ISENDOFCELLS)){
 		tmpCell[i].color.rgba = vec4(0.0, 0.0, 0.0, 0.0);
 	}
-	*/
+	
 	
 
 	//resetCrystalEdge

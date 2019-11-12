@@ -2,11 +2,12 @@
 
 in vec4 vColor[];
 in uint vFlags[];
+in vec3 vNeighSurDir[];
 in mat4 vModelview[];
 in mat4 vProjection[];
 out vec4 gColor;
 layout (points) in;
-layout (triangle_strip, max_vertices = 6) out;
+layout (triangle_strip, max_vertices = 9) out;
 
 //フラグの代わり.....
 const uint ISCRYSTAL = 1u;
@@ -30,7 +31,7 @@ void emitAdditiveVert(int i, vec3 additivePos){
 
 void main()
 {
-	//そもそもvFlagsの値で判断したいやけど、とりあえず、
+	//そもそもvFlagsの値で判断したいけどうまくいかん（泣）
 	for(int i = 0; i < gl_in.length(); ++i){
 		gColor = vColor[i];
 		
@@ -77,6 +78,17 @@ void main()
 			emitAdditiveVert(i,vec3(-0.015, -0.015, 0.015*tan(radians(30.0))));
 			emitAdditiveVert(i,vec3(0.0, 0.015, 0.015/cos(radians(30.0)) ));
 			emitAdditiveVert(i,vec3(0.0, -0.015, 0.015/cos(radians(30.0)) ));
+			*/
+
+			//近傍結晶方向ベクデバッグ
+			/*
+			gColor = vec4(0.0, 0.0, 0.0, 1.0);
+			vec3 tmpDir = normalize(vNeighSurDir[i]) * 0.1;
+			tmpDir.y = 0.1;
+			emitAdditiveVert(i, vec3(0,0.05,0));
+			emitAdditiveVert(i, tmpDir);
+			emitAdditiveVert(i, vec3(0,0.05,0.005));
+			EndPrimitive();
 			*/
 		}
 		

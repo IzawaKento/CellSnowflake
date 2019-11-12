@@ -13,17 +13,40 @@ const uint ISENDOFCELLS = 32u;
 //パラメータメモ（めんどい）
 /*
 0.8, 1.5, 0.5, 1.5, 0.5, 0.5, 0.1
-
-
-*/
-//パラメータ
-const float beta01 = 0.8, 
+13.0,2.5, 2.5, 1.0, 1.0, 0.5, 0.5
+//旧水晶
+beta01 = 0.8, 
 			beta10 = 1.5,
 			beta11 = 0.5, 
 			beta20 = 1.5, 
 			beta21 = 0.5,
 			beta30 = 0.5, 
 			beta31 = 0.1;
+//きれい
+beta01 = 0.1, 
+			beta10 = 0.7,
+			beta11 = 0.7, 
+			beta20 = 0.5, 
+			beta21 = 0.5,
+			beta30 = 0.7, 
+			beta31 = 0.7;
+//平面
+beta01 = 10.0, 
+			beta10 = 3.0,
+			beta11 = 3.0, 
+			beta20 = 2.0, 
+			beta21 = 2.0,
+			beta30 = 1.0, 
+			beta31 = 1.0;
+*/
+//パラメータ
+const float beta01 = 1.0, 
+			beta10 = 1.0,
+			beta11 = 1.0, 
+			beta20 = 0.5, 
+			beta21 = 0.5,
+			beta30 = 0.3, 
+			beta31 = 0.3;
 
 class Cell
 {
