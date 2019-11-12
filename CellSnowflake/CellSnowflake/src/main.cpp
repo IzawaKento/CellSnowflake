@@ -82,7 +82,12 @@ int main() {
 	GLint sharedMemorySize = 0;
 	glGetIntegerv(GL_MAX_COMPUTE_SHARED_MEMORY_SIZE, &sharedMemorySize);
 	std::cout << "SHARED_MEMORY_SIZE " << sharedMemorySize << std::endl;
-
+	GLint maxGeometryOutputVertices = 0;
+	glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES, &maxGeometryOutputVertices);
+	std::cout << "MAX_GEOMETRY_OUTPUT_VERTICES " << maxGeometryOutputVertices << std::endl;
+	GLint maxGeometryTotalOutputComponents = 0;
+	glGetIntegerv(GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS, &maxGeometryTotalOutputComponents);
+	std::cout << "MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS " << maxGeometryTotalOutputComponents << std::endl;
 
 	// ”wŒiF‚ðŽw’è‚·‚é
 	glClearColor(0.3f, 0.0f, 0.0f, 1.0f);

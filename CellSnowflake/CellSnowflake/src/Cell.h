@@ -19,7 +19,7 @@ public:
 	32桁:isEndofCells
 	*/
 	//ビット演算でややこしいことしてみる。無駄に6つもある
-	GLuint flags = 0;
+	alignas(4) GLuint flags = 0;
 	GLfloat diffusionMass = 0.0f;
 	GLfloat boundaryMass = 0.0f;
 	GLint horizontalNeighbourNum = 0;
