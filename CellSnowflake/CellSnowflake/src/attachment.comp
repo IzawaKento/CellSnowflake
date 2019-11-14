@@ -22,6 +22,14 @@ beta01 = 0.8,
 			beta21 = 0.5,
 			beta30 = 0.5, 
 			beta31 = 0.1;
+
+beta01 = 0.7,
+			beta10 = 1.5,
+			beta11 = 0.5, 
+			beta20 = 1.0, 
+			beta21 = 0.5,
+			beta30 = 0.5, 
+			beta31 = 0.1;
 //‚«‚ê‚¢
 beta01 = 0.1, 
 			beta10 = 0.7,
@@ -38,12 +46,20 @@ beta01 = 1.0,
 			beta21 = 0.5,
 			beta30 = 0.3, 
 			beta31 = 0.3;
+//è‡’lƒKƒo
+beta01 = 0.1, 
+			beta10 = 0.1,
+			beta11 = 0.1, 
+			beta20 = 0.1, 
+			beta21 = 0.1,
+			beta30 = 0.1, 
+			beta31 = 0.1;
 */
 //ƒpƒ‰ƒ[ƒ^
-const float beta01 = 0.9,
+const float beta01 = 0.7,
 			beta10 = 1.5,
 			beta11 = 0.5, 
-			beta20 = 1.5, 
+			beta20 = 1.0, 
 			beta21 = 0.5,
 			beta30 = 0.5, 
 			beta31 = 0.1;
@@ -53,11 +69,13 @@ class Cell
 	vec4 position;
 	vec4 color;
 	vec3 neighbourSurfaceDir;
+	ivec3 slicedNeighbourNums;
 	uint flags;
 	float diffusionMass;
 	float boundaryMass;
 	int horizontalNeighbourNum;
 	int verticalNeighbourNum;
+	int neighbourNum;
 };
 
 layout(std430, binding = 0) buffer Cells
@@ -103,8 +121,8 @@ void main(){
 		const int hm = min(3, h);
 		const int vm = min(1, v);
 
-		float beta;
-
+		float beta = 999;
+		
 		if(h == 0 && v == 1){
 			beta = beta01;
 		}else if(hm == 1 && vm == 0){
@@ -123,10 +141,48 @@ void main(){
 			beta = 999;
 		}
 
-		//‚Ä‚·‚Æ
-		float neighSurDirLen = length(cell[i].neighbourSurfaceDir);
-		//–v@ƒxƒN‚Ì’·‚³(1~6)‚ð(0~1)‚É‚È‚¨‚µ‚Ä‚½‚·i³’¼ˆÓ}‚ª‚Í‚Á‚«‚è‚µ‚Ä‚¢‚È‚¢jbeta + (7-neighSurDirLen) / 6.0
+		//•t‚¯‘«‚µ
+		ivec3 fixedSliNeiNums
+			 = cell[i].slicedNeighbourNums.x > cell[i].slicedNeighbourNums.z 
+			 ? cell[i].slicedNeighbourNums.xyz : cell[i].slicedNeighbourNums.zyx;
+		if(fixedSliNeiNums.x > 4 && fixedSliNeiNums.z > 1){
+			beta = 0.1;
+		}
+		
 		if(cell[i].boundaryMass >= beta || (h >= 4 && v >= 1)){
+			setEdgeCry(i);
+		}
+
+		/*
+		//TESTã’†‰º‚É‚æ‚é•ªŠò
+		//‰½‰ñ‚àŽQÆ‚·‚é‚Ì‚Å•Ï”‚É‚µ‚æ‚©‚È
+		ivec3 tmpSliNeiNums = cell[i].slicedNeighbourNums;
+		//ã‰º“ˆê‚Ì‚½‚ßã‚ª‘å‚«‚¢ê‡”½“]
+		ivec3 fixedSliNeiNums
+			 = tmpSliNeiNums.x > tmpSliNeiNums.z ? tmpSliNeiNums.xyz : tmpSliNeiNums.zyx;
+		//Š‘®‰ÓŠ”»’èi‚­‚»‚¾‚¯‚Ç‚ä‚é‚µ‚Äj
+		if(fixedSliNeiNums.x == 0){
+			beta = 10.0;
+		}
+		else if(fixedSliNeiNums.z > 3 || fixedSliNeiNums.y > 3){
+			beta = 0.0;																//–„‚ß
+		}else if(fixedSliNeiNums.z > 0){
+			beta = fixedSliNeiNums.y == 1 || fixedSliNeiNums.z == 1 ? 2.5 : 0.5;	//‚Šp:‚–Ê
+		}else{
+			if(fixedSliNeiNums.y == 0){
+				beta = fixedSliNeiNums.x == 1 ? 1.0 : 4.0;							//’¸“_:•½–Ê
+			}else{
+				if(fixedSliNeiNums.x > 1 && fixedSliNeiNums.y > 1){
+					beta = fixedSliNeiNums.x > 4 ? 1.5 : 0.5;						//Šp–Ê:ŽÎ–Ê
+				}else{
+					beta = fixedSliNeiNums.x > 3 ? 1.0 : 1.5;						//ŽÎŠp:Šp
+				}
+			}
+
+		}
+		*/
+
+		if(cell[i].boundaryMass >= beta){
 			setEdgeCry(i);
 		}
 	}

@@ -19,11 +19,13 @@ class Cell
 	vec4 position;
 	vec4 color;
 	vec3 neighbourSurfaceDir;
+	ivec3 slicedNeighbourNums;
 	uint flags;
 	float diffusionMass;
 	float boundaryMass;
 	int horizontalNeighbourNum;
 	int verticalNeighbourNum;
+	int neighbourNum;
 };
 
 layout(std430, binding = 0) buffer Cells
@@ -52,8 +54,9 @@ void main(){
 		const int h = min(3, cell[i].horizontalNeighbourNum);
 		const int v = min(1, cell[i].verticalNeighbourNum);
 
-		float kappa;
+		float kappa = 0.0;
 
+		/*
 		if(h == 0 && v == 1){
 			kappa = kappa01;
 		}else if(h == 1 && v == 0){
@@ -71,6 +74,7 @@ void main(){
 		}else{
 			kappa = 999;
 		}
+		*/
 
 		float tmpBoundaryMass = cell[i].boundaryMass + (1 - kappa) * cell[i].diffusionMass;
 		float tmpDiffusionMass = kappa * cell[i].diffusionMass;

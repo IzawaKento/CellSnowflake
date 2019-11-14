@@ -15,11 +15,13 @@ class Cell
 	vec4 position;
 	vec4 color;
 	vec3 neighbourSurfaceDir;
+	ivec3 slicedNeighbourNums;
 	uint flags;
 	float diffusionMass;
 	float boundaryMass;
 	int horizontalNeighbourNum;
 	int verticalNeighbourNum;
+	int neighbourNum;
 };
 
 layout(std430, binding = 0) buffer Cells
@@ -52,13 +54,14 @@ void main(){
 	const uint gridNumX = gl_NumWorkGroups.x, gridNumZ = gl_NumWorkGroups.z;
 
 	int zOddNum = int(isFlag(i, MZISODD)) * 2 - 1;	//–¼‘Ov‚¢‚Â‚©‚ñ
-	const uint[8] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX,
-		i + gridNumX + zOddNum, i - gridNumX + zOddNum,
-		i + gridNumX * gridNumZ, i - gridNumX * gridNumZ);
+	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX,
+		i + gridNumX + zOddNum, i - gridNumX + zOddNum);
 	
 	//diffusion_1
 	if(!isFlag(i, ISCRYSTAL) && !isFlag(i, ISENDOFCELLS)){		//‹C‘Ì‚Å‚ ‚è’[‚Á‚±‚Å‚È‚¢
 		float tmpDiffusionMass = 0.0;
+
+		/*
 		//…•½
 		float horiDiffMass = 0.0;
 		horiDiffMass = cell[i].diffusionMass +
@@ -71,15 +74,33 @@ void main(){
 		//horiDiffMass /= 7.0;
 		//‚’¼
 		float verDiffMass = 0.0;
-		verDiffMass += cell[aroundCellIDs[6]].diffusionMass +
-			cell[aroundCellIDs[7]].diffusionMass;	//‚Ç‚¤‚à‘«‚·‚¾‚¯
+		verDiffMass += cell[i + gridNumX * gridNumZ].diffusionMass +
+			cell[i - gridNumX * gridNumZ].diffusionMass;	//‚Ç‚¤‚à‘«‚·‚¾‚¯
 		
 		//ŠgU¿—ÊŒvZ@…•½4/7 ‚’¼ 3/7 («‚Ì®‚Å‚Í‚’¼‚Ì‚Q‚ÅŠ„‚é‚Ì‚ğŠÜ‚ß‚Ä‚¢‚é)
 		//‚È‚º‚©‚’¼‚ÌŠ„‡‚ğ‘‚â‚·‚Æ…•½•ûŒü‚Ì¬’·‚ªi‚Ş
 		//tmpDiffusionMass = horiDiffMass * 4.0 / 7.0 + verDiffMass * 3.0 / 14.0;
 		
-		//ƒeƒXƒg ‚’¼…•½ŠÖŒW‚È‚­ŠgU
+		//‚’¼…•½ŠÖŒW‚È‚­ŠgU
 		tmpDiffusionMass = (horiDiffMass + verDiffMass) / 9.0;
+		*/
+
+		
+		//üˆÍ‚Q‚Oƒ}ƒX‚ÅŠgU ‘S•”“¯—l‚É•½‹Ï‚Å‚¢‚¢‚Ì‚©H
+		uint id;
+		for(int j = -1; j < 2; ++j){
+			for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
+				id = aroundCellIDs[aro_i] + j * gridNumX * gridNumZ;
+				tmpDiffusionMass += cell[id].diffusionMass;
+				
+			}
+		}
+		//^ã^‰º
+		tmpDiffusionMass += cell[i+gridNumX*gridNumZ].diffusionMass;
+		tmpDiffusionMass += cell[i-gridNumX*gridNumZ].diffusionMass;
+		
+		tmpDiffusionMass *= 0.05;	//20‚ÅŠ„‚é
+		
 		
 		tmpCell[i].diffusionMass = tmpDiffusionMass;
 	}

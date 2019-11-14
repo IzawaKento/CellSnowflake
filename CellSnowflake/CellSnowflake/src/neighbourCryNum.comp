@@ -15,11 +15,13 @@ class Cell
 	vec4 position;
 	vec4 color;
 	vec3 neighbourSurfaceDir;
+	ivec3 slicedNeighbourNums;
 	uint flags;
 	float diffusionMass;
 	float boundaryMass;
 	int horizontalNeighbourNum;
 	int verticalNeighbourNum;
+	int neighbourNum;
 };
 
 layout(std430, binding = 0) buffer Cells
@@ -107,7 +109,8 @@ void main()
 		}
 	}
 
-	//テスト 周囲の結晶の平均の向きのベクトルを作る
+
+	//多分没（泣） 周囲の結晶の平均の向きのベクトルを作る
 	vec3 tmpNeighSurDir = vec3(0,0,0);
 	if(isFlag(i, ISEDGEBOUNDARY)){
 		uint id;
@@ -115,9 +118,9 @@ void main()
 			for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
 				id = aroundCellIDs[aro_i] + j * gridNumX * gridNumZ;
 				if(isFlag(id, ISCRYSTAL)){
-					//tmpCell[i].horizontalNeighbourNum++;	//隣接数をとりあえずこれに格納する
+					tmpCell[i].neighbourNum++;	//隣接数を格納する
 					//ベクトルを足す
-					tmpNeighSurDir += baseSurfaceDir[aro_i] + vec3(0.0, float(j), 0.0);
+					tmpNeighSurDir += normalize(baseSurfaceDir[aro_i] + vec3(0.0, float(j), 0.0));
 				}
 			}
 		}
@@ -133,6 +136,28 @@ void main()
 		tmpCell[i].neighbourSurfaceDir = tmpNeighSurDir * -1;
 	}
 	
+
+	//周囲水平３層それぞれの結晶数を格納（アトミックカウンター使うと便利なのかなあ）
+	ivec3 tmpSlicedNeighNums = ivec3(0,0,0);
+	if(isFlag(i, ISEDGEBOUNDARY)){
+		uint id;
+		for(int j = 0; j < 3; ++j){
+			for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
+				id = aroundCellIDs[aro_i] + (j-1) * gridNumX * gridNumZ;
+				if(isFlag(id, ISCRYSTAL)){
+					tmpSlicedNeighNums[j]++;	//層ごとの隣接数を格納する
+				}
+			}
+		}
+		//真上真下
+		if(isFlag(i + gridNumX * gridNumZ, ISCRYSTAL)){
+			tmpSlicedNeighNums[2]++;
+		}
+		if(isFlag(i - gridNumX * gridNumZ, ISCRYSTAL)){
+			tmpSlicedNeighNums[0]++;
+		}
+		tmpCell[i].slicedNeighbourNums = tmpSlicedNeighNums;
+	}
 
 }
 

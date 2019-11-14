@@ -15,11 +15,13 @@ class Cell
 	vec4 position;
 	vec4 color;
 	vec3 neighbourSurfaceDir;
+	ivec3 slicedNeighbourNums;
 	uint flags;
 	float diffusionMass;
 	float boundaryMass;
 	int horizontalNeighbourNum;
 	int verticalNeighbourNum;
+	int neighbourNum;
 };
 
 layout(std430, binding = 0) buffer Cells
@@ -74,24 +76,24 @@ void main()
 		i + gridNumX * gridNumZ, i - gridNumX * gridNumZ);
 	
 	//とりあえず色付ける
-	tmpCell[i].color.rgba = vec4(0.0, 0.0, 0.0, 1.0);
+	tmpCell[i].color = vec4(0.0, 0.0, 0.0, 1.0);
 
 	//diffusionMassのみ可視化
-	//tmpCell[i].color.rgba = vec4(abs(cell[i].diffusionMass - 0.1) * 30.0, cell[i].boundaryMass, 0.0, 1.0);
+	//tmpCell[i].color = vec4(abs(cell[i].diffusionMass - 0.1) * 30.0, cell[i].boundaryMass, 0.0, 1.0);
 
 	//状態
 	
 	if(isFlag(i, ISCRYSTAL)){
-		tmpCell[i].color.rgba = vec4(0.0, 0.7, 0.7, 1.0);
+		tmpCell[i].color = vec4(0.0, 0.7, 0.7, 1.0);
 	}
 	if(isFlag(i, ISEDGECRYSTAL)){
-		tmpCell[i].color.rgba = vec4(0.7, 0.0, 0.7, 1.0);
+		tmpCell[i].color = vec4(0.7, 0.0, 0.7, 1.0);
 	}
 	if(isFlag(i, ISBOUNDARY)){
-		tmpCell[i].color.rgba = vec4(0.0, 0.1, 0.0, 0.0);
+		tmpCell[i].color = vec4(0.0, 0.1, 0.0, 0.0);
 	}
 	if(isFlag(i, ISEDGEBOUNDARY)){	//この段階では存在しないのででない
-		tmpCell[i].color.rgba = vec4(0.3, 0.3, 0.3, 1.0);
+		tmpCell[i].color = vec4(0.3, 0.3, 0.3, 1.0);
 	}
 	
 	/*
@@ -124,29 +126,38 @@ void main()
 	
 
 	//隣接面方向ベクトル確認
-	//tmpCell[i].color.rgba = vec4((normalize(cell[i].neighbourSurfaceDir) + vec3(1,1,1)) * 0.5, 1.0);
+	//tmpCell[i].color = vec4((normalize(cell[i].neighbourSurfaceDir) + vec3(1,1,1)) * 0.5, 1.0);
 	/*
 	float neighSurDirLen = length(cell[i].neighbourSurfaceDir);
-	tmpCell[i].color.rgba = vec4(0.0, neighSurDirLen, 0.0, 1.0);
+	tmpCell[i].color = vec4(0.0, neighSurDirLen, 0.0, 1.0);
 	*/
+	
 	//座標確認
-	//tmpCell[i].color.rgba = vec4(cell[i].position.rgb, 1.0);
+	//tmpCell[i].color = vec4(cell[i].position.rgb, 1.0);
 
-	//tmpCell[i].color.rgba = vec4(cell[i].diffusionMass * 10.0, 0.0, 0.0, 1.0);
+	/*
+	//隣接数確認
+	tmpCell[i].color = vec4(cell[i].slicedNeighbourNums[0] / 7.0
+		, cell[i].slicedNeighbourNums[1] / 6.0
+		, cell[i].slicedNeighbourNums[2] / 7.0, 1.0);
+	*/
+
+	//拡散質量確認
+	//tmpCell[i].color = vec4(cell[i].diffusionMass * 10.0, 0.0, 0.0, 1.0);
 	/*
 	if(isFlag(i, ISEDGEBOUNDARY)){
-		tmpCell[i].color.rgba += vec4(0.0, cell[i].diffusionMass * 40.0, 0.0, 1.0);
+		tmpCell[i].color += vec4(0.0, cell[i].diffusionMass * 40.0, 0.0, 1.0);
 	}
 	*/
 
 	//気体を黒くする
 	
 	if(!isFlag(i, ISCRYSTAL)){
-		tmpCell[i].color.rgba = vec4(0.0, 0.0, 0.0, 0.0);
+		tmpCell[i].color = vec4(0.0, 0.0, 0.0, 0.0);
 	}
 	//端っこを黒くしてみやすく
 	if(isFlag(i, ISENDOFCELLS)){
-		tmpCell[i].color.rgba = vec4(0.0, 0.0, 0.0, 0.0);
+		tmpCell[i].color = vec4(0.0, 0.0, 0.0, 0.0);
 	}
 	
 	

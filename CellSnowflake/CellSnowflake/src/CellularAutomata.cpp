@@ -134,28 +134,86 @@ CellularAutomata::~CellularAutomata() {
 }
 
 void CellularAutomata::setInitialCells(int centerCellNum) {
-	//中心点を結晶に
-	
+	//頂点を結晶に
+	/*
 	cells[centerCellNum].SetFlagTrue(CellFlags::ISCRYSTAL);
 	cells[centerCellNum].SetFlagFalse(CellFlags::ISEDGECRYSTAL);
 	cells[centerCellNum].SetFlagFalse(CellFlags::ISBOUNDARY);
 	cells[centerCellNum].SetFlagFalse(CellFlags::ISEDGEBOUNDARY);
 	cells[centerCellNum].diffusionMass = 0.0f;
 	cells[centerCellNum].boundaryMass = 1.0f;
+	*/
+	//まじ適当な作り方
+	SetEdgeCry(centerCellNum);
 
-	//中心点の周りを結晶に
-	SetEdgeCry(centerCellNum + 1);
-	SetEdgeCry(centerCellNum - 1);
+	int tmpY = mGridNumX * mGridNumZ;
+	//直径３
+	SetEdgeCry(centerCellNum + 1 - tmpY);
+	SetEdgeCry(centerCellNum - 1 - tmpY);
 	//いいのかわからん
-	SetEdgeCry(centerCellNum + mGridNumX);
-	SetEdgeCry(centerCellNum - mGridNumX);
+	SetEdgeCry(centerCellNum + mGridNumX - tmpY);
+	SetEdgeCry(centerCellNum - mGridNumX - tmpY);
 	int zOddNum = static_cast<int>(cells[centerCellNum].isFlag(CellFlags::MZISODD)) * 2 - 1;
-	SetEdgeCry(centerCellNum + mGridNumX + zOddNum);
-	SetEdgeCry(centerCellNum - mGridNumX + zOddNum);
+	SetEdgeCry(centerCellNum + mGridNumX + zOddNum - tmpY);
+	SetEdgeCry(centerCellNum - mGridNumX + zOddNum - tmpY);
 
+	//直径５
+	SetEdgeCry(centerCellNum + 2 - tmpY * 2);
+	SetEdgeCry(centerCellNum - 2 - tmpY * 2);
+	SetEdgeCry(centerCellNum + mGridNumX - zOddNum - tmpY * 2);
+	SetEdgeCry(centerCellNum - mGridNumX - zOddNum - tmpY * 2);
+	SetEdgeCry(centerCellNum + mGridNumX + (zOddNum * 2) - tmpY * 2);
+	SetEdgeCry(centerCellNum - mGridNumX + (zOddNum * 2) - tmpY * 2);
+	SetEdgeCry(centerCellNum + (mGridNumX * 2) - tmpY * 2);
+	SetEdgeCry(centerCellNum - (mGridNumX * 2) - tmpY * 2);
+	SetEdgeCry(centerCellNum + (mGridNumX * 2) + 1 - tmpY * 2);
+	SetEdgeCry(centerCellNum - (mGridNumX * 2) + 1 - tmpY * 2);
+	SetEdgeCry(centerCellNum + (mGridNumX * 2) - 1 - tmpY * 2);
+	SetEdgeCry(centerCellNum - (mGridNumX * 2) - 1 - tmpY * 2);
+
+	SetEdgeCry(centerCellNum + 2 - tmpY*3);
+	SetEdgeCry(centerCellNum - 2 - tmpY*3);
+	SetEdgeCry(centerCellNum + mGridNumX - zOddNum - tmpY*3);
+	SetEdgeCry(centerCellNum - mGridNumX - zOddNum - tmpY*3);
+	SetEdgeCry(centerCellNum + mGridNumX + (zOddNum*2) - tmpY*3);
+	SetEdgeCry(centerCellNum - mGridNumX + (zOddNum*2) - tmpY*3);
+	SetEdgeCry(centerCellNum + (mGridNumX*2) - tmpY * 3);
+	SetEdgeCry(centerCellNum - (mGridNumX*2) - tmpY * 3);
+	SetEdgeCry(centerCellNum + (mGridNumX * 2) + 1 - tmpY * 3);
+	SetEdgeCry(centerCellNum - (mGridNumX * 2) + 1 - tmpY * 3);
+	SetEdgeCry(centerCellNum + (mGridNumX * 2) - 1 - tmpY * 3);
+	SetEdgeCry(centerCellNum - (mGridNumX * 2) - 1 - tmpY * 3);
+
+	SetEdgeCry(centerCellNum + 2 - tmpY * 4);
+	SetEdgeCry(centerCellNum - 2 - tmpY * 4);
+	SetEdgeCry(centerCellNum + mGridNumX - zOddNum - tmpY * 4);
+	SetEdgeCry(centerCellNum - mGridNumX - zOddNum - tmpY * 4);
+	SetEdgeCry(centerCellNum + mGridNumX + (zOddNum * 2) - tmpY * 4);
+	SetEdgeCry(centerCellNum - mGridNumX + (zOddNum * 2) - tmpY * 4);
+	SetEdgeCry(centerCellNum + (mGridNumX * 2) - tmpY * 4);
+	SetEdgeCry(centerCellNum - (mGridNumX * 2) - tmpY * 4);
+	SetEdgeCry(centerCellNum + (mGridNumX * 2) + 1 - tmpY * 4);
+	SetEdgeCry(centerCellNum - (mGridNumX * 2) + 1 - tmpY * 4);
+	SetEdgeCry(centerCellNum + (mGridNumX * 2) - 1 - tmpY * 4);
+	SetEdgeCry(centerCellNum - (mGridNumX * 2) - 1 - tmpY * 4);
+
+	//直径３
+	SetEdgeCry(centerCellNum + 1 - tmpY*5);
+	SetEdgeCry(centerCellNum - 1 - tmpY*5);
+	//いいのかわからん
+	SetEdgeCry(centerCellNum + mGridNumX - tmpY*5);
+	SetEdgeCry(centerCellNum - mGridNumX - tmpY*5);
+	SetEdgeCry(centerCellNum + mGridNumX + zOddNum - tmpY*5);
+	SetEdgeCry(centerCellNum - mGridNumX + zOddNum - tmpY*5);
+
+	SetEdgeCry(centerCellNum - tmpY * 6);
+	
 	//上下も
-	SetEdgeCry(centerCellNum + mGridNumX * mGridNumZ);
-	SetEdgeCry(centerCellNum - mGridNumX * mGridNumZ);
+	//SetEdgeCry(centerCellNum + mGridNumX * mGridNumZ + mGridNumX * mGridNumZ);
+	//SetEdgeCry(centerCellNum - mGridNumX * mGridNumZ + mGridNumX * mGridNumZ);
+
+
+	
 
 	//以下不要
 	////ifはつかってないけどめっちゃくそやと思う
@@ -235,7 +293,8 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
 
-	//diffusion2
+	/*
+	//未使用diffusion2
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glUseProgram(diffusion2ComProgObj);
@@ -243,6 +302,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
+	*/
 
 	//freezing
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);

@@ -51,7 +51,7 @@ void main()
 		*/
 		
 		//不透明に設定したセルだけ作る
-		if(gColor[3] > 0.0){	// isFlag(i,16777216)
+		if(gColor[3] > 0.0){	// isFlag(i,524288)
 			
 			//emitAdditiveVert(i,vec3(0.0, 0.0, 0.0 ));
 			
@@ -83,11 +83,11 @@ void main()
 			//近傍結晶方向ベクデバッグ
 			/*
 			gColor = vec4(0.0, 0.0, 0.0, 1.0);
-			vec3 tmpDir = normalize(vNeighSurDir[i]) * 0.1;
+			vec3 tmpDir = normalize(vNeighSurDir[i]) * 0.3;
 			tmpDir.y = 0.1;
 			emitAdditiveVert(i, vec3(0,0.05,0));
 			emitAdditiveVert(i, tmpDir);
-			emitAdditiveVert(i, vec3(0,0.05,0.005));
+			emitAdditiveVert(i, vec3(0,0.05,0.007));
 			EndPrimitive();
 			*/
 		}
