@@ -78,7 +78,7 @@ void main()
 	//EDGECRYSTALの周囲の気体をEDGEBOUNDARYに変える
 	if(isFlag(i, ISEDGECRYSTAL)){
 		
-		//新
+		//新 拡散質量エラー発生中
 		for(int j = -1; j < 2; ++j){
 			for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
 				uint id = aroundCellIDs[aro_i] + j * gridNumX * gridNumZ;
