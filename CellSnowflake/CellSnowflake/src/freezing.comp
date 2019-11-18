@@ -44,6 +44,10 @@ bool isFlag(uint i, uint flagID) {
 	return ((cell[i].flags & flagID) != 0);
 }
 
+float random (vec2 st) {
+    return fract(sin(dot(st.xy, vec2(12.9898,78.233)))* 43758.5453123);
+}
+
 void main(){
 	
 	const uint i = gl_WorkGroupID.y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
@@ -73,6 +77,39 @@ void main(){
 			kappa = kappa31;
 		}else{
 			kappa = 999;
+		}
+		*/
+
+		/*
+		//適当にランダム性を入れてみる
+		float ran = random(vec2(i, i)) * 0.7;
+		//tmpCell[i].color = vec4(vec3(ran), 1.0);
+		kappa += ran;
+		*/
+
+		/*
+		//てすと周囲のセル状況に応じて凍結具合を変えてみる
+		ivec3 tmpSliNeiNums = cell[i].slicedNeighbourNums;
+		ivec3 fixedSliNeiNums
+			 = tmpSliNeiNums.x > tmpSliNeiNums.z ? tmpSliNeiNums.xyz : tmpSliNeiNums.zyx;
+		if(fixedSliNeiNums.x == 0){
+			kappa = 1.0;
+		}
+		else if(fixedSliNeiNums.z > 3 || fixedSliNeiNums.y > 3){
+			kappa = 0.0;																//埋め
+		}else if(fixedSliNeiNums.z > 0){
+			kappa = fixedSliNeiNums.y == 1 || fixedSliNeiNums.z == 1 ? 0.8 : 0.1;	//垂角薄赤:垂面薄緑
+		}else{
+			if(fixedSliNeiNums.y == 0){
+				kappa = fixedSliNeiNums.x == 1 ? 0.1 : 0.4;							//頂点赤:平面緑
+			}else{
+				if(fixedSliNeiNums.x > 1 && fixedSliNeiNums.y > 1){
+					kappa = fixedSliNeiNums.x > 4 ? 0.1 : 0.1;						//角面紫:斜面水色
+				}else{
+					kappa = fixedSliNeiNums.x > 3 ? 0.3 : 0.0;						//斜角黄:角青
+				}
+			}
+
 		}
 		*/
 

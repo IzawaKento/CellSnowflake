@@ -58,6 +58,7 @@ void setEdgeCry(uint i){
 void setEdgeBoundary(uint i){
 	setFlagFalse(i, ISBOUNDARY);
 	setFlagTrue(i, ISEDGEBOUNDARY);
+	//tmpCell[i].color = vec4(vec3(fract(sin(dot(vec2(i, i), vec2(12.9898,78.233)))* 43758.5453123)), 1.0) ;
 }
 
 void main()
@@ -70,21 +71,44 @@ void main()
 	const float colorValue = float(i) / float(gl_NumWorkGroups.x);
 	int zOddNum = int(isFlag(i, MZISODD)) * 2 - 1;	//名前思いつかん
 	
-	const uint[8] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX, 
-		i + gridNumX + zOddNum, i - gridNumX + zOddNum,
-		i + gridNumX * gridNumZ, i - gridNumX * gridNumZ);
+	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX, 
+		i + gridNumX + zOddNum, i - gridNumX + zOddNum);
 
 	//set_boundary
 	//EDGECRYSTALの周囲の気体をEDGEBOUNDARYに変える
 	if(isFlag(i, ISEDGECRYSTAL)){
-		//うーん読みにくい。。
-
+		
+		//新
+		for(int j = -1; j < 2; ++j){
+			for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
+				uint id = aroundCellIDs[aro_i] + j * gridNumX * gridNumZ;
+				if(!isFlag(id, ISCRYSTAL) && !isFlag(id, ISEDGEBOUNDARY)){
+					setEdgeBoundary(id);
+				}
+			}
+		}
+		if(!isFlag(i + gridNumX * gridNumZ, ISCRYSTAL) && !isFlag(i + gridNumX * gridNumZ, ISEDGEBOUNDARY)){
+			setEdgeBoundary(i + gridNumX * gridNumZ);
+		}
+		if(!isFlag(i - gridNumX * gridNumZ, ISCRYSTAL) && !isFlag(i - gridNumX * gridNumZ, ISEDGEBOUNDARY)){
+			setEdgeBoundary(i - gridNumX * gridNumZ);
+		}
+		
+		/*
+		//旧
 		for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
 			uint id = aroundCellIDs[aro_i];
 			if(!isFlag(id, ISCRYSTAL) && !isFlag(id, ISEDGEBOUNDARY)){
 				setEdgeBoundary(id);
 			}
 		}
+		if(!isFlag(i + gridNumX * gridNumZ, ISCRYSTAL) && !isFlag(i + gridNumX * gridNumZ, ISEDGEBOUNDARY)){
+			setEdgeBoundary(i + gridNumX * gridNumZ);
+		}
+		if(!isFlag(i - gridNumX * gridNumZ, ISCRYSTAL) && !isFlag(i - gridNumX * gridNumZ, ISEDGEBOUNDARY)){
+			setEdgeBoundary(i - gridNumX * gridNumZ);
+		}
+		*/
 	}
 }
 

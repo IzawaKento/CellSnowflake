@@ -90,7 +90,7 @@ void main()
 		vec3(zOddNum * sin(radians(30.0)), 0.0, -cos(radians(30.0)))
 	);
 
-	//—×ÚŒ‹»”Ši”[
+	//‹Œ—×ÚŒ‹»”Ši”[
 	if(isFlag(i, ISEDGEBOUNDARY)){
 		//…•½
 		for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){				//i‚É‚µ‚½‚¢‚¯‚Ç‚ß‚ñ‚Ç‚¢

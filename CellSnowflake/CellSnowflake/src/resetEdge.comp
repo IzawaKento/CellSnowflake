@@ -84,10 +84,10 @@ void main()
 	//状態
 	
 	if(isFlag(i, ISCRYSTAL)){
-		tmpCell[i].color = vec4(0.0, 0.7, 0.7, 1.0);
+		tmpCell[i].color = vec4(0.0, 0.7, 0.7, 0.0);
 	}
 	if(isFlag(i, ISEDGECRYSTAL)){
-		tmpCell[i].color = vec4(0.7, 0.0, 0.7, 1.0);
+		tmpCell[i].color = vec4(0.7, 0.0, 0.7, 0.0);
 	}
 	if(isFlag(i, ISBOUNDARY)){
 		tmpCell[i].color = vec4(0.0, 0.1, 0.0, 0.0);
@@ -142,24 +142,28 @@ void main()
 		, cell[i].slicedNeighbourNums[2] / 7.0, 1.0);
 	*/
 
-	//拡散質量確認
-	//tmpCell[i].color = vec4(cell[i].diffusionMass * 10.0, 0.0, 0.0, 1.0);
+	//境界質量確認
+	//tmpCell[i].color = vec4(cell[i].boundaryMass, 0.0, 0.0, 1.0);
+	
 	/*
+	//拡散質量確認
+	tmpCell[i].color = vec4(cell[i].diffusionMass * 10.0, 0.0, 0.0, 1.0);
+	
 	if(isFlag(i, ISEDGEBOUNDARY)){
 		tmpCell[i].color += vec4(0.0, cell[i].diffusionMass * 40.0, 0.0, 1.0);
 	}
 	*/
-
-	//気体を黒くする
-	
-	if(!isFlag(i, ISCRYSTAL)){
+	/*
+	//気体を消す
+	if(isFlag(i, ISBOUNDARY)){
 		tmpCell[i].color = vec4(0.0, 0.0, 0.0, 0.0);
 	}
-	//端っこを黒くしてみやすく
+	
+	//端っこを消す
 	if(isFlag(i, ISENDOFCELLS)){
 		tmpCell[i].color = vec4(0.0, 0.0, 0.0, 0.0);
 	}
-	
+	*/
 	
 
 	//resetCrystalEdge

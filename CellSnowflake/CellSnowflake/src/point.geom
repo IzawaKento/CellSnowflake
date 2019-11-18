@@ -8,7 +8,7 @@ in mat4 vProjection[];
 out vec4 gColor;
 layout (points) in;
 layout (triangle_strip, max_vertices = 9) out;
-
+//layout (points, max_vertices = 1) out;
 //ƒtƒ‰ƒO‚Ì‘ã‚í‚è.....
 const uint ISCRYSTAL = 1u;
 const uint ISEDGECRYSTAL = 2u;

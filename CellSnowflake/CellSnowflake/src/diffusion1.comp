@@ -86,18 +86,27 @@ void main(){
 		*/
 
 		
-		//周囲２０マスで拡散 全部同様に平均でいいのか？
+		//周囲２０マスで拡散　簡単のため垂直:水平 = 1:1とする
 		uint id;
-		for(int j = -1; j < 2; ++j){
-			for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
-				id = aroundCellIDs[aro_i] + j * gridNumX * gridNumZ;
-				tmpDiffusionMass += cell[id].diffusionMass;
+		for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
+			id = aroundCellIDs[aro_i];
+			tmpDiffusionMass += cell[id].diffusionMass / (0.4 + 0.3 * sqrt(2.0));
+		}
+		//上周囲
+		for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
+			id = aroundCellIDs[aro_i] + gridNumX * gridNumZ;
+			tmpDiffusionMass += cell[id].diffusionMass * sqrt(2.0) * 0.5 / (0.4 + 0.3 * sqrt(2.0));
 				
-			}
+		}
+		//下周囲
+		for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
+			id = aroundCellIDs[aro_i] - gridNumX * gridNumZ;
+			tmpDiffusionMass += cell[id].diffusionMass * sqrt(2.0) * 0.5 / (0.4 + 0.3 * sqrt(2.0));
+				
 		}
 		//真上真下
-		tmpDiffusionMass += cell[i+gridNumX*gridNumZ].diffusionMass;
-		tmpDiffusionMass += cell[i-gridNumX*gridNumZ].diffusionMass;
+		tmpDiffusionMass += cell[i+gridNumX*gridNumZ].diffusionMass / (0.4 + 0.3 * sqrt(2.0));
+		tmpDiffusionMass += cell[i-gridNumX*gridNumZ].diffusionMass / (0.4 + 0.3 * sqrt(2.0));
 		
 		tmpDiffusionMass *= 0.05;	//20で割る
 		

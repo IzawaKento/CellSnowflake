@@ -83,9 +83,9 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	}
 	
 	//中心初期セル作成
-	int centerCellNum = (mGridNumX / 2) + (mGridNumZ / 2 * mGridNumX) + ((mGridNumY / 2 - 10) * mGridNumX * mGridNumZ);
+	int centerCellNum = (mGridNumX / 2) + (mGridNumZ / 2 * mGridNumX) + ((mGridNumY / 2 ) * mGridNumX * mGridNumZ);
 	setInitialCells(centerCellNum);
-	
+	//setInitialCells(centerCellNum + 106);
 	//Houdiniの隣り合うセル数格納処理は省略
 
 	//確認用頂点配列オブジェクト
@@ -145,7 +145,7 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 	*/
 	//まじ適当な作り方
 	SetEdgeCry(centerCellNum);
-
+	/*
 	int tmpY = mGridNumX * mGridNumZ;
 	//直径３
 	SetEdgeCry(centerCellNum + 1 - tmpY);
@@ -207,7 +207,7 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 	SetEdgeCry(centerCellNum - mGridNumX + zOddNum - tmpY*5);
 
 	SetEdgeCry(centerCellNum - tmpY * 6);
-	
+	*/
 	//上下も
 	//SetEdgeCry(centerCellNum + mGridNumX * mGridNumZ + mGridNumX * mGridNumZ);
 	//SetEdgeCry(centerCellNum - mGridNumX * mGridNumZ + mGridNumX * mGridNumZ);
