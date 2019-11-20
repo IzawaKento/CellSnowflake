@@ -177,10 +177,15 @@ void main(){
 			beta = 0.0;																//–„‚ß
 			tmpCell[i].color = vec4(0.3, 0.3, 0.3, 1.0);
 		}else if(fixedSliNeiNums.z > 0){
-			beta = fixedSliNeiNums.y == 1 || fixedSliNeiNums.z == 1 ? 2.5 : 0.5;	//‚Šp”–Ô:‚–Ê”–—Î
-			
-			tmpCell[i].color = fixedSliNeiNums.y == 1 || fixedSliNeiNums.z == 1 ?
-						vec4(1.0, 0.5, 0.5, 1.0) : vec4(0.5, 1.0, 0.5, 1.0);
+			if(fixedSliNeiNums.y == 1 || fixedSliNeiNums.z == 1){
+				beta =  fixedSliNeiNums.y == 1 && fixedSliNeiNums.z == 1 && fixedSliNeiNums.x != 1 ?
+					0.5 : 5.0;	//’¸“_•t‹ß:‚Šp”–Ô
+				tmpCell[i].color = fixedSliNeiNums.y == 1 && fixedSliNeiNums.z == 1 && fixedSliNeiNums.x != 1 ?
+						vec4(0.2, 0.2, 0.2, 1.0) : vec4(1.0, 0.5, 0.5, 1.0);
+			}else{
+				beta = 0.5;	//‚–Ê”–—Î
+				tmpCell[i].color = vec4(0.5, 1.0, 0.5, 1.0);
+			}
 			
 		}else{
 			if(fixedSliNeiNums.y == 0){
@@ -202,7 +207,7 @@ void main(){
 						vec4(1.0, 0.0, 1.0, 1.0) : vec4(0.0, 1.0, 1.0, 1.0);
 					
 				}else{
-					beta = fixedSliNeiNums.x > 3 ? 1.0 : 2.5;						//ŽÎŠp‰©:ŠpÂ
+					beta = fixedSliNeiNums.x > 3 ? 5.0 : 2.5;						//ŽÎŠp‰©:ŠpÂ
 					
 					tmpCell[i].color = fixedSliNeiNums.x > 3 ?
 						vec4(1.0, 1.0, 0.0, 1.0) : vec4(0.0, 0.0, 1.0, 1.0);

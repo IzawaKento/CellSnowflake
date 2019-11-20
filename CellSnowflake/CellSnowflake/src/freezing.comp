@@ -82,7 +82,7 @@ void main(){
 
 		/*
 		//“K“–‚Éƒ‰ƒ“ƒ_ƒ€«‚ğ“ü‚ê‚Ä‚İ‚é
-		float ran = random(vec2(i, i)) * 0.7;
+		float ran = random(vec2(i, i)) * 0.1;
 		//tmpCell[i].color = vec4(vec3(ran), 1.0);
 		kappa += ran;
 		*/
