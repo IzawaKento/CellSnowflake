@@ -118,5 +118,6 @@ void main(){
 
 		tmpCell[i].diffusionMass = tmpDiffusionMass;
 		tmpCell[i].boundaryMass = tmpBoundaryMass;
+		
 	}
 }

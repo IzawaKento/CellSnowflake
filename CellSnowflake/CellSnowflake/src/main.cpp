@@ -2,6 +2,8 @@
 #include <fstream>
 #include <vector>
 #include <memory>
+#include <thread>
+#include <chrono>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include "Window.h"
@@ -35,7 +37,7 @@ constexpr Vertex octahedronVertex[] =
 const float pi = 3.1415926535f;
 //うーん
 // 水蒸気セルの初期拡散質量
-const float rho = 0.1f;
+const float rho = 0.2f;
 
 const int gridNumX = 50;
 const int gridNumY = 150;
@@ -90,7 +92,7 @@ int main() {
 	std::cout << "MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS " << maxGeometryTotalOutputComponents << std::endl;
 
 	// 背景色を指定する
-	glClearColor(0.3f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.15f, 0.13f, 0.14f, 1.0f);
 
 	glPointSize(2.0);
 	//いみないし
@@ -137,6 +139,10 @@ int main() {
 
 			previousTime = glfwGetTime();
 		}
+		
+		//1フレームデバッグ
+		//なんか無理やり止める感じ
+		//std::this_thread::sleep_for(std::chrono::seconds(1));
 
 		// ウィンドウを消去する
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -199,5 +205,7 @@ int main() {
 		
 		// カラーバッファを入れ替える
 		window.swapBuffers();
+
+		
 	}
 }

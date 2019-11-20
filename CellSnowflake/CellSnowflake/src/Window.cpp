@@ -61,9 +61,9 @@ void Window::swapBuffers() {
 	// カラーバッファを入れ替える
 	glfwSwapBuffers(window);
 	// イベントを取り出す
-	if (keyStatus == GLFW_RELEASE)
+	/*if (keyStatus == GLFW_RELEASE)
 		glfwWaitEvents();
-	else
+	else*/
 		glfwPollEvents();
 
 	//なんでここでやるんにゃ？Waiteventが問題らしい

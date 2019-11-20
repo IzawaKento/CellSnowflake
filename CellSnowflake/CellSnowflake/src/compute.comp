@@ -58,7 +58,7 @@ void setEdgeCry(uint i){
 void setEdgeBoundary(uint i){
 	setFlagFalse(i, ISBOUNDARY);
 	setFlagTrue(i, ISEDGEBOUNDARY);
-	//tmpCell[i].color = vec4(vec3(fract(sin(dot(vec2(i, i), vec2(12.9898,78.233)))* 43758.5453123)), 1.0) ;
+	
 }
 
 void main()
@@ -68,7 +68,6 @@ void main()
 		gl_WorkGroupID.x;
 	const uint gridNumX = gl_NumWorkGroups.x, gridNumZ = gl_NumWorkGroups.z;
 
-	const float colorValue = float(i) / float(gl_NumWorkGroups.x);
 	int zOddNum = int(isFlag(i, MZISODD)) * 2 - 1;	//名前思いつかん
 	
 	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX, 
@@ -77,8 +76,8 @@ void main()
 	//set_boundary
 	//EDGECRYSTALの周囲の気体をEDGEBOUNDARYに変える
 	if(isFlag(i, ISEDGECRYSTAL)){
-		
-		//新 拡散質量エラー発生中
+		/*
+		//新 周囲２０マス
 		for(int j = -1; j < 2; ++j){
 			for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
 				uint id = aroundCellIDs[aro_i] + j * gridNumX * gridNumZ;
@@ -93,8 +92,8 @@ void main()
 		if(!isFlag(i - gridNumX * gridNumZ, ISCRYSTAL) && !isFlag(i - gridNumX * gridNumZ, ISEDGEBOUNDARY)){
 			setEdgeBoundary(i - gridNumX * gridNumZ);
 		}
+		*/
 		
-		/*
 		//旧
 		for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
 			uint id = aroundCellIDs[aro_i];
@@ -108,7 +107,7 @@ void main()
 		if(!isFlag(i - gridNumX * gridNumZ, ISCRYSTAL) && !isFlag(i - gridNumX * gridNumZ, ISEDGEBOUNDARY)){
 			setEdgeBoundary(i - gridNumX * gridNumZ);
 		}
-		*/
+		
 	}
 }
 

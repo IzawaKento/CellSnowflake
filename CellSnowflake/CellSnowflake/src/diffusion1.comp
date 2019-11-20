@@ -61,7 +61,7 @@ void main(){
 	if(!isFlag(i, ISCRYSTAL) && !isFlag(i, ISENDOFCELLS)){		//ãCëÃÇ≈Ç†ÇËí[Ç¡Ç±Ç≈Ç»Ç¢
 		float tmpDiffusionMass = 0.0;
 
-		/*
+		/*ãåägéU
 		//êÖïΩ
 		float horiDiffMass = 0.0;
 		horiDiffMass = cell[i].diffusionMass +
@@ -113,4 +113,5 @@ void main(){
 		
 		tmpCell[i].diffusionMass = tmpDiffusionMass;
 	}
+	
 }

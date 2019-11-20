@@ -145,7 +145,7 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 	*/
 	//まじ適当な作り方
 	SetEdgeCry(centerCellNum);
-	/*
+	
 	int tmpY = mGridNumX * mGridNumZ;
 	//直径３
 	SetEdgeCry(centerCellNum + 1 - tmpY);
@@ -207,7 +207,7 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 	SetEdgeCry(centerCellNum - mGridNumX + zOddNum - tmpY*5);
 
 	SetEdgeCry(centerCellNum - tmpY * 6);
-	*/
+	
 	//上下も
 	//SetEdgeCry(centerCellNum + mGridNumX * mGridNumZ + mGridNumX * mGridNumZ);
 	//SetEdgeCry(centerCellNum - mGridNumX * mGridNumZ + mGridNumX * mGridNumZ);
@@ -262,7 +262,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	//引数は３次元でx, y, zのワークグループを起動する数
 	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
 	//メモリへのアクセスを止める
-	//glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
 
@@ -280,7 +280,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glUseProgram(neighbourCryNumComProgObj);
 	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
-	//glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
+	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
 
@@ -303,7 +303,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
 	*/
-
+	
 	//freezing
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
@@ -321,7 +321,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
-
+	
 	//melting
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);

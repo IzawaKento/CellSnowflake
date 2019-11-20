@@ -61,11 +61,12 @@ void main(){
 		gl_WorkGroupID.x;
 
 	if(isFlag(i, ISEDGEBOUNDARY) && !isFlag(i, ISENDOFCELLS)){
+		
 		const int h = min(3, cell[i].horizontalNeighbourNum);
 		const int v = min(1, cell[i].verticalNeighbourNum);
 
-		float mu;
-
+		float mu = 0.001;
+		/*
 		if(h == 0 && v == 1){
 			mu = mu01;
 		}else if(h == 1 && v == 0){
@@ -81,10 +82,11 @@ void main(){
 		}else if(h == 3 && v == 1){
 			mu = mu31;
 		}else{
-			mu = 999;
+			mu = 0.001;		//ほんまココ適当な値いれたらはまるで２日間
 		}
+		*/
 
-		float tmpBoundaryMass = (1 - mu) * cell[i].boundaryMass;
+		float tmpBoundaryMass = (1.0 - mu) * cell[i].boundaryMass;
 		float tmpDiffusionMass = cell[i].diffusionMass + mu * cell[i].boundaryMass;
 
 		tmpCell[i].diffusionMass = tmpDiffusionMass;
