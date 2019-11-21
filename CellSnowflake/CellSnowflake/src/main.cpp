@@ -45,7 +45,7 @@ const int gridNumZ = 50;
 
 const float cellSizeX = 0.03f;
 const float cellSizeZ = cellSizeX * sin(60.0f * pi / 180.0f);		//Å„3 / 2
-const float cellSizeY = cellSizeX * 1.10013f;						//c : a = 1.10013 : 1
+const float cellSizeY = cellSizeX *1.10013f;						//c : a = 1.10013 : 1
 
 //ÇƒÇ∑Ç∆
 Vertex TestCellVertex[gridNumX * gridNumY * gridNumZ];

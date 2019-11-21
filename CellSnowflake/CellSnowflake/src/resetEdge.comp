@@ -84,10 +84,10 @@ void main()
 	//èÛë‘
 	
 	if(isFlag(i, ISCRYSTAL)){
-		tmpCell[i].color = vec4(0.0, 0.0, 0.0, 1.0);
+		tmpCell[i].color = vec4(0.0, 0.4, 0.4, 1.0);
 	}
 	if(isFlag(i, ISEDGECRYSTAL)){
-		tmpCell[i].color = vec4(0.0, 0.0, 0.0, 1.0);
+		tmpCell[i].color = vec4(0.0, 0.6, 0.6, 1.0);
 	}
 	if(isFlag(i, ISBOUNDARY)){
 		tmpCell[i].color = vec4(0.0, 0.1, 0.0, 0.0);

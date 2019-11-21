@@ -146,6 +146,21 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 	//Ç‹Ç∂ìKìñÇ»çÏÇËï˚
 	SetEdgeCry(centerCellNum);
 	
+	//íºåaÇR
+	SetEdgeCry(centerCellNum + 1);
+	SetEdgeCry(centerCellNum - 1);
+	//Ç¢Ç¢ÇÃÇ©ÇÌÇ©ÇÁÇÒ
+	SetEdgeCry(centerCellNum + mGridNumX);
+	SetEdgeCry(centerCellNum - mGridNumX);
+	int zOddNum = static_cast<int>(cells[centerCellNum].isFlag(CellFlags::MZISODD)) * 2 - 1;
+	SetEdgeCry(centerCellNum + mGridNumX + zOddNum);
+	SetEdgeCry(centerCellNum - mGridNumX + zOddNum);
+	//è„â∫Ç‡
+	SetEdgeCry(centerCellNum + mGridNumX * mGridNumZ + mGridNumX * mGridNumZ);
+	SetEdgeCry(centerCellNum - mGridNumX * mGridNumZ + mGridNumX * mGridNumZ);
+	
+	
+	/*
 	int tmpY = mGridNumX * mGridNumZ;
 	//íºåaÇR
 	SetEdgeCry(centerCellNum + 1 - tmpY);
@@ -207,10 +222,8 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 	SetEdgeCry(centerCellNum - mGridNumX + zOddNum - tmpY*5);
 
 	SetEdgeCry(centerCellNum - tmpY * 6);
-	
-	//è„â∫Ç‡
-	//SetEdgeCry(centerCellNum + mGridNumX * mGridNumZ + mGridNumX * mGridNumZ);
-	//SetEdgeCry(centerCellNum - mGridNumX * mGridNumZ + mGridNumX * mGridNumZ);
+	*/
+
 
 
 	

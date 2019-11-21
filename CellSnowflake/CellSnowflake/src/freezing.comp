@@ -11,8 +11,8 @@ const uint MZISODD = 16u;	//セル番号のZ値が奇数である
 const uint ISENDOFCELLS = 32u;
 //パラメータ
 //水晶は準液体相がないので0.0に
-const float kappa01 = 0.0, kappa10 = 0.0, kappa11 = 0.0, 
-	kappa20 = 0.0, kappa21 = 0.0, kappa30 = 0.0, kappa31 = 0.0;
+const float kappa01 = 0.1, kappa10 = 0.1, kappa11 = 0.1, 
+	kappa20 = 0.1, kappa21 = 0.1, kappa30 = 0.1, kappa31 = 0.1;
 
 class Cell
 {
@@ -61,6 +61,7 @@ void main(){
 		float kappa = 0.0;
 
 		/*
+		//旧
 		if(h == 0 && v == 1){
 			kappa = kappa01;
 		}else if(h == 1 && v == 0){
@@ -82,7 +83,7 @@ void main(){
 
 		/*
 		//適当にランダム性を入れてみる
-		float ran = random(vec2(i, i)) * 0.1;
+		float ran = random(vec2(i, i)) * 0.8;
 		//tmpCell[i].color = vec4(vec3(ran), 1.0);
 		kappa += ran;
 		*/
@@ -118,6 +119,10 @@ void main(){
 
 		tmpCell[i].diffusionMass = tmpDiffusionMass;
 		tmpCell[i].boundaryMass = tmpBoundaryMass;
-		
+
+
+
+		//tmpCell[i].color = vec4(0.0, cell[i].boundaryMass, cell[i].boundaryMass, 1.0);
+
 	}
 }

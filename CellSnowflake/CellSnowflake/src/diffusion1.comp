@@ -60,8 +60,8 @@ void main(){
 	//diffusion_1
 	if(!isFlag(i, ISCRYSTAL) && !isFlag(i, ISENDOFCELLS)){		//‹C‘Ì‚Å‚ ‚è’[‚Á‚±‚Å‚È‚¢
 		float tmpDiffusionMass = 0.0;
-
-		/*‹ŒŠgU
+		
+		//‹ŒŠgU
 		//…•½
 		float horiDiffMass = 0.0;
 		horiDiffMass = cell[i].diffusionMass +
@@ -71,7 +71,7 @@ void main(){
 			cell[aroundCellIDs[3]].diffusionMass + 
 			cell[aroundCellIDs[4]].diffusionMass + 
 			cell[aroundCellIDs[5]].diffusionMass;
-		//horiDiffMass /= 7.0;
+		horiDiffMass /= 7.0;
 		//‚’¼
 		float verDiffMass = 0.0;
 		verDiffMass += cell[i + gridNumX * gridNumZ].diffusionMass +
@@ -79,13 +79,13 @@ void main(){
 		
 		//ŠgU¿—ÊŒvZ@…•½4/7 ‚’¼ 3/7 («‚Ì®‚Å‚Í‚’¼‚Ì‚Q‚ÅŠ„‚é‚Ì‚ğŠÜ‚ß‚Ä‚¢‚é)
 		//‚È‚º‚©‚’¼‚ÌŠ„‡‚ğ‘‚â‚·‚Æ…•½•ûŒü‚Ì¬’·‚ªi‚Ş
-		//tmpDiffusionMass = horiDiffMass * 4.0 / 7.0 + verDiffMass * 3.0 / 14.0;
+		tmpDiffusionMass = horiDiffMass * 4.0 / 7.0 + verDiffMass * 3.0 / 14.0;
 		
 		//‚’¼…•½ŠÖŒW‚È‚­ŠgU
-		tmpDiffusionMass = (horiDiffMass + verDiffMass) / 9.0;
-		*/
-
+		//tmpDiffusionMass = (horiDiffMass + verDiffMass) / 9.0;
 		
+		
+		/*
 		//üˆÍ‚Q‚Oƒ}ƒX‚ÅŠgU@ŠÈ’P‚Ì‚½‚ß‚’¼:…•½ = 1:1‚Æ‚·‚é
 		uint id;
 		for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
@@ -109,9 +109,8 @@ void main(){
 		tmpDiffusionMass += cell[i-gridNumX*gridNumZ].diffusionMass / (0.4 + 0.3 * sqrt(2.0));
 		
 		tmpDiffusionMass *= 0.05;	//20‚ÅŠ„‚é
-		
+		*/
 		
 		tmpCell[i].diffusionMass = tmpDiffusionMass;
 	}
-	
 }
