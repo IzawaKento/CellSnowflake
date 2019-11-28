@@ -16,6 +16,7 @@ class Cell
 	vec4 color;
 	vec3 neighbourSurfaceDir;
 	ivec3 slicedNeighbourNums;
+	vec3 vertexNormal;
 	uint flags;
 	float diffusionMass;
 	float boundaryMass;
@@ -60,7 +61,7 @@ void main(){
 	//diffusion_1
 	if(!isFlag(i, ISCRYSTAL) && !isFlag(i, ISENDOFCELLS)){		//‹C‘Ì‚Å‚ ‚è’[‚Á‚±‚Å‚È‚¢
 		float tmpDiffusionMass = 0.0;
-		
+		/*
 		//‹ŒŠgU
 		//…•½
 		float horiDiffMass = 0.0;
@@ -83,9 +84,9 @@ void main(){
 		
 		//‚’¼…•½ŠÖŒW‚È‚­ŠgU
 		//tmpDiffusionMass = (horiDiffMass + verDiffMass) / 9.0;
+		*/
 		
 		
-		/*
 		//üˆÍ‚Q‚Oƒ}ƒX‚ÅŠgU@ŠÈ’P‚Ì‚½‚ß‚’¼:…•½ = 1:1‚Æ‚·‚é
 		uint id;
 		for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
@@ -109,7 +110,7 @@ void main(){
 		tmpDiffusionMass += cell[i-gridNumX*gridNumZ].diffusionMass / (0.4 + 0.3 * sqrt(2.0));
 		
 		tmpDiffusionMass *= 0.05;	//20‚ÅŠ„‚é
-		*/
+		
 		
 		tmpCell[i].diffusionMass = tmpDiffusionMass;
 	}

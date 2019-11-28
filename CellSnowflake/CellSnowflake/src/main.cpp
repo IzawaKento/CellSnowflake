@@ -37,7 +37,7 @@ constexpr Vertex octahedronVertex[] =
 const float pi = 3.1415926535f;
 //うーん
 // 水蒸気セルの初期拡散質量
-const float rho = 0.2f;
+const float rho = 0.1f;
 
 const int gridNumX = 50;
 const int gridNumY = 150;
@@ -101,6 +101,15 @@ int main() {
 	///* アルファテストの比較関数 */
 	//glAlphaFunc(GL_ALWAYS, 0.5);
 
+	// 背面カリングを有効にする
+	glFrontFace(GL_CCW);
+	glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
+
+	// デプスバッファを有効にする(うまくいってない)
+	/*glClearDepth(1.0);
+	glDepthFunc(GL_LESS);
+	glEnable(GL_DEPTH_TEST);*/
 
 	//// シェーダのソースファイルを読み込んでプログラムオブジェクトを作成する
 	//Program program("src\\point.vert", "src\\point.frag");
@@ -109,6 +118,10 @@ int main() {
 	// uniform 変数の場所を取得する
 	const GLint modelviewLoc(glGetUniformLocation(vertfragProgramObj, "modelview"));
 	const GLint projectionLoc(glGetUniformLocation(vertfragProgramObj, "projection"));
+	const GLint LposLoc(glGetUniformLocation(vertfragProgramObj, "Lpos"));
+	const GLint LambLoc(glGetUniformLocation(vertfragProgramObj, "Lamb"));
+	const GLint LdiffLoc(glGetUniformLocation(vertfragProgramObj, "Ldiff"));
+	const GLint LspecLoc(glGetUniformLocation(vertfragProgramObj, "Lspec"));
 
 	CellularAutomata cellularAutomata(rho, gridNumX, gridNumY, gridNumZ, cellSizeX, cellSizeZ, cellSizeY);
 	
@@ -122,6 +135,12 @@ int main() {
 	}
 	//std::unique_ptr<const Shape> shape(new Shape(3, 12, octahedronVertex));
 	std::unique_ptr<const Shape> shape(new Shape(4, gridNumX*gridNumY*gridNumZ, TestCellVertex));
+	
+	//光源データ
+	static constexpr Vector4 Lpos = { 0.0f, 0.0f, 0.0f, 1.0f };
+	static constexpr Vector4 Lamb = { 0.2f, 0.1f, 0.1f };
+	static constexpr Vector4 Ldiff = { 1.0f, 0.5f, 0.5f };
+	static constexpr Vector4 Lspec = { 1.0f, 0.5f, 0.5f };
 
 	//FPS表示用
 	double previousTime = glfwGetTime();
@@ -192,9 +211,20 @@ int main() {
 		const GLfloat aspect(size[0] / size[1]);
 		const Matrix projection(Matrix::perspective(fovy, aspect, 1.0f, 10.0f));
 
+		//光源を回す
+		const Vector3 transLit = { 0.5, 0.0, 0.0 };
+		const Matrix transMatLit(Matrix::translate(transLit));
+		const Matrix modelMatLit(r * transMatLit);
+		Vector4 rotatedLpos = modelMatLit.multiplyVec4(Lpos);
+
 		// uniform 変数に値を設定する
 		glUniformMatrix4fv(modelviewLoc, 1, GL_FALSE, modelview.data());
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, projection.data());
+		glUniform4fv(LposLoc, 1, rotatedLpos.data());
+		glUniform3fv(LambLoc, 1, Lamb.data());
+		glUniform3fv(LdiffLoc, 1, Ldiff.data());
+		glUniform3fv(LspecLoc, 1, Lspec.data());
+
 
 		// 図形を描画する
 		//shape->draw();

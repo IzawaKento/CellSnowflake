@@ -72,13 +72,13 @@ beta01 = 0.5,
 			beta31 = 3.5;
 */
 //パラメータ
-const float beta01 = 0.8,
-			beta10 = 1.5,
-			beta11 = 0.5, 
-			beta20 = 1.0, 
-			beta21 = 0.5,
-			beta30 = 0.5, 
-			beta31 = 0.1;
+const float beta01 = 0.5, 
+			beta10 = 1.0,
+			beta11 = 1.0, 
+			beta20 = 3.5, 
+			beta21 = 3.5,
+			beta30 = 3.5, 
+			beta31 = 3.5;
 
 class Cell
 {
@@ -86,6 +86,7 @@ class Cell
 	vec4 color;
 	vec3 neighbourSurfaceDir;
 	ivec3 slicedNeighbourNums;
+	vec3 vertexNormal;
 	uint flags;
 	float diffusionMass;
 	float boundaryMass;
@@ -139,7 +140,7 @@ void main(){
 
 		float beta = 999;
 
-		
+		/*
 		if(hm == 0 && vm == 1){
 			beta = beta01;
 			//tmpCell[i].color = vec4(0.0, 0.3, 0.0, 1.0);
@@ -178,8 +179,9 @@ void main(){
 		if(cell[i].boundaryMass >= beta || (h >= 4 && v >= 1)){
 			setEdgeCry(i);
 		}
+		*/
+
 		
-		/*
 		//TEST上中下による分岐
 		//何回も参照する
 		ivec3 tmpSliNeiNums = cell[i].slicedNeighbourNums;
@@ -232,10 +234,10 @@ void main(){
 			}
 
 		}
-		
+
 		if(cell[i].boundaryMass >= beta){
 			setEdgeCry(i);
 		}
-		*/
+		
 	}
 }

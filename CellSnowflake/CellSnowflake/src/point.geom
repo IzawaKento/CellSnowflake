@@ -3,6 +3,8 @@
 in vec4 vColor[];
 in uint vFlags[];
 in vec3 vNeighSurDir[];
+in vec3 vIdiff[];
+in vec3 vIspec[];
 in mat4 vModelview[];
 in mat4 vProjection[];
 out vec4 gColor;
@@ -33,7 +35,7 @@ void main()
 {
 	//そもそもvFlagsの値で判断したいけどうまくいかん（泣）
 	for(int i = 0; i < gl_in.length(); ++i){
-		gColor = vColor[i];
+		gColor = vColor[i];//vec4(vIdiff[i]+vIspec[i], 1.0);//vColor[i];
 		
 		//gColor[3] = 0.9999;		//0.0~0.999.. これを入れると動く、訳が分からない
 		//gColor[1] = 0.5555;		//0.01~1.0    これを入れても動く、訳が分からない
@@ -51,10 +53,10 @@ void main()
 		*/
 		
 		//不透明に設定したセルだけ作る
-		if(gColor[3] > 0.0){	// isFlag(i,524288)
+		if(vColor[i][3] > 0.0){	// isFlag(i,524288)
 			
 			//emitAdditiveVert(i,vec3(0.0, 0.0, 0.0 ));
-			
+			//なぜか全三角形上向いてる
 			emitAdditiveVert(i,vec3(0.0, 0.015, 0.015/cos(radians(30.0)) ));
 			emitAdditiveVert(i,vec3(0.015, 0.015, 0.015*tan(radians(30.0))));
 			emitAdditiveVert(i,vec3(-0.015, 0.015, 0.015*tan(radians(30.0))));

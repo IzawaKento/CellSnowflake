@@ -16,6 +16,7 @@ class Cell
 	vec4 color;
 	vec3 neighbourSurfaceDir;
 	ivec3 slicedNeighbourNums;
+	vec3 vertexNormal;
 	uint flags;
 	float diffusionMass;
 	float boundaryMass;

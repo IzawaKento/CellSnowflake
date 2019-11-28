@@ -41,7 +41,7 @@ public:
 		}
 	}
 
-	Vector4 multiplyVec4(const Vector4 v) {
+	Vector4 multiplyVec4(Vector4 v) const{
 		Vector4 t;
 		for (int i = 0; i < 4; ++i)
 		{

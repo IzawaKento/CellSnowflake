@@ -107,6 +107,8 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Cell), &static_cast<const Cell *>(0)->neighbourSurfaceDir);
 	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Cell), &static_cast<const Cell *>(0)->vertexNormal);
+	glEnableVertexAttribArray(4);
 	
 	//èëÇ´çûÇ›ópSSBOçÏê¨
 	glGenBuffers(1, &tmpSsbo);
@@ -145,7 +147,7 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 	*/
 	//Ç‹Ç∂ìKìñÇ»çÏÇËï˚
 	SetEdgeCry(centerCellNum);
-	
+	/*
 	//íºåaÇR
 	SetEdgeCry(centerCellNum + 1);
 	SetEdgeCry(centerCellNum - 1);
@@ -156,11 +158,11 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 	SetEdgeCry(centerCellNum + mGridNumX + zOddNum);
 	SetEdgeCry(centerCellNum - mGridNumX + zOddNum);
 	//è„â∫Ç‡
-	SetEdgeCry(centerCellNum + mGridNumX * mGridNumZ + mGridNumX * mGridNumZ);
-	SetEdgeCry(centerCellNum - mGridNumX * mGridNumZ + mGridNumX * mGridNumZ);
+	SetEdgeCry(centerCellNum + mGridNumX * mGridNumZ);
+	SetEdgeCry(centerCellNum - mGridNumX * mGridNumZ);
+	*/
 	
 	
-	/*
 	int tmpY = mGridNumX * mGridNumZ;
 	//íºåaÇR
 	SetEdgeCry(centerCellNum + 1 - tmpY);
@@ -222,7 +224,7 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 	SetEdgeCry(centerCellNum - mGridNumX + zOddNum - tmpY*5);
 
 	SetEdgeCry(centerCellNum - tmpY * 6);
-	*/
+	
 
 
 

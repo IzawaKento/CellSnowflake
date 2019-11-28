@@ -11,6 +11,7 @@ public:
 	//„’è‚³‚ê‚½‹ß–T–Ê•ûŒü
 	alignas(16) Vector3 neighbourSurfaceDir = { 0,0,0 };
 	alignas(16) GLint slicedNeighbourNums[3] = { 0,0,0 };
+	alignas(16) Vector3 vertexNormal = {0.0, 1.0, 0.0};
 	/*
 	1Œ…: isCrystal
 	2Œ…: isEdgeCrystal
