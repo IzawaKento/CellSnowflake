@@ -37,7 +37,7 @@ constexpr Vertex octahedronVertex[] =
 const float pi = 3.1415926535f;
 //うーん
 // 水蒸気セルの初期拡散質量
-const float rho = 0.1f;
+const float rho = 0.2f;
 
 const int gridNumX = 50;
 const int gridNumY = 150;
@@ -161,7 +161,7 @@ int main() {
 		
 		//1フレームデバッグ
 		//なんか無理やり止める感じ
-		//std::this_thread::sleep_for(std::chrono::seconds(1));
+		std::this_thread::sleep_for(std::chrono::seconds(1));
 
 		// ウィンドウを消去する
 		glClear(GL_COLOR_BUFFER_BIT);

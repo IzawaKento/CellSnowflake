@@ -72,13 +72,13 @@ beta01 = 0.5,
 			beta31 = 3.5;
 */
 //ƒpƒ‰ƒ[ƒ^
-const float beta01 = 0.5, 
-			beta10 = 1.0,
-			beta11 = 1.0, 
-			beta20 = 3.5, 
-			beta21 = 3.5,
-			beta30 = 3.5, 
-			beta31 = 3.5;
+const float beta01 = 0.8, 
+			beta10 = 1.5,
+			beta11 = 0.5, 
+			beta20 = 1.5, 
+			beta21 = 0.5,
+			beta30 = 0.5, 
+			beta31 = 0.1;
 
 class Cell
 {
@@ -185,47 +185,57 @@ void main(){
 		//TESTã’†‰º‚É‚æ‚é•ªŠò
 		//‰½‰ñ‚àŽQÆ‚·‚é
 		ivec3 tmpSliNeiNums = cell[i].slicedNeighbourNums;
-		//ã‰º“ˆê‚Ì‚½‚ßã‚ª‘å‚«‚¢ê‡”½“]
+		//ã‰º“ˆê‚Ì‚½‚ß‰º‚ª‘å‚«‚¢ê‡”½“]
 		ivec3 fixedSliNeiNums
 			 = tmpSliNeiNums.x > tmpSliNeiNums.z ? tmpSliNeiNums.xyz : tmpSliNeiNums.zyx;
-		//Š‘®‰ÓŠ”»’èi‚­‚»‚¾‚¯‚Çj
+
+		//Š‘®‰ÓŠ”»’è
+		beta = 1.0;
+		//tmpCell[i].color = vec4(0.5, 0.0, 0.5, 1.0);
+		//‚Å‚Á‚Ï‚è‚ÌŽü‚è‚Ìè‡’l‚ð‰º‚°‚é
+		if(fixedSliNeiNums.x > 1 && fixedSliNeiNums.y < 3 && fixedSliNeiNums.z > 0 && fixedSliNeiNums.z < 3){
+			beta = 0.2;
+			//tmpCell[i].color = vec4(0.5, 1.0, 0.5, 1.0);
+		}
+		//‹ŒŠ‘®‰ÓŠ”»’èi‚­‚»‚¾‚¯‚Çj
+		/*
 		if(fixedSliNeiNums.x == 0){
-			beta = 10.0;
+			beta = 5.0;
 		}else if(fixedSliNeiNums.z > 3 || fixedSliNeiNums.y > 3){
 			beta = 0.0;																//–„‚ß
 			tmpCell[i].color = vec4(0.3, 0.3, 0.3, 1.0);
 		}else if(fixedSliNeiNums.z > 0){
 			if(fixedSliNeiNums.y == 1 || fixedSliNeiNums.z == 1){
 				beta =  fixedSliNeiNums.y == 1 && fixedSliNeiNums.z == 1 && fixedSliNeiNums.x != 1 ?
-					0.5 : 5.0;	//’¸“_•t‹ß:‚Šp”–Ô
+					5.0 : 5.0;	//’¸“_•t‹ß:‚Šp”–Ô
 				tmpCell[i].color = fixedSliNeiNums.y == 1 && fixedSliNeiNums.z == 1 && fixedSliNeiNums.x != 1 ?
 						vec4(0.2, 0.2, 0.2, 1.0) : vec4(1.0, 0.5, 0.5, 1.0);
 			}else{
-				beta = 0.5;	//‚–Ê”–—Î
+				beta = 5.0;	//‚–Ê”–—Î
 				tmpCell[i].color = vec4(0.5, 1.0, 0.5, 1.0);
 			}
 			
 		}else{
 			if(fixedSliNeiNums.y == 0){
 				if(fixedSliNeiNums.x == 1){
-					beta = cell[i].verticalNeighbourNum > 0 ? 1.0 : 4.0;			//’¸“_Ô:ŽÎ‚ß”’
+					beta = cell[i].verticalNeighbourNum > 0 ? 5.0 : 4.0;			//’¸“_Ô:ŽÎ‚ß”’
 					tmpCell[i].color = cell[i].verticalNeighbourNum > 0 ?
 						vec4(1.0, 0.0, 0.0, 1.0) : vec4(0.8, 0.8, 0.8, 1.0);
 				}else{
-					beta = 4.0;														//•½–Ê—Î
+					beta = 5.0;														//•½–Ê—Î
 					tmpCell[i].color = vec4(0.0, 1.0, 0.0, 1.0);
 				}
 				
 				
 			}else{
 				if(fixedSliNeiNums.x > 1 && fixedSliNeiNums.y > 1){
-					beta = fixedSliNeiNums.x > 4 ? 0.5 : 0.5;						//Šp–ÊŽ‡:ŽÎ–Ê…F
+					beta = fixedSliNeiNums.x > 4 ? 1.0 : 5.0;						//Šp–ÊŽ‡:ŽÎ–Ê…F
 					
 					tmpCell[i].color = fixedSliNeiNums.x > 4 ?
 						vec4(1.0, 0.0, 1.0, 1.0) : vec4(0.0, 1.0, 1.0, 1.0);
 					
 				}else{
-					beta = fixedSliNeiNums.x > 3 ? 5.0 : 2.5;						//ŽÎŠp‰©:ŠpÂ
+					beta = fixedSliNeiNums.x > 3 ? 5.0 : 5.0;						//ŽÎŠp‰©:ŠpÂ
 					
 					tmpCell[i].color = fixedSliNeiNums.x > 3 ?
 						vec4(1.0, 1.0, 0.0, 1.0) : vec4(0.0, 0.0, 1.0, 1.0);
@@ -234,6 +244,7 @@ void main(){
 			}
 
 		}
+		*/
 
 		if(cell[i].boundaryMass >= beta){
 			setEdgeCry(i);

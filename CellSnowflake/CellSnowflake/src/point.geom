@@ -27,7 +27,7 @@ bool isFlag(int i, uint flagID) {
 }
 
 void emitAdditiveVert(int i, vec3 additivePos){
-	gl_Position = vProjection[i] * vModelview[i] * (gl_in[i].gl_Position + vec4(additivePos, 0.0));
+	gl_Position = vProjection[i] * vModelview[i] * (gl_in[i].gl_Position + vec4(additivePos * 0.9, 0.0));
 	EmitVertex();
 }
 
