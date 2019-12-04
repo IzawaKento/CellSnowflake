@@ -13,6 +13,9 @@ public:
 		float cellSizeX, float cellSizeZ, float cellSizeY);
 	~CellularAutomata();
 
+	void set2RadiusCells(int centerNum, int yOffset);
+	void set3RadiusCells(int centerNum, int yOffset);
+
 	void setInitialCells(int centerNum);
 
 	void copySSBO(GLuint readBuffer, GLuint writeBuffer);

@@ -161,7 +161,7 @@ int main() {
 		
 		//1フレームデバッグ
 		//なんか無理やり止める感じ
-		std::this_thread::sleep_for(std::chrono::seconds(1));
+		//std::this_thread::sleep_for(std::chrono::milliseconds(500));
 
 		// ウィンドウを消去する
 		glClear(GL_COLOR_BUFFER_BIT);

@@ -135,6 +135,40 @@ CellularAutomata::~CellularAutomata() {
 	glDeleteBuffers(1, &drawVbo);*/
 }
 
+//íºåaÇR
+void CellularAutomata::set2RadiusCells(int centerCellNum, int yOffset) {
+	int tmpY = mGridNumX * mGridNumZ;
+	//íÜêS
+	SetEdgeCry(centerCellNum - tmpY * yOffset);
+	//é¸ÇË
+	SetEdgeCry(centerCellNum + 1 - tmpY * yOffset);
+	SetEdgeCry(centerCellNum - 1 - tmpY * yOffset);
+	SetEdgeCry(centerCellNum + mGridNumX - tmpY * yOffset);
+	SetEdgeCry(centerCellNum - mGridNumX - tmpY * yOffset);
+	int zOddNum = static_cast<int>(cells[centerCellNum].isFlag(CellFlags::MZISODD)) * 2 - 1;
+	SetEdgeCry(centerCellNum + mGridNumX + zOddNum - tmpY * yOffset);
+	SetEdgeCry(centerCellNum - mGridNumX + zOddNum - tmpY * yOffset);
+}
+//íºåaÇT
+void CellularAutomata::set3RadiusCells(int centerCellNum, int yOffset) {
+	int tmpY = mGridNumX * mGridNumZ;
+	int zOddNum = static_cast<int>(cells[centerCellNum].isFlag(CellFlags::MZISODD)) * 2 - 1;
+	set2RadiusCells(centerCellNum, yOffset);
+	//é¸ÇË
+	SetEdgeCry(centerCellNum + 2 - tmpY * yOffset);
+	SetEdgeCry(centerCellNum - 2 - tmpY * yOffset);
+	SetEdgeCry(centerCellNum + mGridNumX - zOddNum - tmpY * yOffset);
+	SetEdgeCry(centerCellNum - mGridNumX - zOddNum - tmpY * yOffset);
+	SetEdgeCry(centerCellNum + mGridNumX + (zOddNum * 2) - tmpY * yOffset);
+	SetEdgeCry(centerCellNum - mGridNumX + (zOddNum * 2) - tmpY * yOffset);
+	SetEdgeCry(centerCellNum + (mGridNumX * 2) - tmpY * yOffset);
+	SetEdgeCry(centerCellNum - (mGridNumX * 2) - tmpY * yOffset);
+	SetEdgeCry(centerCellNum + (mGridNumX * 2) + 1 - tmpY * yOffset);
+	SetEdgeCry(centerCellNum - (mGridNumX * 2) + 1 - tmpY * yOffset);
+	SetEdgeCry(centerCellNum + (mGridNumX * 2) - 1 - tmpY * yOffset);
+	SetEdgeCry(centerCellNum - (mGridNumX * 2) - 1 - tmpY * yOffset);
+}
+
 void CellularAutomata::setInitialCells(int centerCellNum) {
 	//í∏ì_ÇåãèªÇ…
 	/*
@@ -164,71 +198,14 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 	
 	
 	int tmpY = mGridNumX * mGridNumZ;
-	//íºåaÇR
-	SetEdgeCry(centerCellNum + 1 - tmpY);
-	SetEdgeCry(centerCellNum - 1 - tmpY);
-	//Ç¢Ç¢ÇÃÇ©ÇÌÇ©ÇÁÇÒ
-	SetEdgeCry(centerCellNum + mGridNumX - tmpY);
-	SetEdgeCry(centerCellNum - mGridNumX - tmpY);
 	int zOddNum = static_cast<int>(cells[centerCellNum].isFlag(CellFlags::MZISODD)) * 2 - 1;
-	SetEdgeCry(centerCellNum + mGridNumX + zOddNum - tmpY);
-	SetEdgeCry(centerCellNum - mGridNumX + zOddNum - tmpY);
-
-	//íºåaÇT
-	SetEdgeCry(centerCellNum + 2 - tmpY * 2);
-	SetEdgeCry(centerCellNum - 2 - tmpY * 2);
-	SetEdgeCry(centerCellNum + mGridNumX - zOddNum - tmpY * 2);
-	SetEdgeCry(centerCellNum - mGridNumX - zOddNum - tmpY * 2);
-	SetEdgeCry(centerCellNum + mGridNumX + (zOddNum * 2) - tmpY * 2);
-	SetEdgeCry(centerCellNum - mGridNumX + (zOddNum * 2) - tmpY * 2);
-	SetEdgeCry(centerCellNum + (mGridNumX * 2) - tmpY * 2);
-	SetEdgeCry(centerCellNum - (mGridNumX * 2) - tmpY * 2);
-	SetEdgeCry(centerCellNum + (mGridNumX * 2) + 1 - tmpY * 2);
-	SetEdgeCry(centerCellNum - (mGridNumX * 2) + 1 - tmpY * 2);
-	SetEdgeCry(centerCellNum + (mGridNumX * 2) - 1 - tmpY * 2);
-	SetEdgeCry(centerCellNum - (mGridNumX * 2) - 1 - tmpY * 2);
-
-	SetEdgeCry(centerCellNum + 2 - tmpY*3);
-	SetEdgeCry(centerCellNum - 2 - tmpY*3);
-	SetEdgeCry(centerCellNum + mGridNumX - zOddNum - tmpY*3);
-	SetEdgeCry(centerCellNum - mGridNumX - zOddNum - tmpY*3);
-	SetEdgeCry(centerCellNum + mGridNumX + (zOddNum*2) - tmpY*3);
-	SetEdgeCry(centerCellNum - mGridNumX + (zOddNum*2) - tmpY*3);
-	SetEdgeCry(centerCellNum + (mGridNumX*2) - tmpY * 3);
-	SetEdgeCry(centerCellNum - (mGridNumX*2) - tmpY * 3);
-	SetEdgeCry(centerCellNum + (mGridNumX * 2) + 1 - tmpY * 3);
-	SetEdgeCry(centerCellNum - (mGridNumX * 2) + 1 - tmpY * 3);
-	SetEdgeCry(centerCellNum + (mGridNumX * 2) - 1 - tmpY * 3);
-	SetEdgeCry(centerCellNum - (mGridNumX * 2) - 1 - tmpY * 3);
-
-	SetEdgeCry(centerCellNum + 2 - tmpY * 4);
-	SetEdgeCry(centerCellNum - 2 - tmpY * 4);
-	SetEdgeCry(centerCellNum + mGridNumX - zOddNum - tmpY * 4);
-	SetEdgeCry(centerCellNum - mGridNumX - zOddNum - tmpY * 4);
-	SetEdgeCry(centerCellNum + mGridNumX + (zOddNum * 2) - tmpY * 4);
-	SetEdgeCry(centerCellNum - mGridNumX + (zOddNum * 2) - tmpY * 4);
-	SetEdgeCry(centerCellNum + (mGridNumX * 2) - tmpY * 4);
-	SetEdgeCry(centerCellNum - (mGridNumX * 2) - tmpY * 4);
-	SetEdgeCry(centerCellNum + (mGridNumX * 2) + 1 - tmpY * 4);
-	SetEdgeCry(centerCellNum - (mGridNumX * 2) + 1 - tmpY * 4);
-	SetEdgeCry(centerCellNum + (mGridNumX * 2) - 1 - tmpY * 4);
-	SetEdgeCry(centerCellNum - (mGridNumX * 2) - 1 - tmpY * 4);
-
-	//íºåaÇR
-	SetEdgeCry(centerCellNum + 1 - tmpY*5);
-	SetEdgeCry(centerCellNum - 1 - tmpY*5);
-	//Ç¢Ç¢ÇÃÇ©ÇÌÇ©ÇÁÇÒ
-	SetEdgeCry(centerCellNum + mGridNumX - tmpY*5);
-	SetEdgeCry(centerCellNum - mGridNumX - tmpY*5);
-	SetEdgeCry(centerCellNum + mGridNumX + zOddNum - tmpY*5);
-	SetEdgeCry(centerCellNum - mGridNumX + zOddNum - tmpY*5);
-
+	
+	set2RadiusCells(centerCellNum, 1);
+	set3RadiusCells(centerCellNum, 2);
+	set3RadiusCells(centerCellNum, 3);
+	set3RadiusCells(centerCellNum, 4);
+	set2RadiusCells(centerCellNum, 5);
 	SetEdgeCry(centerCellNum - tmpY * 6);
-	
-
-
-
-	
 
 	//à»â∫ïsóv
 	////ifÇÕÇ¬Ç©Ç¡ÇƒÇ»Ç¢ÇØÇ«ÇﬂÇ¡ÇøÇ·Ç≠ÇªÇ‚Ç∆évÇ§

@@ -190,13 +190,23 @@ void main(){
 			 = tmpSliNeiNums.x > tmpSliNeiNums.z ? tmpSliNeiNums.xyz : tmpSliNeiNums.zyx;
 
 		//所属箇所判定
-		beta = 1.0;
+		beta = 5.0;
 		//tmpCell[i].color = vec4(0.5, 0.0, 0.5, 1.0);
-		//でっぱりの周りの閾値を下げる
-		if(fixedSliNeiNums.x > 1 && fixedSliNeiNums.y < 3 && fixedSliNeiNums.z > 0 && fixedSliNeiNums.z < 3){
-			beta = 0.2;
-			//tmpCell[i].color = vec4(0.5, 1.0, 0.5, 1.0);
+		if(fixedSliNeiNums.x == 1 && fixedSliNeiNums.y == 0 && fixedSliNeiNums.z == 0){
+			beta = 3.0;
+			tmpCell[i].color = vec4(0.5, 0.5, 1.0, 1.0);
 		}
+		//でっぱりの周りの閾値を下げる
+		if(fixedSliNeiNums.x > 3 && fixedSliNeiNums.y > 0 && fixedSliNeiNums.z > 0){
+			beta = 0.2;
+			tmpCell[i].color = vec4(0.5, 1.0, 0.5, 1.0);
+		}
+		//横に伸ばしたい
+		if(fixedSliNeiNums.y > 2 && fixedSliNeiNums.z < 1){
+			beta = 0.2;
+			tmpCell[i].color = vec4(1.0, 0.5, 0.5, 1.0);
+		}
+
 		//旧所属箇所判定（くそだけど）
 		/*
 		if(fixedSliNeiNums.x == 0){
