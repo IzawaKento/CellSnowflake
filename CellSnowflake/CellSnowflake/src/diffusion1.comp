@@ -117,7 +117,7 @@ void main(){
 		tmpDiffusionMass *= 0.05;	//20‚ÅŠ„‚é
 		
 		//ƒmƒCƒY
-		tmpDiffusionMass *= (1.0 + (random(vec2(i, i)) * 2 - 1) * 0.05);
+		tmpDiffusionMass *= (1.0 + (random(vec2(i, i)) * 2 - 1) * 0.2);
 
 		tmpCell[i].diffusionMass = tmpDiffusionMass;
 	}
