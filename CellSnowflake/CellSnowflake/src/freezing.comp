@@ -45,8 +45,9 @@ bool isFlag(uint i, uint flagID) {
 	return ((cell[i].flags & flagID) != 0);
 }
 
+//‚QŸŒ³À•W‚©‚ç—”
 float random (vec2 st) {
-    return fract(sin(dot(st.xy, vec2(12.9898,78.233)))* 43758.5453123);
+    return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
 }
 
 void main(){
@@ -59,7 +60,7 @@ void main(){
 		const int h = min(3, cell[i].horizontalNeighbourNum);
 		const int v = min(1, cell[i].verticalNeighbourNum);
 
-		float kappa = 0.0;
+		float kappa = 0.1;
 
 		/*
 		//‹Œ
@@ -84,7 +85,7 @@ void main(){
 
 		/*
 		//“K“–‚Éƒ‰ƒ“ƒ_ƒ€«‚ğ“ü‚ê‚Ä‚İ‚é
-		float ran = random(vec2(i, i)) * 0.8;
+		float ran = random(vec2(i, i)) * 0.1;
 		//tmpCell[i].color = vec4(vec3(ran), 1.0);
 		kappa += ran;
 		*/

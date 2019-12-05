@@ -1,5 +1,6 @@
 #include "CellularAutomata.h"
 #include <iostream>
+#include <random>
 #include "Cell.h"
 #include "Program.h"
 
@@ -83,7 +84,7 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	}
 	
 	//’†S‰ŠúƒZƒ‹ì¬
-	int centerCellNum = (mGridNumX / 2) + (mGridNumZ / 2 * mGridNumX) + ((mGridNumY / 2 ) * mGridNumX * mGridNumZ);
+	int centerCellNum = (mGridNumX / 2) + (mGridNumZ / 2 * mGridNumX) + ((mGridNumY / 2 -10) * mGridNumX * mGridNumZ);
 	setInitialCells(centerCellNum);
 	//setInitialCells(centerCellNum + 106);
 	//Houdini‚Ì—×‚è‡‚¤ƒZƒ‹”Ši”[ˆ—‚ÍÈ—ª
@@ -179,8 +180,7 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 	cells[centerCellNum].diffusionMass = 0.0f;
 	cells[centerCellNum].boundaryMass = 1.0f;
 	*/
-	//‚Ü‚¶“K“–‚Èì‚è•û
-	SetEdgeCry(centerCellNum);
+	
 	/*
 	//’¼Œa‚R
 	SetEdgeCry(centerCellNum + 1);
@@ -199,7 +199,7 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 	
 	int tmpY = mGridNumX * mGridNumZ;
 	int zOddNum = static_cast<int>(cells[centerCellNum].isFlag(CellFlags::MZISODD)) * 2 - 1;
-	
+	SetEdgeCry(centerCellNum);
 	set2RadiusCells(centerCellNum, 1);
 	set3RadiusCells(centerCellNum, 2);
 	set3RadiusCells(centerCellNum, 3);

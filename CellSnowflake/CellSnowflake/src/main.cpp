@@ -39,9 +39,9 @@ const float pi = 3.1415926535f;
 // …ö‹CƒZƒ‹‚Ì‰ŠúŠgU¿—Ê
 const float rho = 0.2f;
 
-const int gridNumX = 50;
+const int gridNumX = 60;
 const int gridNumY = 150;
-const int gridNumZ = 50;
+const int gridNumZ = 60;
 
 const float cellSizeX = 0.03f;
 const float cellSizeZ = cellSizeX * sin(60.0f * pi / 180.0f);		//ã3 / 2
@@ -150,7 +150,7 @@ int main() {
 	while (window.shouldClose() == GL_FALSE)
 	{
 		//ƒŠƒvƒŒƒC
-		if (glfwGetTime() > 40.0f)
+		if (glfwGetTime() > 400.0f)
 		{
 			std::cout << "RePlay" << std::endl;
 			cellularAutomata.initialize();
