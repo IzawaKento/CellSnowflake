@@ -150,7 +150,7 @@ int main() {
 	while (window.shouldClose() == GL_FALSE)
 	{
 		//ƒŠƒvƒŒƒC
-		if (glfwGetTime() > 40.0f)
+		if (glfwGetTime() > 400.0f)
 		{
 			std::cout << "RePlay" << std::endl;
 			cellularAutomata.initialize();

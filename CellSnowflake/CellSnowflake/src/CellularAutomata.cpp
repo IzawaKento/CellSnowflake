@@ -84,7 +84,7 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	}
 	
 	//’†S‰ŠúƒZƒ‹ì¬
-	int centerCellNum = (mGridNumX / 2) + (mGridNumZ / 2 * mGridNumX) + ((mGridNumY / 2 -10) * mGridNumX * mGridNumZ);
+	int centerCellNum = (mGridNumX / 2) + (mGridNumZ / 2 * mGridNumX) + ((mGridNumY / 2 ) * mGridNumX * mGridNumZ);
 	setInitialCells(centerCellNum);
 	//setInitialCells(centerCellNum + 106);
 	//Houdini‚Ì—×‚è‡‚¤ƒZƒ‹”Ši”[ˆ—‚ÍÈ—ª
