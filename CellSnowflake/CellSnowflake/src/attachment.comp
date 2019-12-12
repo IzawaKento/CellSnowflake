@@ -221,22 +221,39 @@ void main(){
 		
 		//所属箇所判定191130
 		if(fixedSliNeiNums.x == 1 && fixedSliNeiNums.y == 0 && fixedSliNeiNums.z == 0){
-			beta = 2.6;
+			beta = 2.0;
 			tmpCell[i].color = vec4(0.5, 0.5, 1.0, 1.0);
 		}else if(fixedSliNeiNums.x > 4 && fixedSliNeiNums.y > 3){								//穴を埋める
 			beta = 0.0;
 			tmpCell[i].color = vec4(0.5, 0.5, 0.5, 1.0);
 		}else if(fixedSliNeiNums.x > 3 && fixedSliNeiNums.y > 0 && fixedSliNeiNums.z > 0
 			|| fixedSliNeiNums.z > 5){//でっぱりの周りの閾値を下げる
-			beta = 0.5;
+			beta = 0.2;
 			tmpCell[i].color = vec4(0.5, 1.0, 0.5, 1.0);
 		}else if(fixedSliNeiNums.y > 2){	//横に伸ばしたい
-			beta = 0.5;
+			beta = 0.2;
 			tmpCell[i].color = vec4(1.0, 0.5, 0.5, 1.0);
 		}else{
-			tmpCell[i].color = vec4(0.3, 0.3, 0.5, 1.0);
-			beta = 3.0;
+			tmpCell[i].color = vec4(0.0, 0.0, cell[i].boundaryMass / 2.6, 1.0);
+			beta = 2.6;
 		}
+		
+		/*
+		//所属箇所判定191212
+		if(fixedSliNeiNums.x == 1 && fixedSliNeiNums.y == 0 && fixedSliNeiNums.z == 0){
+			beta = 2.0;
+			tmpCell[i].color = vec4(0.5, 0.5, 1.0, 1.0);
+		}else if(fixedSliNeiNums.y < 2){
+			beta = 999;
+			tmpCell[i].color = vec4(0.5, 1.0, 0.5, 1.0);
+		}else if(fixedSliNeiNums.y == 999){
+			beta = 2.6;
+			tmpCell[i].color = vec4(1.0, 0.5, 0.5, 1.0);
+		}else{
+			tmpCell[i].color = vec4(0.3, 0.3, 0.5 + 0.5 * cell[i].boundaryMass / 2.6, 1.0);
+			beta = 2.6;
+		}
+		*/
 		/*
 		//気まぐれで結晶化0.962
 		if(random(vec2(i, i)) > 0.99){
@@ -244,17 +261,15 @@ void main(){
 			tmpCell[i].color = vec4(0.9, 0.1, 0.1, 1.0);
 		}
 		*/
-
-		
+		/*
 		//気まぐれで結晶化
-		if(i == coord2cellID(36, 75, 34)
-			|| i == coord2cellID(37, 72, 36)
+		if(i == coord2cellID(35, 75, 33)
+			|| i == coord2cellID(35, 72, 34)
 			){
 			beta = 0.0;
 			tmpCell[i].color = vec4(1.0, 1.0, 1.0, 1.0);
 		}
-		
-		
+		*/
 		
 		//旧所属箇所判定（くそだけど）
 		/*
