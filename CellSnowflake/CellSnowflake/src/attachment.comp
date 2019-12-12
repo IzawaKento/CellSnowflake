@@ -131,6 +131,12 @@ float random (vec2 st) {
     return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
 }
 
+uint coord2cellID(int x, int y, int z){
+	uint id = y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
+		z * gl_NumWorkGroups.x + x;
+	return id;
+}
+
 void main(){
 	
 	const uint i = gl_WorkGroupID.y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
@@ -215,29 +221,40 @@ void main(){
 		
 		//所属箇所判定191130
 		if(fixedSliNeiNums.x == 1 && fixedSliNeiNums.y == 0 && fixedSliNeiNums.z == 0){
-			beta = 3.0;
+			beta = 2.6;
 			tmpCell[i].color = vec4(0.5, 0.5, 1.0, 1.0);
 		}else if(fixedSliNeiNums.x > 4 && fixedSliNeiNums.y > 3){								//穴を埋める
 			beta = 0.0;
 			tmpCell[i].color = vec4(0.5, 0.5, 0.5, 1.0);
 		}else if(fixedSliNeiNums.x > 3 && fixedSliNeiNums.y > 0 && fixedSliNeiNums.z > 0
 			|| fixedSliNeiNums.z > 5){//でっぱりの周りの閾値を下げる
-			beta = 0.2;
+			beta = 0.5;
 			tmpCell[i].color = vec4(0.5, 1.0, 0.5, 1.0);
 		}else if(fixedSliNeiNums.y > 2){	//横に伸ばしたい
-			beta = 0.2;
+			beta = 0.5;
 			tmpCell[i].color = vec4(1.0, 0.5, 0.5, 1.0);
 		}else{
 			tmpCell[i].color = vec4(0.3, 0.3, 0.5, 1.0);
 			beta = 3.0;
 		}
-		
-		
+		/*
 		//気まぐれで結晶化0.962
-		if(random(vec2(i, i)) > 0.6){
+		if(random(vec2(i, i)) > 0.99){
 			beta = 0.0;
 			tmpCell[i].color = vec4(0.9, 0.1, 0.1, 1.0);
 		}
+		*/
+
+		
+		//気まぐれで結晶化
+		if(i == coord2cellID(36, 75, 34)
+			|| i == coord2cellID(37, 72, 36)
+			){
+			beta = 0.0;
+			tmpCell[i].color = vec4(1.0, 1.0, 1.0, 1.0);
+		}
+		
+		
 		
 		//旧所属箇所判定（くそだけど）
 		/*

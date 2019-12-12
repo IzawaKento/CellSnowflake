@@ -50,6 +50,12 @@ float random (vec2 st) {
     return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
 }
 
+uint coord2cellID(int x, int y, int z){
+	uint id = y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
+		z * gl_NumWorkGroups.x + x;
+	return id;
+}
+
 void main(){
 	
 	const uint i = gl_WorkGroupID.y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
@@ -60,7 +66,7 @@ void main(){
 		const int h = min(3, cell[i].horizontalNeighbourNum);
 		const int v = min(1, cell[i].verticalNeighbourNum);
 
-		float kappa = 0.1;
+		float kappa = 0.5;
 
 		/*
 		//ãå
@@ -88,6 +94,13 @@ void main(){
 		float ran = random(vec2(i, i)) * 0.1;
 		//tmpCell[i].color = vec4(vec3(ran), 1.0);
 		kappa += ran;
+		*/
+		/*
+		//ãCÇ‹ÇÆÇÍÇ≈åãèªâª
+		if(i == coord2cellID(36, 75, 34)){
+			kappa = 0.0;
+			tmpCell[i].color = vec4(1.0, 1.0, 1.0, 1.0);
+		}
 		*/
 
 		/*
