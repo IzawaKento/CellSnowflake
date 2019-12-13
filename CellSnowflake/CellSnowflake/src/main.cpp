@@ -37,11 +37,11 @@ constexpr Vertex octahedronVertex[] =
 const float pi = 3.1415926535f;
 //‚¤[‚ñ
 // …ö‹CƒZƒ‹‚Ì‰ŠúŠgU¿—Ê
-const float rho = 0.2f;
+const float rho = 0.1f;
 
-const int gridNumX = 60;
-const int gridNumY = 150;
-const int gridNumZ = 60;
+const int gridNumX = 70;
+const int gridNumY = 100;
+const int gridNumZ = 70;
 
 const float cellSizeX = 0.03f;
 const float cellSizeZ = cellSizeX * sin(60.0f * pi / 180.0f);		//ã3 / 2

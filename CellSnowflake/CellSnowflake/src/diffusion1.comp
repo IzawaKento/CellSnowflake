@@ -117,7 +117,12 @@ void main(){
 		tmpDiffusionMass *= 0.05;	//20で割る
 		
 		//ノイズ
-		//tmpDiffusionMass *= (1.0 + (random(vec2(i, i)) * 2 - 1) * 0.2);
+		//元論文の実装。うまくいかん
+		/*
+		tmpDiffusionMass *= 1.0 + 0.2 * (step(0.51, (random(vec2(i, i)) )) * 2 - 1);
+		*/
+		//これもなんか惜しい感じ
+		//tmpDiffusionMass *= (1.0 + (random(vec2(i+100, i)) * 2 - 1) * 0.2);
 
 		tmpCell[i].diffusionMass = tmpDiffusionMass;
 	}

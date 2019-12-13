@@ -86,7 +86,7 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	//中心初期セル作成
 	int centerCellNum = (mGridNumX / 2) + (mGridNumZ / 2 * mGridNumX) + ((mGridNumY / 2 ) * mGridNumX * mGridNumZ);
 	setInitialCells(centerCellNum);
-	//setInitialCells(centerCellNum + 106);
+	//setInitialCells(centerCellNum + 146);
 	//Houdiniの隣り合うセル数格納処理は省略
 
 	//確認用頂点配列オブジェクト

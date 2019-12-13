@@ -219,23 +219,29 @@ void main(){
 		}
 		*/
 		
-		//所属箇所判定191130
-		if(fixedSliNeiNums.x == 1 && fixedSliNeiNums.y == 0 && fixedSliNeiNums.z == 0){
-			beta = 2.0;
-			tmpCell[i].color = vec4(0.5, 0.5, 1.0, 1.0);
-		}else if(fixedSliNeiNums.x > 4 && fixedSliNeiNums.y > 3){								//穴を埋める
+		//所属箇所判定191130改
+		if(fixedSliNeiNums.x > 4 && fixedSliNeiNums.y > 3){								//穴を埋める
 			beta = 0.0;
 			tmpCell[i].color = vec4(0.5, 0.5, 0.5, 1.0);
 		}else if(fixedSliNeiNums.x > 3 && fixedSliNeiNums.y > 0 && fixedSliNeiNums.z > 0
-			|| fixedSliNeiNums.z > 5){//でっぱりの周りの閾値を下げる
+			|| fixedSliNeiNums.z > 5){//面にする。でっぱりの周りの閾値を下げる
 			beta = 0.2;
-			tmpCell[i].color = vec4(0.5, 1.0, 0.5, 1.0);
-		}else if(fixedSliNeiNums.y > 2){	//横に伸ばしたい
+			tmpCell[i].color = vec4(0.5, cell[i].boundaryMass/2.0, 0.5, 1.0);
+		}else if(fixedSliNeiNums.y > 2){	//面にする。横に伸ばしたい
 			beta = 0.2;
-			tmpCell[i].color = vec4(1.0, 0.5, 0.5, 1.0);
-		}else{
-			tmpCell[i].color = vec4(0.0, 0.0, cell[i].boundaryMass / 2.6, 1.0);
-			beta = 2.6;
+			tmpCell[i].color = vec4(cell[i].boundaryMass/2.0, 0.5, 0.5, 1.0);
+		}else if(fixedSliNeiNums.x+fixedSliNeiNums.y+fixedSliNeiNums.z > 6){	//斜面
+			beta = 0.3;
+			tmpCell[i].color = vec4(0.0, 0.2, cell[i].boundaryMass, 1.0);
+		}else if(fixedSliNeiNums.x+fixedSliNeiNums.y+fixedSliNeiNums.z > 5){	//側面
+			beta = 0.6;
+			tmpCell[i].color = vec4(0.2, 0.0, cell[i].boundaryMass/2.0, 1.0);
+		}else if(fixedSliNeiNums.x+fixedSliNeiNums.y+fixedSliNeiNums.z > 2){	//斜角、面角
+			beta = 4.0; //カイネティクス的にくっつきにくい
+			tmpCell[i].color = vec4(0.1, 0.2, cell[i].boundaryMass/3.0, 1.0);
+		}else{																	//角
+			tmpCell[i].color = vec4(0.0, 0.0, cell[i].boundaryMass/6.0, 1.0);
+			beta = 6.0;	//カイネティクス的にくっつきにくい
 		}
 		
 		/*
@@ -243,14 +249,11 @@ void main(){
 		if(fixedSliNeiNums.x == 1 && fixedSliNeiNums.y == 0 && fixedSliNeiNums.z == 0){
 			beta = 2.0;
 			tmpCell[i].color = vec4(0.5, 0.5, 1.0, 1.0);
-		}else if(fixedSliNeiNums.y < 2){
-			beta = 999;
+		}else if(fixedSliNeiNums.x > 3 && fixedSliNeiNums.y > 0 && fixedSliNeiNums.z > 0){//でっぱりの周りの閾値を下げる
+			beta = 0.2;
 			tmpCell[i].color = vec4(0.5, 1.0, 0.5, 1.0);
-		}else if(fixedSliNeiNums.y == 999){
-			beta = 2.6;
-			tmpCell[i].color = vec4(1.0, 0.5, 0.5, 1.0);
 		}else{
-			tmpCell[i].color = vec4(0.3, 0.3, 0.5 + 0.5 * cell[i].boundaryMass / 2.6, 1.0);
+			tmpCell[i].color = vec4(0.0, 0.0, cell[i].boundaryMass / 2.6, 1.0);
 			beta = 2.6;
 		}
 		*/

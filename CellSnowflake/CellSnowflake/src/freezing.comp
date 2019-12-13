@@ -67,9 +67,10 @@ void main(){
 		const int v = min(1, cell[i].verticalNeighbourNum);
 
 		//”Z“x‚ð0~1‚É
-		float diffParam = smoothstep(0.0, 0.2, cell[i].diffusionMass);
+		const float rho = 0.1;
+		float diffParam = cell[i].diffusionMass / rho;
 		//kappa‚ð”Z“x‚ª’á‚¢‚Ù‚Ç’á‚­‚·‚é
-		float kappa = diffParam;
+		float kappa = 0.1;//clamp(diffParam, 0.0, 1.0);
 
 		/*
 		//‹Œ
@@ -138,9 +139,7 @@ void main(){
 		tmpCell[i].diffusionMass = tmpDiffusionMass;
 		tmpCell[i].boundaryMass = tmpBoundaryMass;
 
-
-
-		tmpCell[i].color = vec4(0.0, kappa, kappaaaa, 1.0);
+		tmpCell[i].color = vec4(kappa, 0.0, kappa, 1.0);
 
 	}
 }
