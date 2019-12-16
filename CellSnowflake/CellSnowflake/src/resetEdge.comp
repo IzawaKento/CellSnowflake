@@ -3,12 +3,12 @@
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
 //フラグの代わり.....
-const uint ISCRYSTAL = 1u;	//ISCRYSTAL
-const uint ISEDGECRYSTAL = 2u;	//ISEDGECRYSTAL
-const uint ISBOUNDARY = 4u;	//ISBOUNDARY
-const uint ISEDGEBOUNDARY = 8u;	//ISEDGEBOUNDARY
-const uint MZISODD = 16u;	//セル番号のZ値が奇数である
-const uint ISENDOFCELLS = 32u;
+const uint ISCRYSTAL = 1;	//ISCRYSTAL
+const uint ISEDGECRYSTAL = 2;	//ISEDGECRYSTAL
+const uint ISBOUNDARY = 4;	//ISBOUNDARY
+const uint ISEDGEBOUNDARY = 8;	//ISEDGEBOUNDARY
+const uint MZISODD = 16;	//セル番号のZ値が奇数である
+const uint ISENDOFCELLS = 32;
 
 class Cell
 {
@@ -145,7 +145,7 @@ void main()
 	
 	//拡散質量確認
 	//tmpCell[i].color = vec4(cell[i].diffusionMass * 5.0, 0.0, 0.0, (1.0 - step(0.05, cell[i].diffusionMass)));
-	
+	//tmpCell[i].color = vec4(cell[i].diffusionMass, 0.0, 0.0, step(0.0001, cell[i].diffusionMass));
 	/*
 	//気体を消す
 	if(isFlag(i, ISBOUNDARY)){
@@ -153,10 +153,11 @@ void main()
 	}
 	*/
 	//端っこを消す
+	
 	if(isFlag(i, ISENDOFCELLS)){
 		tmpCell[i].color = vec4(0.0, 0.0, 0.0, 0.0);
 	}
-
+	
 
 
 	//resetCrystalEdge

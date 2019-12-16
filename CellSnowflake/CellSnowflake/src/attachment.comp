@@ -3,12 +3,12 @@
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
 //フラグの代わり.....
-const uint ISCRYSTAL = 1u;	//ISCRYSTAL
-const uint ISEDGECRYSTAL = 2u;	//ISEDGECRYSTAL
-const uint ISBOUNDARY = 4u;	//ISBOUNDARY
-const uint ISEDGEBOUNDARY = 8u;	//ISEDGEBOUNDARY
-const uint MZISODD = 16u;	//セル番号のZ値が奇数である
-const uint ISENDOFCELLS = 32u;
+const uint ISCRYSTAL = 1;	//ISCRYSTAL
+const uint ISEDGECRYSTAL = 2;	//ISEDGECRYSTAL
+const uint ISBOUNDARY = 4;	//ISBOUNDARY
+const uint ISEDGEBOUNDARY = 8;	//ISEDGEBOUNDARY
+const uint MZISODD = 16;	//セル番号のZ値が奇数である
+const uint ISENDOFCELLS = 32;
 
 //パラメータメモ（めんどい）
 /*
@@ -231,10 +231,10 @@ void main(){
 			beta = 0.2;
 			tmpCell[i].color = vec4(cell[i].boundaryMass/2.0, 0.5, 0.5, 1.0);
 		}else if(fixedSliNeiNums.x+fixedSliNeiNums.y+fixedSliNeiNums.z > 6){	//斜面
-			beta = 0.3;
+			beta = 0.6;
 			tmpCell[i].color = vec4(0.0, 0.2, cell[i].boundaryMass, 1.0);
 		}else if(fixedSliNeiNums.x+fixedSliNeiNums.y+fixedSliNeiNums.z > 5){	//側面
-			beta = 0.6;
+			beta = 1.2;
 			tmpCell[i].color = vec4(0.2, 0.0, cell[i].boundaryMass/2.0, 1.0);
 		}else if(fixedSliNeiNums.x+fixedSliNeiNums.y+fixedSliNeiNums.z > 2){	//斜角、面角
 			beta = 4.0; //カイネティクス的にくっつきにくい

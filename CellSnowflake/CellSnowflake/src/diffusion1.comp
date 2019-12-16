@@ -3,12 +3,12 @@
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
 //フラグの代わり.....
-const uint ISCRYSTAL = 1u;	//ISCRYSTAL
-const uint ISEDGECRYSTAL = 2u;	//ISEDGECRYSTAL
-const uint ISBOUNDARY = 4u;	//ISBOUNDARY
-const uint ISEDGEBOUNDARY = 8u;	//ISEDGEBOUNDARY
-const uint MZISODD = 16u;	//セル番号のZ値が奇数である
-const uint ISENDOFCELLS = 32u;
+const uint ISCRYSTAL = 1;	//ISCRYSTAL
+const uint ISEDGECRYSTAL = 2;	//ISEDGECRYSTAL
+const uint ISBOUNDARY = 4;	//ISBOUNDARY
+const uint ISEDGEBOUNDARY = 8;	//ISEDGEBOUNDARY
+const uint MZISODD = 16;	//セル番号のZ値が奇数である
+const uint ISENDOFCELLS = 32;
 
 class Cell
 {
@@ -118,9 +118,10 @@ void main(){
 		
 		//ノイズ
 		//元論文の実装。うまくいかん
-		/*
-		tmpDiffusionMass *= 1.0 + 0.2 * (step(0.51, (random(vec2(i, i)) )) * 2 - 1);
-		*/
+		//tmpDiffusionMass *= 1.0 + 0.1 * (step(0.515, (random(vec2(i, i)) )) * 2 - 1);
+		
+		//tmpDiffusionMass *= 1.0 + 0.2 * ((int(i) % 2) * 2 - 1);
+
 		//これもなんか惜しい感じ
 		//tmpDiffusionMass *= (1.0 + (random(vec2(i+100, i)) * 2 - 1) * 0.2);
 
