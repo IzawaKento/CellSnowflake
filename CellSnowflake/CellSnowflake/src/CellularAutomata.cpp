@@ -118,7 +118,11 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	glBufferData(GL_SHADER_STORAGE_BUFFER,
 		gridNumX*gridNumY*gridNumZ * sizeof(Cell), cells, GL_DYNAMIC_DRAW);
 
-	
+	//アトミックカウンターバッファオブジェクト作成
+	glGenBuffers(1, &acbo);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, acbo);
+	glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint), nullptr, GL_DYNAMIC_DRAW);
+
 }
 
 CellularAutomata::~CellularAutomata() {
@@ -126,6 +130,8 @@ CellularAutomata::~CellularAutomata() {
 	//ssbo削除
 	glDeleteBuffers(1, &ssbo);
 	glDeleteBuffers(1, &tmpSsbo);
+	//アトミックカウンター削除
+	glDeleteBuffers(1, &acbo);
 }
 
 //直径３
@@ -241,6 +247,8 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	// 書き込み用SSBOを 1 番の結合ポイントに結合する
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
+	//アトミックカウンターを 2 番の結合ポイントに結合する
+	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 2, acbo);
 	// 更新用のシェーダプログラムの使用開始
 	glUseProgram(resetEdgeComProgObj);
 	//引数は３次元でx, y, zのワークグループを起動する数
@@ -253,6 +261,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	//setBoundary
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
+	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 2, acbo);
 	glUseProgram(computeProgramObj);
 	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
@@ -262,6 +271,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	//setNeighbourCryNum
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
+	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 2, acbo);
 	glUseProgram(neighbourCryNumComProgObj);
 	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
@@ -271,6 +281,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	//diffusion1
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
+	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 2, acbo);
 	glUseProgram(diffusion1ComProgObj);
 	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
@@ -291,6 +302,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	//freezing
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
+	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 2, acbo);
 	glUseProgram(freezingComProgObj);
 	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
@@ -300,6 +312,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	//attachment
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
+	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 2, acbo);
 	glUseProgram(attachmentComProgObj);
 	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
@@ -309,6 +322,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	//melting
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
+	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 2, acbo);
 	glUseProgram(meltingComProgObj);
 	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);	//なくていいかも
@@ -350,4 +364,6 @@ void CellularAutomata::initialize() {
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glNamedBufferSubDataEXT(tmpSsbo, 0,
 		mGridNumX*mGridNumY*mGridNumZ * sizeof(Cell), cells);
+	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 2, acbo);
+	glNamedBufferSubDataEXT(acbo, 0, sizeof(GLuint), nullptr);
 }

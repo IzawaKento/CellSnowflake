@@ -1,4 +1,4 @@
-#version 450 core
+#version 460 core
 
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
@@ -44,6 +44,8 @@ layout(std430, binding = 1) buffer tmpCells
 	Cell tmpCell[];
 };
 
+layout(binding = 2, offset = 0) uniform atomic_uint growCellCounter;
+
 //flagIDは2進数の値
 //flagsのビットのfragID番目（0から）が1ならtrue
 bool isFlag(uint i, uint flagID) {
@@ -57,43 +59,42 @@ void setFlagFalse(uint i, uint flagID) {
 }
 
 void main(){
-	
 	const uint i = gl_WorkGroupID.y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
 		gl_WorkGroupID.z * gl_NumWorkGroups.x +
 		gl_WorkGroupID.x;
 
 	if(isFlag(i, ISEDGEBOUNDARY) && !isFlag(i, ISENDOFCELLS)){
-		
-		const int h = min(3, cell[i].horizontalNeighbourNum);
-		const int v = min(1, cell[i].verticalNeighbourNum);
+		if(atomicCounter(growCellCounter) == 0u){
+			const int h = min(3, cell[i].horizontalNeighbourNum);
+			const int v = min(1, cell[i].verticalNeighbourNum);
 
-		float mu = 0.001;
-		/*
-		if(h == 0 && v == 1){
-			mu = mu01;
-		}else if(h == 1 && v == 0){
-			mu = mu10;
-		}else if(h == 1 && v == 1){
-			mu = mu11;
-		}else if(h == 2 && v == 0){
-			mu = mu20;
-		}else if(h == 2 && v == 1){
-			mu = mu21;
-		}else if(h == 3 && v == 0){
-			mu = mu30;
-		}else if(h == 3 && v == 1){
-			mu = mu31;
-		}else{
-			mu = 0.001;		//ほんまココ適当な値いれたらはまるで２日間
+			float mu = 0.001;
+			/*
+			if(h == 0 && v == 1){
+				mu = mu01;
+			}else if(h == 1 && v == 0){
+				mu = mu10;
+			}else if(h == 1 && v == 1){
+				mu = mu11;
+			}else if(h == 2 && v == 0){
+				mu = mu20;
+			}else if(h == 2 && v == 1){
+				mu = mu21;
+			}else if(h == 3 && v == 0){
+				mu = mu30;
+			}else if(h == 3 && v == 1){
+				mu = mu31;
+			}else{
+				mu = 0.001;		//ほんまココ適当な値いれたらはまるで２日間
+			}
+			*/
+
+			float tmpBoundaryMass = (1.0 - mu) * cell[i].boundaryMass;
+			float tmpDiffusionMass = cell[i].diffusionMass + mu * cell[i].boundaryMass;
+
+			tmpCell[i].diffusionMass = tmpDiffusionMass;
+			tmpCell[i].boundaryMass = tmpBoundaryMass;
 		}
-		*/
-
-		float tmpBoundaryMass = (1.0 - mu) * cell[i].boundaryMass;
-		float tmpDiffusionMass = cell[i].diffusionMass + mu * cell[i].boundaryMass;
-
-		tmpCell[i].diffusionMass = tmpDiffusionMass;
-		tmpCell[i].boundaryMass = tmpBoundaryMass;
-
 		//resetBoundary
 		tmpCell[i].horizontalNeighbourNum = 0;
 		tmpCell[i].verticalNeighbourNum = 0;
@@ -102,4 +103,6 @@ void main(){
 
 	}
 	
+	//アトミックカウンタリセット
+	atomicCounterExchange(growCellCounter, 0u);
 }

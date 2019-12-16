@@ -1,4 +1,4 @@
-#version 450 core
+#version 460 core
 
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
@@ -35,6 +35,8 @@ layout(std430, binding = 1) buffer tmpCells
 	Cell tmpCell[];
 };
 
+layout(binding = 2, offset = 0) uniform atomic_uint growCellCounter;
+
 //flagIDは2進数の値
 //flagsのビットのfragID番目（0から）が1ならtrue
 bool isFlag(uint i, uint flagID) {
@@ -62,6 +64,22 @@ void main(){
 	int zOddNum = int(isFlag(i, MZISODD)) * 2 - 1;	//名前思いつかん
 	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX,
 		i + gridNumX + zOddNum, i - gridNumX + zOddNum);
+	
+	//とりあえず自分の周りにでっぱりがあったらアトミックカウンタ+1
+	if(isFlag(i, ISEDGEBOUNDARY) && !isFlag(i, ISENDOFCELLS)){
+		ivec3 tmpSliNeiNums = cell[i].slicedNeighbourNums;
+		ivec3 fixedSliNeiNums
+			= tmpSliNeiNums.x > tmpSliNeiNums.z ? tmpSliNeiNums.xyz : tmpSliNeiNums.zyx;
+		if(fixedSliNeiNums.y > 2 || (fixedSliNeiNums.x > 3 && fixedSliNeiNums.y > 0 && fixedSliNeiNums.z > 0)){
+			//atomicCounterIncrement(growCellCounter);
+		}
+
+	}
+	
+	//面成長中は拡散処理をスキップ
+	if(atomicCounter(growCellCounter) > 0u){
+		return;
+	}
 	
 	//diffusion_1
 	if(!isFlag(i, ISCRYSTAL) && !isFlag(i, ISENDOFCELLS)){		//気体であり端っこでない

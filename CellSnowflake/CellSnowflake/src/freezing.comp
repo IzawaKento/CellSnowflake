@@ -1,4 +1,4 @@
-#version 450 core
+#version 460 core
 
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
@@ -40,6 +40,8 @@ layout(std430, binding = 1) buffer tmpCells
 	Cell tmpCell[];
 };
 
+layout(binding = 2, offset = 0) uniform atomic_uint growCellCounter;
+
 //flagIDは2進数の値
 //flagsのビットのfragID番目（0から）が1ならtrue
 bool isFlag(uint i, uint flagID) {
@@ -58,7 +60,9 @@ uint coord2cellID(int x, int y, int z){
 }
 
 void main(){
-	
+	if(atomicCounter(growCellCounter) > 0u){
+		return;
+	}
 	const uint i = gl_WorkGroupID.y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
 		gl_WorkGroupID.z * gl_NumWorkGroups.x +
 		gl_WorkGroupID.x;

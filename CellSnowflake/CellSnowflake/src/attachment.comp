@@ -1,4 +1,4 @@
-#version 450 core
+#version 460 core
 
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
@@ -105,6 +105,8 @@ layout(std430, binding = 1) buffer tmpCells
 	Cell tmpCell[];
 };
 
+layout(binding = 2, offset = 0) uniform atomic_uint growCellCounter;
+
 //flagIDは2進数の値
 //flagsのビットのfragID番目（0から）が1ならtrue
 bool isFlag(uint i, uint flagID) {
@@ -144,6 +146,7 @@ void main(){
 		gl_WorkGroupID.x;
 
 	if(isFlag(i, ISEDGEBOUNDARY) && !isFlag(i, ISENDOFCELLS)){
+
 		const int h = cell[i].horizontalNeighbourNum;
 		const int v = cell[i].verticalNeighbourNum;
 		const int hm = min(3, h);
@@ -180,8 +183,8 @@ void main(){
 		
 		//付け足し　へこみの閾値を下げる
 		ivec3 fixedSliNeiNums
-			 = cell[i].slicedNeighbourNums.x > cell[i].slicedNeighbourNums.z 
-			 ? cell[i].slicedNeighbourNums.xyz : cell[i].slicedNeighbourNums.zyx;
+				= cell[i].slicedNeighbourNums.x > cell[i].slicedNeighbourNums.z 
+				? cell[i].slicedNeighbourNums.xyz : cell[i].slicedNeighbourNums.zyx;
 		if(fixedSliNeiNums.x > 4 && fixedSliNeiNums.z > 1){
 			beta = 0.1;
 			//tmpCell[i].color = vec4(0.9, 0.9, 0.0, 1.0);
@@ -198,7 +201,7 @@ void main(){
 		ivec3 tmpSliNeiNums = cell[i].slicedNeighbourNums;
 		//上下統一のため下が大きい場合反転
 		ivec3 fixedSliNeiNums
-			 = tmpSliNeiNums.x > tmpSliNeiNums.z ? tmpSliNeiNums.xyz : tmpSliNeiNums.zyx;
+				= tmpSliNeiNums.x > tmpSliNeiNums.z ? tmpSliNeiNums.xyz : tmpSliNeiNums.zyx;
 		/*
 		//所属箇所判定191205
 		if(fixedSliNeiNums.x == 1 && fixedSliNeiNums.y == 0 && fixedSliNeiNums.y == 0){
@@ -225,10 +228,10 @@ void main(){
 			tmpCell[i].color = vec4(0.5, 0.5, 0.5, 1.0);
 		}else if(fixedSliNeiNums.x > 3 && fixedSliNeiNums.y > 0 && fixedSliNeiNums.z > 0
 			|| fixedSliNeiNums.z > 5){//面にする。でっぱりの周りの閾値を下げる
-			beta = 0.2;
+			beta = 0.0;
 			tmpCell[i].color = vec4(0.5, cell[i].boundaryMass/2.0, 0.5, 1.0);
 		}else if(fixedSliNeiNums.y > 2){	//面にする。横に伸ばしたい
-			beta = 0.2;
+			beta = 0.0;
 			tmpCell[i].color = vec4(cell[i].boundaryMass/2.0, 0.5, 0.5, 1.0);
 		}else if(fixedSliNeiNums.x+fixedSliNeiNums.y+fixedSliNeiNums.z > 6){	//斜面
 			beta = 0.6;
@@ -326,6 +329,10 @@ void main(){
 		if(cell[i].boundaryMass >= beta){
 			setEdgeCry(i);
 		}
-		
+
+		if(atomicCounter(growCellCounter) > 0u){
+			tmpCell[i].color += vec4(0.1, 0.1, 0.1, 0.0);
+			//return;
+		}
 	}
 }

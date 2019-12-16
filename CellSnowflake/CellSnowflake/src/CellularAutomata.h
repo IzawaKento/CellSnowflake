@@ -66,6 +66,8 @@ private:
 	GLuint ssbo;
 	//更新データ書き込み用SSBO、更新後↑にバッファをコピーする
 	GLuint tmpSsbo;		//名前これでいいんかなあ
+	//一斉面成長用アトミックカウンターバッファオブジェクト
+	GLuint acbo;
 
 	//コンピュートシェーダー用プログラムオブジェクト
 	GLuint resetEdgeComProgObj = Program::loadCompProgramObj("src\\resetEdge.comp");
