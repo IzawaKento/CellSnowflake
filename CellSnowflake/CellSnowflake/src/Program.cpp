@@ -51,6 +51,58 @@ GLboolean Program::printProgramInfoLog(GLuint program)
 }
 
 //プログラムオブジェクトを作成する
+GLuint Program::createProgramObj(const char *vsrc, const char *fsrc) {
+	// 空のプログラムオブジェクトを作成する
+	const GLuint program(glCreateProgram());
+
+	if (vsrc != NULL)
+	{
+		// バーテックスシェーダのシェーダオブジェクトを作成する
+		//戻り値は作成されたシェーダオブジェクトのハンドル (識別名) 
+		const GLuint vobj(glCreateShader(GL_VERTEX_SHADER));
+		//			shader, count, **string, *length
+		/*
+		glShaderSource() の引数 string に渡す配列の各要素が終端にヌル文字
+		('\0') をもつ通常の文字列なら, 引数 length を 0 (NULL) にします.
+		*/
+		glShaderSource(vobj, 1, &vsrc, NULL);
+		glCompileShader(vobj);
+		// バーテックスシェーダのシェーダオブジェクトをプログラムオブジェクトに組み込む
+		if (printShaderInfoLog(vobj, "vertex shader"))
+			glAttachShader(program, vobj);
+		glDeleteShader(vobj);
+	}
+	
+	if (fsrc != NULL)
+	{
+		// フラグメントシェーダのシェーダオブジェクトを作成する
+		const GLuint fobj(glCreateShader(GL_FRAGMENT_SHADER));
+		glShaderSource(fobj, 1, &fsrc, NULL);
+		glCompileShader(fobj);
+		// フラグメントシェーダのシェーダオブジェクトをプログラムオブジェクトに組み込む
+		if (printShaderInfoLog(fobj, "fragment shader"))
+			glAttachShader(program, fobj);
+		glDeleteShader(fobj);
+	}
+
+	glBindAttribLocation(program, 0, "position");
+	glBindAttribLocation(program, 1, "color");
+	glBindAttribLocation(program, 2, "flags");
+	//フラグメントシェーダーからの出力先を指定
+	glBindFragDataLocation(program, 0, "fragment");
+	// プログラムオブジェクトをリンクする
+	glLinkProgram(program);
+	// 作成したプログラムオブジェクトを返す
+	if (printProgramInfoLog(program))
+		return program;
+
+	// プログラムオブジェクトが作成できなければ 0 を返す
+	glDeleteProgram(program);
+	return 0;
+}
+
+//プログラムオブジェクトを作成する
+//＋ジオメトリシェーダ
 GLuint Program::createProgramObj(const char *vsrc, const char *gsrc, const char *fsrc) {
 	// 空のプログラムオブジェクトを作成する
 	const GLuint program(glCreateProgram());
@@ -159,6 +211,16 @@ bool Program::readShaderSource(const char *name, std::vector<GLchar> &buffer) {
 	return true;
 }
 
+//プログラムオブジェクトをロード
+GLuint Program::loadProgramObj(const char* vert, const char* frag) {
+	std::vector<GLchar> vsrc;
+	const bool vstat(readShaderSource(vert, vsrc));
+	std::vector<GLchar> fsrc;
+	const bool fstat(readShaderSource(frag, fsrc));
+	// プログラムオブジェクトを作成する
+	return vstat && fstat ? createProgramObj(vsrc.data(), fsrc.data()) : 0;
+}
+//＋ジオメトリシェーダ
 GLuint Program::loadProgramObj(const char* vert, const char* geom, const char* frag) {
 	std::vector<GLchar> vsrc;
 	const bool vstat(readShaderSource(vert, vsrc));

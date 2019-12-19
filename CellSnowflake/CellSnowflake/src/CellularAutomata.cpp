@@ -2,7 +2,7 @@
 #include <iostream>
 #include <random>
 #include "Cell.h"
-#include "Program.h"
+//#include "Program.h"
 
 CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gridNumZ,
 	float cellSizeX, float cellSizeZ, float cellSizeY) 
@@ -127,6 +127,7 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 
 CellularAutomata::~CellularAutomata() {
 	delete[] cells;
+	glDeleteVertexArrays(1, &vao);
 	//ssboçÌèú
 	glDeleteBuffers(1, &ssbo);
 	glDeleteBuffers(1, &tmpSsbo);

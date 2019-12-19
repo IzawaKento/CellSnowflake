@@ -135,6 +135,7 @@
     <ClCompile Include="src\Cell.cpp" />
     <ClCompile Include="src\CellularAutomata.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\MarchingTetrahedra.cpp" />
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\Program.cpp" />
     <ClCompile Include="src\Shape.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="src\BitOperation.h" />
     <ClInclude Include="src\Cell.h" />
     <ClInclude Include="src\CellularAutomata.h" />
+    <ClInclude Include="src\MarchingTetrahedra.h" />
     <ClInclude Include="src\Matrix.h" />
     <ClInclude Include="src\Object.h" />
     <ClInclude Include="src\Program.h" />

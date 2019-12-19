@@ -13,12 +13,15 @@ namespace Program {
 	extern GLboolean printProgramInfoLog(GLuint program);
 
 	//プログラムオブジェクトを作成する
+	extern GLuint createProgramObj(const char *vsrc, const char *fsrc);
 	extern GLuint createProgramObj(const char *vsrc, const char *gsrc, const char *fsrc);
 
 	//シェーダのソースファイルを読み込んだメモリを返す
 	extern bool readShaderSource(const char *name, std::vector<GLchar> &buffer);
 
+	extern GLuint loadProgramObj(const char* vert, const char* frag);
 	extern GLuint loadProgramObj(const char* vert, const char* geom, const char* frag);
+	
 
 	//コンピュートシェーダー用
 	extern GLuint createCompProgramObj(const char* csrc);

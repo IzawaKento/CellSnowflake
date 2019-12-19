@@ -65,6 +65,7 @@ void main(){
 	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX,
 		i + gridNumX + zOddNum, i - gridNumX + zOddNum);
 	
+	//変化ないのでとりあえず没
 	//とりあえず自分の周りにでっぱりがあったらアトミックカウンタ+1
 	if(isFlag(i, ISEDGEBOUNDARY) && !isFlag(i, ISENDOFCELLS)){
 		ivec3 tmpSliNeiNums = cell[i].slicedNeighbourNums;
