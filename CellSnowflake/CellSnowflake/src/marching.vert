@@ -1,4 +1,4 @@
-#vertion 460 core
+#version 460 core
 
 uniform mat4 modelview;
 uniform mat4 projection;

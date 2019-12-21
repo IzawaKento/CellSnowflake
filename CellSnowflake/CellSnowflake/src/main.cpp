@@ -13,6 +13,7 @@
 #include "Program.h"
 #include "CellularAutomata.h"
 #include "Cell.h"
+#include "MarchingTetrahedra.h"
 
 // ”ª–Ê‘Ì‚Ì’¸“_‚ÌˆÊ’u
 constexpr Vertex octahedronVertex[] =
@@ -123,8 +124,12 @@ int main() {
 	const GLint LdiffLoc(glGetUniformLocation(vertfragProgramObj, "Ldiff"));
 	const GLint LspecLoc(glGetUniformLocation(vertfragProgramObj, "Lspec"));
 
-	CellularAutomata cellularAutomata(rho, gridNumX, gridNumY, gridNumZ, cellSizeX, cellSizeZ, cellSizeY);
+	CellularAutomata cellularAutomata(rho, 
+		gridNumX, gridNumY, gridNumZ, cellSizeX, cellSizeZ, cellSizeY);
 	
+	MarchingTetrahedra marchingTetrahedra(gridNumX,
+		gridNumY, gridNumZ, &cellularAutomata);
+
 	for (int k = 0; k < gridNumY; ++k) {
 		for (int j = 0; j < gridNumZ; ++j) {
 			for (int i = 0; i < gridNumX; ++i) {

@@ -1,0 +1,56 @@
+#version 460 core
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+
+struct Vertex{
+	vec4 position;
+};
+
+struct Tetrahedra{
+	vec4[4] positions;
+	int[4] isCrystals;
+};
+
+layout(std430, binding = 0) buffer Vertexes{
+	Vertex vertex[];
+};
+
+layout(std430, binding = 1) buffer Tetrahedras{
+	Tetrahedra tetrahedra[];
+};
+
+layout(binding = 2, offset = 0) uniform atomic_uint vertexCounter;
+
+int tetrahedraEdgeFlags[16] = { 
+	0x00, 0x0d, 0x13, 0x1e, 0x26, 0x2b, 0x35, 0x38, 
+	0x38, 0x35, 0x2b, 0x26, 0x1e, 0x13, 0x0d, 0x00 };
+
+int tetrahedraTriangles[16][7] = {
+	{-1, -1, -1, -1, -1, -1, -1},
+	{ 0,  3,  2, -1, -1, -1, -1},
+	{ 0,  1,  4, -1, -1, -1, -1},
+	{ 1,  4,  2,  2,  4,  3, -1},
+
+	{ 1,  2,  5, -1, -1, -1, -1},
+	{ 0,  3,  5,  0,  5,  1, -1},
+	{ 0,  2,  5,  0,  5,  4, -1},
+	{ 5,  4,  3, -1, -1, -1, -1},
+
+	{ 3,  4,  5, -1, -1, -1, -1},
+	{ 4,  5,  0,  5,  2,  0, -1},
+	{ 1,  5,  0,  5,  3,  0, -1},
+	{ 5,  2,  1, -1, -1, -1, -1},
+
+	{ 3,  4,  2,  2,  4,  1, -1},
+	{ 4,  1,  0, -1, -1, -1, -1},
+	{ 2,  3,  0, -1, -1, -1, -1},
+	{-1, -1, -1, -1, -1, -1, -1}
+};
+
+void main(){
+	const uint wgi = gl_WorkGroupID.x;
+	int iEdge, iVert0, iVert1, iEdgeFlags, iTriangle, iCorner, iVertex, iFlagIndex = 0;
+	float fOffset, fInvOffset, fValue = 0.0;
+	vec4[12] edgeVertex;
+
+
+}

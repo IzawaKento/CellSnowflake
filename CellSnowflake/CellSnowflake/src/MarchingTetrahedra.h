@@ -16,11 +16,13 @@ public:
 
 	void dispatchCompute();
 
-	void drawMesh(int vertexCount);	//描画用クラスに移動した方がいいかも
+	void drawMesh();	//描画用クラスに移動した方がいいかも
 
 private:
 	GLuint vao;
 	GLuint vbo;
+	GLuint ssbo;
+	GLuint acbo;
 
 	GLuint vfProgObj = Program::loadProgramObj("src\\marching.vert", "src\\marching.frag");
 	GLuint compProgObj = Program::loadCompProgramObj("src\\marching.comp");

@@ -1,4 +1,4 @@
-#vertion 460 core
+#version 460 core
 
 out vec4 color;
 
