@@ -235,7 +235,7 @@ int main() {
 		//shape->draw();
 		//セルオートマトン処理
 		cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
-
+		marchingTetrahedra.dispatchCompute();
 		cellularAutomata.drawCell(gridNumX * gridNumY * gridNumZ, vertfragProgramObj);
 		
 		// カラーバッファを入れ替える

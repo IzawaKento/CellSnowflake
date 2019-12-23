@@ -21,34 +21,37 @@ MarchingTetrahedra::MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,
 	glEnableVertexAttribArray(0);
 
 	//コンピュート用ssboを作成
-	glGenBuffers(1, &ssbo);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+	glGenBuffers(1, &tetraBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, tetraBuffer);
 	glBufferData(GL_SHADER_STORAGE_BUFFER,
 		mGridNumX*mGridNumY*mGridNumZ * sizeof(Tetrahedra), nullptr, GL_DYNAMIC_DRAW);
 
 	//アトミックカウンターバッファオブジェクト作成
-	glGenBuffers(1, &acbo);
-	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, acbo);
+	glGenBuffers(1, &vertexCounterBuffer);
+	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, vertexCounterBuffer);
 	glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint), nullptr, GL_DYNAMIC_DRAW);
 }
 
 MarchingTetrahedra::~MarchingTetrahedra() {
 	glDeleteVertexArrays(1, &vao);
 	glDeleteBuffers(1, &vbo);
-	glDeleteBuffers(1, &ssbo);
-	glDeleteBuffers(1, &acbo);
+	glDeleteBuffers(1, &tetraBuffer);
+	glDeleteBuffers(1, &vertexCounterBuffer);
 }
 
 void MarchingTetrahedra::dispatchCompute() {
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, vbo);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, ssbo);
-	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 2, acbo);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, cellularAutomata->getSsbo());
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, vbo);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, tetraBuffer);
+	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 5, vertexCounterBuffer);
 	glUseProgram(compProgObj);
 	//ワークグループは四面体数だけ起動する
 	glDispatchCompute(mGridNumX * mGridNumY * mGridNumZ * mTetraPerHex, 1, 1);
 	//いるかわからん、一応
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 }
+
+//未使用
 void MarchingTetrahedra::marchingHoneycomb() {
 	for (int iX = 0; iX < mGridNumX; iX++) {
 		for (int iY = 0; iY < mGridNumY; iY++) {

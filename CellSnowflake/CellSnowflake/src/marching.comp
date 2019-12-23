@@ -1,6 +1,21 @@
 #version 460 core
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
+class Cell
+{
+	vec4 position;
+	vec4 color;
+	vec3 neighbourSurfaceDir;
+	ivec3 slicedNeighbourNums;
+	vec3 vertexNormal;
+	uint flags;
+	float diffusionMass;
+	float boundaryMass;
+	int horizontalNeighbourNum;
+	int verticalNeighbourNum;
+	int neighbourNum;
+};
+
 struct Vertex{
 	vec4 position;
 };
@@ -10,15 +25,20 @@ struct Tetrahedra{
 	int[4] isCrystals;
 };
 
-layout(std430, binding = 0) buffer Vertexes{
+layout(std430, binding = 0) buffer Cells
+{
+	Cell cell[];
+};
+
+layout(std430, binding = 3) buffer Vertexes{
 	Vertex vertex[];
 };
 
-layout(std430, binding = 1) buffer Tetrahedras{
+layout(std430, binding = 4) buffer Tetrahedras{
 	Tetrahedra tetrahedra[];
 };
 
-layout(binding = 2, offset = 0) uniform atomic_uint vertexCounter;
+layout(binding = 5, offset = 0) uniform atomic_uint vertexCounter;
 
 int tetrahedraEdgeFlags[16] = { 
 	0x00, 0x0d, 0x13, 0x1e, 0x26, 0x2b, 0x35, 0x38, 
@@ -52,5 +72,6 @@ void main(){
 	float fOffset, fInvOffset, fValue = 0.0;
 	vec4[12] edgeVertex;
 
-
+	//セルからテトラに情報を送る方法を考える
+	//テトラを初期化するには？
 }

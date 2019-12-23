@@ -21,8 +21,8 @@ public:
 private:
 	GLuint vao;
 	GLuint vbo;
-	GLuint ssbo;
-	GLuint acbo;
+	GLuint tetraBuffer;
+	GLuint vertexCounterBuffer;
 
 	GLuint vfProgObj = Program::loadProgramObj("src\\marching.vert", "src\\marching.frag");
 	GLuint compProgObj = Program::loadCompProgramObj("src\\marching.comp");

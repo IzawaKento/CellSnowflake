@@ -38,6 +38,9 @@ public:
 	int getCellNumZ(int i) {
 		return (i % (mGridNumX * mGridNumZ)) / mGridNumX;
 	}
+	const GLuint getSsbo() const{
+		return ssbo;
+	}
 
 	//‚Ä‚·‚Æ
 	Cell* GetCells() { return cells; }
