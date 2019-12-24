@@ -66,12 +66,19 @@ int tetrahedraTriangles[16][7] = {
 	{-1, -1, -1, -1, -1, -1, -1}
 };
 
+bool isFlag(uint i, uint flagID) const {
+	return ((cell[i].flags & flagID) != 0);
+}
+
 void main(){
 	const uint wgi = gl_WorkGroupID.x;
 	int iEdge, iVert0, iVert1, iEdgeFlags, iTriangle, iCorner, iVertex, iFlagIndex = 0;
 	float fOffset, fInvOffset, fValue = 0.0;
 	vec4[12] edgeVertex;
-
+	
 	//セルからテトラに情報を送る方法を考える
+	int cellID = int(wgi / 12);
+	
 	//テトラを初期化するには？
+
 }

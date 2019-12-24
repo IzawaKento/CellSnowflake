@@ -27,6 +27,7 @@
     <None Include="src\resetEdge.comp" />
     <None Include="src\neighbourCryNum.comp" />
     <None Include="src\point.geom" />
+    <None Include="src\marchingCube.comp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">

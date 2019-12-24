@@ -124,6 +124,7 @@
     <None Include="src\diffusion1.comp" />
     <None Include="src\diffusion2.comp" />
     <None Include="src\freezing.comp" />
+    <None Include="src\marchingCube.comp" />
     <None Include="src\melt.comp" />
     <None Include="src\neighbourCryNum.comp" />
     <None Include="src\point.frag" />

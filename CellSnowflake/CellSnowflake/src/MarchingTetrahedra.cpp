@@ -45,8 +45,8 @@ void MarchingTetrahedra::dispatchCompute() {
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, tetraBuffer);
 	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 5, vertexCounterBuffer);
 	glUseProgram(compProgObj);
-	//ワークグループは四面体数だけ起動する
-	glDispatchCompute(mGridNumX * mGridNumY * mGridNumZ * mTetraPerHex, 1, 1);
+	//ワークグループはセル数だけ起動する
+	glDispatchCompute(mGridNumX * mGridNumY * mGridNumZ, 1, 1);
 	//いるかわからん、一応
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 }
