@@ -15,14 +15,22 @@ MarchingTetrahedra::MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER,
-		//セル数 * 24個も作るんか…
-		mGridNumX*mGridNumY*mGridNumZ * mTetraPerHex * mMaxTriPerTetra * sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
+		//セル数 * キューブ一つの最大頂点数
+		mGridNumX*mGridNumY*mGridNumZ * 12 * sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), &static_cast<const Vertex *>(0)->position);
 	glEnableVertexAttribArray(0);
 
+	//インデックスのバッファオブジェクト
+	glGenBuffers(1, &ibo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+	//セル数 * 三角形の頂点数 * キューブ一つの最大三角数
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+		mGridNumX*mGridNumY*mGridNumZ * 3 * 5 * sizeof(GLuint), nullptr, GL_DYNAMIC_DRAW);
+
+
 	//コンピュート用ssboを作成
 	glGenBuffers(1, &tetraBuffer);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, tetraBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, tetraBuffer);
 	glBufferData(GL_SHADER_STORAGE_BUFFER,
 		mGridNumX*mGridNumY*mGridNumZ * sizeof(Tetrahedra), nullptr, GL_DYNAMIC_DRAW);
 
@@ -35,6 +43,7 @@ MarchingTetrahedra::MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,
 MarchingTetrahedra::~MarchingTetrahedra() {
 	glDeleteVertexArrays(1, &vao);
 	glDeleteBuffers(1, &vbo);
+	glDeleteBuffers(1, &ibo);
 	glDeleteBuffers(1, &tetraBuffer);
 	glDeleteBuffers(1, &vertexCounterBuffer);
 }
@@ -42,6 +51,7 @@ MarchingTetrahedra::~MarchingTetrahedra() {
 void MarchingTetrahedra::dispatchCompute() {
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, cellularAutomata->getSsbo());
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, vbo);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, ibo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, tetraBuffer);
 	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 5, vertexCounterBuffer);
 	glUseProgram(compProgObj);
@@ -77,6 +87,8 @@ void MarchingTetrahedra::marchingTetra() {
 void MarchingTetrahedra::drawMesh() {
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glUseProgram(vfProgObj);
-	glDrawArrays(GL_POINTS, 0, vertexCount);
+	//glDrawArrays(GL_POINTS, 0, vertexCount);
+	glDrawElements(GL_TRIANGLES, mGridNumX*mGridNumY*mGridNumZ * 15, GL_UNSIGNED_INT, 0);
 }

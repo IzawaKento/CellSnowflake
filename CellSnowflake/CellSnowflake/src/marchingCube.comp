@@ -39,6 +39,10 @@ layout(std430, binding = 3) buffer Vertexes{
 
 layout(binding = 5, offset = 0) uniform atomic_uint vertexCounter;
 
+layout(std430, binding = 6) buffer Indexes{
+	uint index[];
+};
+
 //後でユニフォームに
 //エッジ番号からローカル頂点番号
 const int edgeConnection[12][2] =
@@ -334,28 +338,28 @@ float isFlag(uint i, uint flagID) {
 
 float getOffset(float fmin, float fmax, float f){
 	double fDelta = fmax - fmin;
-	return fDelta == 0.0 ? 0.5 : (f - fmin) / fDelta;
+	return fDelta == 0.0 ? 0.5 : float((f - fmin) / fDelta);
 }
 
 void main(){
-	const uint i = gl_WorkGroupID.y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
+	const uint wgi = gl_WorkGroupID.y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
 		gl_WorkGroupID.z * gl_NumWorkGroups.x +
 		gl_WorkGroupID.x;
 	const uint gridNumX = gl_NumWorkGroups.x, gridNumZ = gl_NumWorkGroups.z;
 	const uint y = gridNumX * gridNumZ;
 
-	const int cubeVertexIndexes[8] = {
+	const uint cubeIndexes[8] = {
 		0, 1, gridNumX, gridNumX+1, y, y+1, y+gridNumX, y+gridNumX+1
 	};
 
-	int iCorner, iTriangle, iFlagIndex, iEdgeFlags;
+	int iFlagIndex, iEdgeFlags;
 	float threshold = 1.0;
 	float fOffset;
 	float cubeValue[8];
-	vec3 edgeVertex[12];
+	vec4 edgeVertPos[12];
 
 	for(int iVertex = 0; iVertex < 8; ++iVertex){
-		cubeValue[iVertex] = isFlag(wgi+cubeVertexIndexes[iVertex], ISCRYSTAL);
+		cubeValue[iVertex] = isFlag(wgi+cubeIndexes[iVertex], ISCRYSTAL);
 	}
 
 	iFlagIndex = 0;
@@ -368,20 +372,37 @@ void main(){
 	iEdgeFlags = cubeEdgeFlags[iFlagIndex];
 
 	if(iEdgeFlags != 0){
+		//交差点位置を求める
 		for (int iEdge = 0; iEdge < 12; ++iEdge)
 		{
 			//エッジに交差点がある
-			if (iEdgeFlags & (1 << iEdge))
+			if (bool(iEdgeFlags & (1 << iEdge)))
 			{
 				fOffset = getOffset(cubeValue[edgeConnection[iEdge][0]],
 					cubeValue[edgeConnection[iEdge][1]], threshold);
-					//ここから書き換える
-				edgeVertex[iEdge].x = (a2fVertexOffset[a2iEdgeConnection[iEdge][0]][0] + fOffset * a2fEdgeDirection[iEdge][0]);
-				edgeVertex[iEdge].y = (a2fVertexOffset[a2iEdgeConnection[iEdge][0]][1] + fOffset * a2fEdgeDirection[iEdge][1]);
-				edgeVertex[iEdge].z = (a2fVertexOffset[a2iEdgeConnection[iEdge][0]][2] + fOffset * a2fEdgeDirection[iEdge][2]);
 
-				vGetNormal(asEdgeNorm[iEdge], asEdgeVertex[iEdge].fX, asEdgeVertex[iEdge].fY, asEdgeVertex[iEdge].fZ);
+				vec4 edgeVertPos0 = cell[wgi+cubeIndexes[edgeConnection[iEdge][0]]].position;
+				vec4 edgeVertPos1 = cell[wgi+cubeIndexes[edgeConnection[iEdge][1]]].position;
+				edgeVertPos[iEdge] = 
+					vec4(1.0-fOffset) * edgeVertPos0 + vec4(fOffset) * edgeVertPos1;
+				//ノーマル求める
 			}
+		}
+		//三角形を求める drawElement(GL_TRIANGLES)で
+		for (int iTriangle = 0; iTriangle < 5; ++iTriangle)
+		{
+			if (triangleConnectionTable[iFlagIndex][3 * iTriangle] < 0)
+				break;
+
+			for (int iCorner = 0; iCorner < 3; ++iCorner)
+			{
+				int iVertex = triangleConnectionTable[iFlagIndex][3 * iTriangle + iCorner];
+				vertex[wgi * 12 + iVertex].position = edgeVertPos[iVertex];
+
+				index[wgi * 15 + 3 * iTriangle + iCorner] = iVertex;
+			}
+			
+
 		}
 	}
 
