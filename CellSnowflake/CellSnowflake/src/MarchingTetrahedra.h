@@ -1,6 +1,7 @@
 #pragma once
 #include <GL/glew.h>
 #include "Program.h"
+#include "Vertex.h"
 
 class CellularAutomata;
 
@@ -9,6 +10,10 @@ public:
 	MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,
 		CellularAutomata* cellAutoPtr);
 	~MarchingTetrahedra();
+
+	GLuint getVfProgObj() {
+		return vfProgObj;
+	}
 
 	void marchingTetra();
 	void marchingHexagonalPrism();
@@ -25,7 +30,12 @@ private:
 	GLuint tetraBuffer;
 	GLuint vertexCounterBuffer;
 
+	//マーチングキューブのルックアップテーブルがでかいのでバッファに
+	//テクスチャバッファ使うとかあるけどどれがいいかわからんからSSBOでやってみる
+	GLuint triangleConnectionTableBuffer;
 
+	//test
+	Vertex* v = new Vertex[5880000];
 
 	GLuint vfProgObj = Program::loadProgramObj("src\\marching.vert", "src\\marching.frag");
 	GLuint compProgObj = Program::loadCompProgramObj("src\\marchingCube.comp");

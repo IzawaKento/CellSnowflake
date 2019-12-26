@@ -126,9 +126,12 @@ int main() {
 
 	CellularAutomata cellularAutomata(rho, 
 		gridNumX, gridNumY, gridNumZ, cellSizeX, cellSizeZ, cellSizeY);
-	
+	/*
 	MarchingTetrahedra marchingTetrahedra(gridNumX,
 		gridNumY, gridNumZ, &cellularAutomata);
+	*/
+	//const GLint modelviewLoc1(glGetUniformLocation(marchingTetrahedra.getVfProgObj(), "modelview"));
+	//const GLint projectionLoc1(glGetUniformLocation(marchingTetrahedra.getVfProgObj(), "projection"));
 
 	for (int k = 0; k < gridNumY; ++k) {
 		for (int j = 0; j < gridNumZ; ++j) {
@@ -229,15 +232,17 @@ int main() {
 		glUniform3fv(LambLoc, 1, Lamb.data());
 		glUniform3fv(LdiffLoc, 1, Ldiff.data());
 		glUniform3fv(LspecLoc, 1, Lspec.data());
-
+		//マーチングキューブ
+		//glUniformMatrix4fv(modelviewLoc1, 1, GL_FALSE, modelview.data());
+		//glUniformMatrix4fv(projectionLoc1, 1, GL_FALSE, projection.data());
 
 		// 図形を描画する
 		//shape->draw();
 		//セルオートマトン処理
 		cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
-		marchingTetrahedra.dispatchCompute();
+		//marchingTetrahedra.dispatchCompute();
 		cellularAutomata.drawCell(gridNumX * gridNumY * gridNumZ, vertfragProgramObj);
-		
+		//marchingTetrahedra.drawMesh();
 		// カラーバッファを入れ替える
 		window.swapBuffers();
 

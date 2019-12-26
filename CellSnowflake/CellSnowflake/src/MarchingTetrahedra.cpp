@@ -8,6 +8,14 @@ MarchingTetrahedra::MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,
 	: mGridNumX(gridNumX), mGridNumY(gridNumY), mGridNumZ(gridNumZ),
 	mVertexNum(gridNumX*gridNumY*gridNumZ), cellularAutomata(ca)
 {
+
+	//test
+	
+	Vector4 p = { 3.0, 1.0, 1.0, 1.0 };
+	for (int ii = 0; ii < 5880000; ++ii) {
+		v[ii].position = p;
+	}
+	
 	//メッシュ描画用頂点配列オブジェクト
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
@@ -16,7 +24,7 @@ MarchingTetrahedra::MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER,
 		//セル数 * キューブ一つの最大頂点数
-		mGridNumX*mGridNumY*mGridNumZ * 12 * sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
+		mGridNumX*mGridNumY*mGridNumZ * 12 * sizeof(Vertex), v, GL_DYNAMIC_DRAW);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), &static_cast<const Vertex *>(0)->position);
 	glEnableVertexAttribArray(0);
 
@@ -38,6 +46,13 @@ MarchingTetrahedra::MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,
 	glGenBuffers(1, &vertexCounterBuffer);
 	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, vertexCounterBuffer);
 	glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint), nullptr, GL_DYNAMIC_DRAW);
+
+	//ルックアップテーブル(巨大なため)
+	glGenBuffers(1, &triangleConnectionTableBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, triangleConnectionTableBuffer);
+	glBufferData(GL_SHADER_STORAGE_BUFFER,
+		4096 * sizeof(GLint), triangleConnectionTable, GL_DYNAMIC_DRAW);	//256 * (3 * 5 + 1)
+
 }
 
 MarchingTetrahedra::~MarchingTetrahedra() {
@@ -46,6 +61,8 @@ MarchingTetrahedra::~MarchingTetrahedra() {
 	glDeleteBuffers(1, &ibo);
 	glDeleteBuffers(1, &tetraBuffer);
 	glDeleteBuffers(1, &vertexCounterBuffer);
+	glDeleteBuffers(1, &triangleConnectionTableBuffer);
+	delete[] v;
 }
 
 void MarchingTetrahedra::dispatchCompute() {
@@ -54,6 +71,7 @@ void MarchingTetrahedra::dispatchCompute() {
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, ibo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, tetraBuffer);
 	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 5, vertexCounterBuffer);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, triangleConnectionTableBuffer);
 	glUseProgram(compProgObj);
 	//ワークグループはセル数だけ起動する
 	glDispatchCompute(mGridNumX * mGridNumY * mGridNumZ, 1, 1);
@@ -90,5 +108,5 @@ void MarchingTetrahedra::drawMesh() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glUseProgram(vfProgObj);
 	//glDrawArrays(GL_POINTS, 0, vertexCount);
-	glDrawElements(GL_TRIANGLES, mGridNumX*mGridNumY*mGridNumZ * 15, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_POINTS, mGridNumX*mGridNumY*mGridNumZ * 15, GL_UNSIGNED_INT, 0);
 }
