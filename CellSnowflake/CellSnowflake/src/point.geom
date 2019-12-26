@@ -19,6 +19,10 @@ const uint ISEDGEBOUNDARY = 8u;
 const uint MZISODD = 16u;	//セル番号のZ値が奇数である
 const uint ISENDOFCELLS = 32u;
 
+layout(std140) uniform TriangleConnectionTable{
+	int triangleConnectionTable[256][16];
+};
+
 //flagIDは2進数の値
 //flagsのビットのfragID番目（0から）が1ならtrue
 

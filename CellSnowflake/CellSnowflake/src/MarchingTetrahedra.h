@@ -4,7 +4,7 @@
 #include "Vertex.h"
 
 class CellularAutomata;
-
+//沼にはまったので没、ジオメトリシェーダ書き換えのプランで行く
 class MarchingTetrahedra {
 public:
 	MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,

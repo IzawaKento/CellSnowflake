@@ -1,6 +1,6 @@
 #pragma once
 #include "Vector.h"
-
+//没
 struct Tetrahedra {
 	//四面体各頂点情報の配列
 	alignas(16) Vector4 positions[4];

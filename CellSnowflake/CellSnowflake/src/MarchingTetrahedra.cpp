@@ -2,7 +2,7 @@
 #include "CellularAutomata.h"
 #include "Vertex.h"
 #include "Tetrahedra.h"
-
+//–v
 MarchingTetrahedra::MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,
 	CellularAutomata* ca) 
 	: mGridNumX(gridNumX), mGridNumY(gridNumY), mGridNumZ(gridNumZ),
