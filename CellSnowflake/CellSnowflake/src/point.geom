@@ -20,7 +20,7 @@ const uint MZISODD = 16u;	//セル番号のZ値が奇数である
 const uint ISENDOFCELLS = 32u;
 
 layout(std140) uniform TriangleConnectionTable{
-	int triangleConnectionTable[256][16];
+	ivec4 triangleConnectionTable[1024];
 };
 
 //flagIDは2進数の値
@@ -33,6 +33,10 @@ bool isFlag(int i, uint flagID) {
 void emitAdditiveVert(int i, vec3 additivePos){
 	gl_Position = vProjection[i] * vModelview[i] * (gl_in[i].gl_Position + vec4(additivePos * 0.9, 0.0));
 	EmitVertex();
+}
+
+int xy2i(int x, int y){
+	return x * 16 + y;
 }
 
 void main()
@@ -59,7 +63,16 @@ void main()
 		//不透明に設定したセルだけ作る
 		if(vColor[i][3] > 0.0){	// isFlag(i,524288)
 			
-			//emitAdditiveVert(i,vec3(0.0, 0.0, 0.0 ));
+			//TEST
+			vec3 v3 = vec3(float(triangleConnectionTable[8][0]),
+				float(triangleConnectionTable[8][1]),
+				float(triangleConnectionTable[8][2])
+			);
+			//UBOに配列が送れているかチェック	
+			gColor = vec4(v3 * 0.083333, 1.0);
+
+
+			//emitAdditiveVert(i,vec3(0.0, 0.0, 0.0));
 			//なぜか全三角形上向いてる
 			emitAdditiveVert(i,vec3(0.0, 0.015, 0.015/cos(radians(30.0)) ));
 			emitAdditiveVert(i,vec3(0.015, 0.015, 0.015*tan(radians(30.0))));
@@ -84,17 +97,6 @@ void main()
 			emitAdditiveVert(i,vec3(-0.015, -0.015, 0.015*tan(radians(30.0))));
 			emitAdditiveVert(i,vec3(0.0, 0.015, 0.015/cos(radians(30.0)) ));
 			emitAdditiveVert(i,vec3(0.0, -0.015, 0.015/cos(radians(30.0)) ));
-			*/
-
-			//近傍結晶方向ベクデバッグ
-			/*
-			gColor = vec4(0.0, 0.0, 0.0, 1.0);
-			vec3 tmpDir = normalize(vNeighSurDir[i]) * 0.3;
-			tmpDir.y = 0.1;
-			emitAdditiveVert(i, vec3(0,0.05,0));
-			emitAdditiveVert(i, tmpDir);
-			emitAdditiveVert(i, vec3(0,0.05,0.007));
-			EndPrimitive();
 			*/
 		}
 		

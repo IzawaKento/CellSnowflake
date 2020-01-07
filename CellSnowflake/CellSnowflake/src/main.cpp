@@ -77,7 +77,7 @@ int main() {
 
 	Window window(640, 480, "CellSnowFlake");
 	
-	//ワークグループ内で起動可能なスレッドの数	1536　少な！！
+	//ワークグループ内で起動可能なスレッドの数	1536　少な
 	GLint workgroupInvocations = 0;
 	glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS, &workgroupInvocations);
 	std::cout << "WORK_GROUP_INVOCATIONS " << workgroupInvocations << std::endl;
@@ -96,7 +96,7 @@ int main() {
 	glClearColor(0.15f, 0.13f, 0.14f, 1.0f);
 
 	glPointSize(2.0);
-	//いみないし
+	//いみない
 	///* アルファテスト開始 */
 	//glEnable(GL_ALPHA_TEST);
 	///* アルファテストの比較関数 */
@@ -125,7 +125,7 @@ int main() {
 	const GLint LspecLoc(glGetUniformLocation(vertfragProgramObj, "Lspec"));
 
 	CellularAutomata cellularAutomata(rho, 
-		gridNumX, gridNumY, gridNumZ, cellSizeX, cellSizeZ, cellSizeY);
+		gridNumX, gridNumY, gridNumZ, cellSizeX, cellSizeZ, cellSizeY, vertfragProgramObj);
 	/*
 	MarchingTetrahedra marchingTetrahedra(gridNumX,
 		gridNumY, gridNumZ, &cellularAutomata);
