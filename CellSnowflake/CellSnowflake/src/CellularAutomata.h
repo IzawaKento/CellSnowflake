@@ -4,7 +4,9 @@
 #include <array>
 #include <GL/glew.h>
 #include "Program.h"
+//uboとの配置を一致させるため使用
 using IVector4 = std::array<GLint, 4>;
+
 class Cell;
 
 class CellularAutomata {
@@ -80,6 +82,7 @@ private:
 	const GLuint mvfProgObj;
 
 	struct TriangleConnectionTable {
+		//GLint[256][16] として利用
 		alignas(16) const IVector4 triangleConnectionTable[1024] =
 		{
 			-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, -1, -1, -1,
@@ -339,33 +342,8 @@ private:
 			0, 3, 8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 			-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
 		};
-	};
-	TriangleConnectionTable tct;
-
-	//コンピュートシェーダー用プログラムオブジェクト
-	GLuint resetEdgeComProgObj = Program::loadCompProgramObj("src\\resetEdge.comp");
-	GLuint computeProgramObj = Program::loadCompProgramObj("src\\compute.comp");
-	GLuint neighbourCryNumComProgObj = Program::loadCompProgramObj("src\\neighbourCryNum.comp");
-	GLuint diffusion1ComProgObj = Program::loadCompProgramObj("src\\diffusion1.comp");
-	GLuint diffusion2ComProgObj = Program::loadCompProgramObj("src\\diffusion2.comp");
-	GLuint freezingComProgObj = Program::loadCompProgramObj("src\\freezing.comp");
-	GLuint attachmentComProgObj = Program::loadCompProgramObj("src\\attachment.comp");
-	GLuint meltingComProgObj = Program::loadCompProgramObj("src\\melt.comp");
-
-
-	//よく使いそうな値なので保存
-	const int mGridNumX, mGridNumY, mGridNumZ;
-
-	//マーチングキューブ用
-	const GLint edgeConnection[12][2] =
-	{
-			{0,1}, {1,2}, {2,3}, {3,0},
-			{4,5}, {5,6}, {6,7}, {7,4},
-			{0,4}, {1,5}, {2,6}, {3,7}
-	};
-
-	const GLint cubeEdgeFlags[256] =
-	{
+		//GLint[256] として利用
+		alignas(16) const IVector4 cubeEdgeFlags[64] = {
 			0x000, 0x109, 0x203, 0x30a, 0x406, 0x50f, 0x605, 0x70c, 0x80c, 0x905, 0xa0f, 0xb06, 0xc0a, 0xd03, 0xe09, 0xf00,
 			0x190, 0x099, 0x393, 0x29a, 0x596, 0x49f, 0x795, 0x69c, 0x99c, 0x895, 0xb9f, 0xa96, 0xd9a, 0xc93, 0xf99, 0xe90,
 			0x230, 0x339, 0x033, 0x13a, 0x636, 0x73f, 0x435, 0x53c, 0xa3c, 0xb35, 0x83f, 0x936, 0xe3a, 0xf33, 0xc39, 0xd30,
@@ -382,7 +360,25 @@ private:
 			0xd30, 0xc39, 0xf33, 0xe3a, 0x936, 0x83f, 0xb35, 0xa3c, 0x53c, 0x435, 0x73f, 0x636, 0x13a, 0x033, 0x339, 0x230,
 			0xe90, 0xf99, 0xc93, 0xd9a, 0xa96, 0xb9f, 0x895, 0x99c, 0x69c, 0x795, 0x49f, 0x596, 0x29a, 0x393, 0x099, 0x190,
 			0xf00, 0xe09, 0xd03, 0xc0a, 0xb06, 0xa0f, 0x905, 0x80c, 0x70c, 0x605, 0x50f, 0x406, 0x30a, 0x203, 0x109, 0x000
+		};
+		//GLint[12][2] として利用
+		alignas(16) const IVector4 edgeConnection[6] = {
+			0,1, 1,2, 2,3, 3,0, 4,5, 5,6, 6,7, 7,4, 0,4, 1,5, 2,6, 3,7
+		};
 	};
-	
+	TriangleConnectionTable tct;
 
+	//コンピュートシェーダー用プログラムオブジェクト
+	GLuint resetEdgeComProgObj = Program::loadCompProgramObj("src\\resetEdge.comp");
+	GLuint computeProgramObj = Program::loadCompProgramObj("src\\compute.comp");
+	GLuint neighbourCryNumComProgObj = Program::loadCompProgramObj("src\\neighbourCryNum.comp");
+	GLuint diffusion1ComProgObj = Program::loadCompProgramObj("src\\diffusion1.comp");
+	GLuint diffusion2ComProgObj = Program::loadCompProgramObj("src\\diffusion2.comp");
+	GLuint freezingComProgObj = Program::loadCompProgramObj("src\\freezing.comp");
+	GLuint attachmentComProgObj = Program::loadCompProgramObj("src\\attachment.comp");
+	GLuint meltingComProgObj = Program::loadCompProgramObj("src\\melt.comp");
+
+
+	//よく使いそうな値なので保存
+	const int mGridNumX, mGridNumY, mGridNumZ;
 };
