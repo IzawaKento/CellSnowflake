@@ -103,10 +103,11 @@ int main() {
 	//glAlphaFunc(GL_ALWAYS, 0.5);
 
 	// 背面カリングを有効にする
+	/*
 	glFrontFace(GL_CCW);
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
-
+	*/
 	// デプスバッファを有効にする(うまくいってない)
 	/*glClearDepth(1.0);
 	glDepthFunc(GL_LESS);
@@ -126,10 +127,10 @@ int main() {
 
 	CellularAutomata cellularAutomata(rho, 
 		gridNumX, gridNumY, gridNumZ, cellSizeX, cellSizeZ, cellSizeY, vertfragProgramObj);
-	/*
+	
 	MarchingTetrahedra marchingTetrahedra(gridNumX,
 		gridNumY, gridNumZ, &cellularAutomata);
-	*/
+	
 	//const GLint modelviewLoc1(glGetUniformLocation(marchingTetrahedra.getVfProgObj(), "modelview"));
 	//const GLint projectionLoc1(glGetUniformLocation(marchingTetrahedra.getVfProgObj(), "projection"));
 
@@ -240,9 +241,9 @@ int main() {
 		//shape->draw();
 		//セルオートマトン処理
 		cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
-		//marchingTetrahedra.dispatchCompute();
-		cellularAutomata.drawCell(gridNumX * gridNumY * gridNumZ, vertfragProgramObj);
-		//marchingTetrahedra.drawMesh();
+		marchingTetrahedra.dispatchCompute();
+		//cellularAutomata.drawCell(gridNumX * gridNumY * gridNumZ, vertfragProgramObj);
+		marchingTetrahedra.drawMesh();
 		// カラーバッファを入れ替える
 		window.swapBuffers();
 

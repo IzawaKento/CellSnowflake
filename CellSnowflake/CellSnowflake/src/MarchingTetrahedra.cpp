@@ -1,5 +1,6 @@
 #include "MarchingTetrahedra.h"
 #include "CellularAutomata.h"
+#include "Cell.h"
 #include "Vertex.h"
 #include "Tetrahedra.h"
 //没
@@ -10,8 +11,8 @@ MarchingTetrahedra::MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,
 {
 
 	//test
-	
-	Vector4 p = { 3.0, 1.0, 1.0, 1.0 };
+	//適当に初期化
+	Vector4 p = { 0.0, 0.0, 0.0, 1.0 };
 	for (int ii = 0; ii < 5880000; ++ii) {
 		v[ii].position = p;
 	}
@@ -27,6 +28,8 @@ MarchingTetrahedra::MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,
 		mGridNumX*mGridNumY*mGridNumZ * 12 * sizeof(Vertex), v, GL_DYNAMIC_DRAW);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), &static_cast<const Vertex *>(0)->position);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), &static_cast<const Vertex *>(0)->color);
+	glEnableVertexAttribArray(1);
 
 	//インデックスのバッファオブジェクト
 	glGenBuffers(1, &ibo);
@@ -107,6 +110,6 @@ void MarchingTetrahedra::drawMesh() {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glUseProgram(vfProgObj);
-	//glDrawArrays(GL_POINTS, 0, vertexCount);
+	//glDrawArrays(GL_POINTS, 0, 5880000);
 	glDrawElements(GL_POINTS, mGridNumX*mGridNumY*mGridNumZ * 15, GL_UNSIGNED_INT, 0);
 }

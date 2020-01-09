@@ -127,7 +127,6 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	//マーチングキューブ用
 	glGenBuffers(1, &ubo);
 	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
-	//うまくいかん
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(TriangleConnectionTable), &tct, GL_STATIC_DRAW);
 	//ユニフォームブロックの番号を取得
 	GLuint uniformBlockIndex0 = glGetUniformBlockIndex(mvfProgObj, "TriangleConnectionTable");
