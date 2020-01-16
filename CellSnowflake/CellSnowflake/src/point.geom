@@ -73,7 +73,7 @@ void main()
 				float(triangleConnectionTable[8][2])
 			);
 			*/
-			//UBOに配列が送れているかチェック	
+
 			gColor = vColor[i];
 
 

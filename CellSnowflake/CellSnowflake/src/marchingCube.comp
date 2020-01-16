@@ -78,7 +78,8 @@ const int cubeEdgeFlags[256] =
 };
 
 float isFlag(uint i, uint flagID) {
-	return ((cell[i].flags & flagID) != 0) ? 1.0 : 0.0;
+	float value = ((cell[i].flags & flagID) != 0) ? 1.0 : 0.0;
+	return value;
 }
 
 float getOffset(float f1, float f2, float f){
@@ -100,7 +101,8 @@ void main(){
 	};
 
 	for(int itest = 0; itest < 12; ++itest){
-		vertex[wgi * 12 + itest].position = vec4(0.0, 0.0, 0.0, 1.0);;
+		vertex[wgi * 12 + itest].position = vec4(0.0, 0.0, 0.0, 1.0);
+		vertex[wgi * 12 + itest].color = vec4(1.0, 0.35, 0.6, 0.0);
 	}
 	
 	uint iFlagIndex;
@@ -121,6 +123,40 @@ void main(){
 		}
 	}
 
+	/*
+	vec4 tC;
+	switch(iFlagIndex){
+		case 255:	//1111 1100
+			tC = vec4(0.0,0.1,0.0,1.0);
+			break;	
+		case 0:		//0000 0000
+			tC = vec4(0.3,0.0,0.0,1.0);
+			break;
+		case 153:	//1111 1110
+			tC = vec4(1.0,1.0,0.0,1.0);
+			break;
+		case 136:	//1000 1000
+			tC = vec4(1.0,0.0,1.0,1.0);
+			break;
+		case 128:	//1000 0000
+			tC = vec4(0.0,0.0,1.0,1.0);
+			break;
+		case 15:	//0000 1111
+			tC = vec4(0.0,0.7,1.0,1.0);
+			break;
+		case 8:	//0000 1000
+			tC = vec4(0.5,0.7,0.5,1.0);
+			break;
+		case 102:	//0110 0110
+			tC = vec4(1.0,0.7,0.7,1.0);
+			break;
+		default:
+			tC = vec4(0.0, 0.0, 0.0, 1.0);
+	}
+	vertex[wgi*12].position = cell[wgi].position;
+	vertex[wgi*12].color = tC;
+	*/
+
 	iEdgeFlags = cubeEdgeFlags[iFlagIndex];
 
 	if(iEdgeFlags == 0){
@@ -131,54 +167,53 @@ void main(){
 	for (int iEdge = 0; iEdge < 12; ++iEdge)
 	{
 		//エッジに交差点がある
-		if (bool(iEdgeFlags & (1 << iEdge)))
+		if ((iEdgeFlags & (1 << iEdge)) != 0)
 		{
 			fOffset = getOffset(cubeValue[edgeConnection[iEdge][0]],
 				cubeValue[edgeConnection[iEdge][1]], threshold);
 
 			vec4 edgeVertPos0 = cell[wgi+cubeIndexes[edgeConnection[iEdge][0]]].position;
 			vec4 edgeVertPos1 = cell[wgi+cubeIndexes[edgeConnection[iEdge][1]]].position;
-			edgeVertPos[iEdge] = edgeVertPos0;//vec4(1.0-fOffset) * edgeVertPos0 + vec4(fOffset) * edgeVertPos1;
+			edgeVertPos[iEdge] = vec4(1.0-fOffset) * edgeVertPos0 + vec4(fOffset) * edgeVertPos1;
 
 			edgeVertPos[iEdge].w = 1.0;
-			//ノーマル求める
+
+			//TESTO
+			//vertex[wgi*12 + iEdge].position = edgeVertPos[iEdge];
+			//vertex[wgi*12 + iEdge].color = vec4(vec3(float(iEdge) / 12.0), 1.0);
 		}
 	}
+
 	//三角形を求める drawElement(GL_TRIANGLES)で
 	for (int iTriangle = 0; iTriangle < 5; ++iTriangle)
 	{
 		if (triangleConnectionTable[iFlagIndex * 16 + (3 * iTriangle)] < 0)
 			break;
-
+		vec3 p[3];
 		for (int iCorner = 0; iCorner < 3; ++iCorner)
 		{
 			int iVertex = triangleConnectionTable[iFlagIndex * 16 + (3 * iTriangle + iCorner)];
 			vertex[wgi * 12 + iVertex].position = edgeVertPos[iVertex];
-
-			//iFlagIndexの値の理由がわからない
-			vec4 tC;
-			switch(iFlagIndex){
-				case 252:	//1111 1100
-					tC = vec4(1.0,0.0,0.0,1.0);
-					break;	
-				case 253:	//1111 1101
-					tC = vec4(0.0,1.0,0.0,1.0);
-					break;
-				case 254:	//1111 1110
-					tC = vec4(1.0,1.0,0.0,1.0);
-					break;
-				case 255:	//1111 1111
-					tC = vec4(1.0,0.0,1.0,1.0);
-					break;
-				case 256:
-					tC = vec4(0.0,0.0,1.0,1.0);
-					break;
-				default:
-					tC = vec4(0.0, 0.0, 0.0, 1.0);
-			}
-
-			vertex[wgi * 12 + iVertex].color = tC;
+			p[iCorner] = edgeVertPos[iVertex].xyz;
+			vertex[wgi * 12 + iVertex].color = vec4(vec3(float(iTriangle*0.2)),1.0);
 			index[wgi * 15 + 3 * iTriangle + iCorner] = wgi * 12 + iVertex;
+		}
+
+		/*
+		vec3 v01 = vec3(p[1].x - p[0].x, p[1].y - p[0].y, p[1].z - p[0].z);
+		vec3 v02 = vec3(p[2].x - p[0].x, p[2].y - p[0].y, p[2].z - p[0].z);
+		*/
+
+		vec3 v01 = normalize(p[1] - p[0]);
+		vec3 v02 = normalize(p[2] - p[0]);
+		vec3 normal = abs(vec3(
+			v01.y * v02.z - v01.z * v02.y,
+			v01.z * v02.x - v01.x * v02.z,
+			v01.x * v02.y - v01.y * v02.x
+		));
+		for(int iCorner = 0; iCorner < 3; ++ iCorner){
+			int iVertex = triangleConnectionTable[iFlagIndex * 16 + (3 * iTriangle + iCorner)];
+			vertex[wgi * 12 + iVertex].color = vec4(normal, 1.0);
 		}
 	}
 	

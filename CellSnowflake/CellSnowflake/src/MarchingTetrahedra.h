@@ -37,7 +37,7 @@ private:
 	//test 70*100*70 * 12
 	Vertex* v = new Vertex[5880000];
 
-	GLuint vfProgObj = Program::loadProgramObj("src\\marching.vert", "src\\marching.frag");
+	GLuint vfProgObj = Program::loadProgramObj("src\\marching.vert", "src\\marching.geom", "src\\marching.frag");
 	GLuint compProgObj = Program::loadCompProgramObj("src\\marchingCube.comp");
 
 	const GLint modelviewLoc = glGetUniformLocation(vfProgObj, "modelview");
@@ -48,6 +48,8 @@ private:
 	int vertexCount = -1;
 
 	const CellularAutomata* cellularAutomata;
+
+	const GLuint* initialIndexBuffer = new GLuint[mGridNumX*mGridNumY*mGridNumZ*15]();
 
 	const GLint edgeConnection[12][2] =
 	{

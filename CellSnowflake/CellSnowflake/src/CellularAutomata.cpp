@@ -47,7 +47,7 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 			float shiftX = (i_z % 2) * 0.5f * cellSizeX;
 			GLuint zIsOdd = i_z % 2;
 			for (int i_x = 0; i_x < gridNumX; ++i_x) {
-				GLfloat x = i_x * cellSizeX + shiftX;
+				GLfloat x = i_x * cellSizeX +shiftX;
 				int pointNum = i_x + gridNumX * i_z + i_y * gridNumX * gridNumZ;
 				cells[pointNum].SetPosition(x, y, z);
 				//ここ複雑になってる
@@ -209,6 +209,18 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 	
 	int tmpY = mGridNumX * mGridNumZ;
 	int zOddNum = static_cast<int>(cells[centerCellNum].isFlag(CellFlags::MZISODD)) * 2 - 1;
+	
+	////てすと用
+	//for (int i = 0; i < 16; ++i) {
+	//	for (int j = 0; j < 10; ++j) {
+	//		for (int k = 0; k < 12; ++k) {
+	//			SetEdgeCry(centerCellNum + k + mGridNumX * j + mGridNumX*mGridNumZ * i);
+	//		}
+	//	}
+	//}
+	
+
+	
 	SetEdgeCry(centerCellNum);
 	set2RadiusCells(centerCellNum, 1);
 	set3RadiusCells(centerCellNum, 2);
@@ -216,6 +228,7 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 	set3RadiusCells(centerCellNum, 4);
 	set2RadiusCells(centerCellNum, 5);
 	SetEdgeCry(centerCellNum - tmpY * 6);
+	
 
 	//以下不要
 	////ifはつかってないけどめっちゃくそやと思う

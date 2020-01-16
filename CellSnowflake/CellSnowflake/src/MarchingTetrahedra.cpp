@@ -36,7 +36,7 @@ MarchingTetrahedra::MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	//セル数 * 三角形の頂点数 * キューブ一つの最大三角数
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-		mGridNumX*mGridNumY*mGridNumZ * 3 * 5 * sizeof(GLuint), nullptr, GL_DYNAMIC_DRAW);
+		mGridNumX*mGridNumY*mGridNumZ * 3 * 5 * sizeof(GLuint), initialIndexBuffer, GL_DYNAMIC_DRAW);
 
 
 	//コンピュート用ssboを作成
@@ -54,7 +54,7 @@ MarchingTetrahedra::MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,
 	glGenBuffers(1, &triangleConnectionTableBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, triangleConnectionTableBuffer);
 	glBufferData(GL_SHADER_STORAGE_BUFFER,
-		4096 * sizeof(GLint), triangleConnectionTable, GL_DYNAMIC_DRAW);	//256 * (3 * 5 + 1)
+		4096 * sizeof(GLint), triangleConnectionTable, GL_STATIC_DRAW);	//256 * (3 * 5 + 1)
 
 }
 
@@ -77,8 +77,8 @@ void MarchingTetrahedra::dispatchCompute() {
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, triangleConnectionTableBuffer);
 	glUseProgram(compProgObj);
 	//ワークグループはセル数だけ起動する
-	glDispatchCompute(mGridNumX * mGridNumY * mGridNumZ, 1, 1);
-	//いるかわからん、一応
+	glDispatchCompute(mGridNumX, mGridNumY, mGridNumZ);
+	//いるかわからん
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 }
 
@@ -111,5 +111,5 @@ void MarchingTetrahedra::drawMesh() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glUseProgram(vfProgObj);
 	//glDrawArrays(GL_POINTS, 0, 5880000);
-	glDrawElements(GL_POINTS, mGridNumX*mGridNumY*mGridNumZ * 15, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, mGridNumX*mGridNumY*mGridNumZ * 15, GL_UNSIGNED_INT, 0);
 }
