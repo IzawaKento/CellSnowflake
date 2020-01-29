@@ -103,12 +103,12 @@ int main() {
 	//glAlphaFunc(GL_ALWAYS, 0.5);
 
 	// 背面カリングを有効にする
-	/*
+	
 	glFrontFace(GL_CCW);
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
-	*/
-	// デプスバッファを有効にする(うまくいってない)
+	
+	// デプスバッファを有効にする(なぜか描画されなくなる)
 	/*glClearDepth(1.0);
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);*/
@@ -200,7 +200,7 @@ int main() {
 		const Matrix translation(Matrix::translate(pos));
 		// モデル変換行列を求める scalingしてからtranslateなのでちゃんと拡大する
 		const Vector3 rAxis{ 0.0f, 1.0f, 0.0f };
-		const Matrix r(Matrix::rotate(static_cast<GLfloat>(glfwGetTime()),	//回す用
+		const Matrix r(Matrix::rotate(static_cast<GLfloat>(glfwGetTime()*0.1),	//回す用
 			rAxis));
 		const Matrix model(translation);
 		// ビュー変換行列を求める
@@ -209,8 +209,8 @@ int main() {
 		/*Vector3 eyePos{ 3.0f, 4.0f, 3.0f };
 		Vector3 destPos{ 3.0f, 0.0f, 3.1f };
 		Vector3 upVec{ 0.0f, 1.0f, 0.0f };*/
-		Vector3 eyePos{ 4.0f, 3.0f, 4.0f };
-		Vector3 destPos{ 0.0f, 0.0f, 0.0f };
+		Vector3 eyePos{ 4.0f*cos(glfwGetTime()), 4.0f, 4.0f*sin(glfwGetTime()) };
+		Vector3 destPos{ 1.105f, 1.5f, 1.105f };
 		Vector3 upVec{ 0.0f, 1.0f, 0.0f };
 		const Matrix view(Matrix::lookat(eyePos, destPos, upVec));
 		// モデルビュー変換行列を求める
