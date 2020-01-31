@@ -209,7 +209,7 @@ int main() {
 		/*Vector3 eyePos{ 3.0f, 4.0f, 3.0f };
 		Vector3 destPos{ 3.0f, 0.0f, 3.1f };
 		Vector3 upVec{ 0.0f, 1.0f, 0.0f };*/
-		Vector3 eyePos{ 4.0f*cos(glfwGetTime()), 4.0f, 4.0f*sin(glfwGetTime()) };
+		Vector3 eyePos{ 4.0f, 4.0f, 4.0f };
 		Vector3 destPos{ 1.105f, 1.5f, 1.105f };
 		Vector3 upVec{ 0.0f, 1.0f, 0.0f };
 		const Matrix view(Matrix::lookat(eyePos, destPos, upVec));
@@ -241,9 +241,9 @@ int main() {
 		//shape->draw();
 		//セルオートマトン処理
 		cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
-		marchingTetrahedra.dispatchCompute();
-		//cellularAutomata.drawCell(gridNumX * gridNumY * gridNumZ, vertfragProgramObj);
-		marchingTetrahedra.drawMesh();
+		//marchingTetrahedra.dispatchCompute();
+		cellularAutomata.drawCell(gridNumX * gridNumY * gridNumZ, vertfragProgramObj);
+		//marchingTetrahedra.drawMesh();
 		// カラーバッファを入れ替える
 		window.swapBuffers();
 

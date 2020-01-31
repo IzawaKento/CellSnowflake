@@ -84,7 +84,7 @@ void main(){
 	
 	//diffusion_1
 	if(!isFlag(i, ISCRYSTAL) && !isFlag(i, ISENDOFCELLS)){		//気体であり端っこでない
-		float tmpDiffusionMass = 0.0;
+		float tmpDiffusionMass = cell[i].diffusionMass;
 		/*
 		//旧拡散
 		//水平
@@ -133,7 +133,7 @@ void main(){
 		tmpDiffusionMass += cell[i+gridNumX*gridNumZ].diffusionMass / (0.4 + 0.3 * sqrt(2.0));
 		tmpDiffusionMass += cell[i-gridNumX*gridNumZ].diffusionMass / (0.4 + 0.3 * sqrt(2.0));
 		
-		tmpDiffusionMass *= 0.05;	//20で割る
+		tmpDiffusionMass /= 21.0;// *= 0.05;	//20で割る
 		
 		//ノイズ
 		//元論文の実装。うまくいかん
