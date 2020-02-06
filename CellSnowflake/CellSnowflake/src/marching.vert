@@ -13,7 +13,7 @@ in vec4 color;
 flat out vec4 vColor;
 out mat4 vModelview;
 out mat4 vProjection;
-out vec3 vIdiff;
+out vec4 vIdiff;
 
 const vec3 Kamb = vec3(0.6, 0.6, 0.2);
 const vec3 Kdiff = vec3(0.6, 0.6, 0.2);
@@ -24,10 +24,11 @@ void main(){
 	vec4 P = modelview * position;
 	vec3 L = normalize((Lpos * P.w - P * Lpos.w).xyz);
 	vec3 Iamb = Kamb * Lamb;
-	vIdiff = max(dot(color.xyz, L), 0.0) * Kdiff * Ldiff + Iamb;
+	vec3 Idiff = max(dot(color.xyz, L), 0.0) * Kdiff * Ldiff + Iamb;
 
 	vColor = color;
 	vModelview = modelview;
 	vProjection = projection;
+	vIdiff = vec4(Idiff, 1.0);
 	gl_Position = position;
 }

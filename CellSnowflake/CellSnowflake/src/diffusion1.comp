@@ -84,6 +84,10 @@ void main(){
 	
 	//diffusion_1
 	if(!isFlag(i, ISCRYSTAL) && !isFlag(i, ISENDOFCELLS)){		//気体であり端っこでない
+		//乱数の決定
+		float ran = random(vec2(i+97, i));
+		const float gamma = 0.5;
+
 		float tmpDiffusionMass = cell[i].diffusionMass;
 		/*
 		//旧拡散
@@ -113,36 +117,40 @@ void main(){
 		
 		//周囲２０マスで拡散　簡単のため垂直:水平 = 1:1とする
 		uint id;
+		const float tmpValueA = 1.0 / (0.4 + 0.3 * sqrt(2.0));
 		for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
 			id = aroundCellIDs[aro_i];
-			tmpDiffusionMass += cell[id].diffusionMass / (0.4 + 0.3 * sqrt(2.0));
+			tmpDiffusionMass += cell[id].diffusionMass * tmpValueA;
 		}
 		//上周囲
 		for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
 			id = aroundCellIDs[aro_i] + gridNumX * gridNumZ;
-			tmpDiffusionMass += cell[id].diffusionMass * sqrt(2.0) * 0.5 / (0.4 + 0.3 * sqrt(2.0));
+			tmpDiffusionMass += cell[id].diffusionMass * sqrt(2.0) * 0.5 * tmpValueA;
 				
 		}
 		//下周囲
 		for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
 			id = aroundCellIDs[aro_i] - gridNumX * gridNumZ;
-			tmpDiffusionMass += cell[id].diffusionMass * sqrt(2.0) * 0.5 / (0.4 + 0.3 * sqrt(2.0));
+			tmpDiffusionMass += cell[id].diffusionMass * sqrt(2.0) * 0.5 * tmpValueA;
 				
 		}
 		//真上真下
-		tmpDiffusionMass += cell[i+gridNumX*gridNumZ].diffusionMass / (0.4 + 0.3 * sqrt(2.0));
-		tmpDiffusionMass += cell[i-gridNumX*gridNumZ].diffusionMass / (0.4 + 0.3 * sqrt(2.0));
+		tmpDiffusionMass += cell[i+gridNumX*gridNumZ].diffusionMass * tmpValueA;
+		tmpDiffusionMass += cell[i-gridNumX*gridNumZ].diffusionMass * tmpValueA;
 		
-		tmpDiffusionMass /= 21.0;// *= 0.05;	//20で割る
+		tmpDiffusionMass /= 21.0;// *= 0.05;	//21で割る
+
+		//ノイズ完成 gamma0.5ぐらいがいい
+		//tmpDiffusionMass = (1.0 - gamma * ran) * tmpDiffusionMass + (gamma * ran) * cell[i].diffusionMass;
 		
-		//ノイズ
+		
 		//元論文の実装。うまくいかん
 		//tmpDiffusionMass *= 1.0 + 0.1 * (step(0.515, (random(vec2(i, i)) )) * 2 - 1);
 		
 		//tmpDiffusionMass *= 1.0 + 0.2 * ((int(i) % 2) * 2 - 1);
 
 		//これもなんか惜しい感じ
-		//tmpDiffusionMass *= (1.0 + (random(vec2(i+97, i)) * 2 - 1) * 0.2);
+		//tmpDiffusionMass *= (1.0 - random(vec2(i+97, i)) * 0.05);
 
 		tmpCell[i].diffusionMass = tmpDiffusionMass;
 	}

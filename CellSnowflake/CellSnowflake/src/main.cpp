@@ -38,7 +38,7 @@ constexpr Vertex octahedronVertex[] =
 const float pi = 3.1415926535f;
 //うーん
 // 水蒸気セルの初期拡散質量
-const float rho = 0.1f;
+const float rho = 0.2f;
 
 const int gridNumX = 70;
 const int gridNumY = 100;
@@ -75,7 +75,7 @@ int main() {
 	*/
 
 
-	Window window(640, 480, "CellSnowFlake");
+	Window window(720, 960, "CellSnowFlake");
 	
 	//ワークグループ内で起動可能なスレッドの数	1536　少な
 	GLint workgroupInvocations = 0;
@@ -154,10 +154,11 @@ int main() {
 	//FPS表示用
 	double previousTime = glfwGetTime();
 	int frameCount = 0;
-
+	int stepCount = 0;
 	// ウィンドウが開いている間繰り返す
 	while (window.shouldClose() == GL_FALSE)
 	{
+		/*
 		//リプレイ
 		if (glfwGetTime() > 400.0f)
 		{
@@ -167,7 +168,7 @@ int main() {
 
 			previousTime = glfwGetTime();
 		}
-		
+		*/
 		//1フレームデバッグ
 		//なんか無理やり止める感じ
 		//std::this_thread::sleep_for(std::chrono::milliseconds(250));
@@ -179,10 +180,11 @@ int main() {
 		//FPS表示
 		double currentTime = glfwGetTime();
 		frameCount++;
+		stepCount++;
 		if (currentTime - previousTime >= 1.0)
 		{
 			std::cout << "fps:" << frameCount << std::endl;
-
+			std::cout << "t = " << stepCount << std::endl;
 			frameCount = 0;
 			previousTime = currentTime;
 		}
@@ -209,7 +211,7 @@ int main() {
 		/*Vector3 eyePos{ 3.0f, 4.0f, 3.0f };
 		Vector3 destPos{ 3.0f, 0.0f, 3.1f };
 		Vector3 upVec{ 0.0f, 1.0f, 0.0f };*/
-		Vector3 eyePos{ 4.0f, 4.0f, 4.0f };
+		Vector3 eyePos{ 3.0f, 3.0f, 3.0f };
 		Vector3 destPos{ 1.105f, 1.5f, 1.105f };
 		Vector3 upVec{ 0.0f, 1.0f, 0.0f };
 		const Matrix view(Matrix::lookat(eyePos, destPos, upVec));
@@ -240,10 +242,17 @@ int main() {
 		// 図形を描画する
 		//shape->draw();
 		//セルオートマトン処理
-		cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
-		marchingTetrahedra.dispatchCompute();
-		//cellularAutomata.drawCell(gridNumX * gridNumY * gridNumZ, vertfragProgramObj);
-		marchingTetrahedra.drawMesh();
+		if (stepCount <= 750) {
+			cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
+		}
+		if (stepCount < 730) {
+			marchingTetrahedra.dispatchCompute();
+			marchingTetrahedra.drawMesh();
+		}
+		else {
+			cellularAutomata.drawCell(gridNumX * gridNumY * gridNumZ, vertfragProgramObj);
+		}
+		
 		// カラーバッファを入れ替える
 		window.swapBuffers();
 
