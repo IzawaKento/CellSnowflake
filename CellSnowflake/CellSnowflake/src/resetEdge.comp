@@ -163,8 +163,8 @@ void main()
 	//resetCrystalEdge
 	if(isFlag(i, ISEDGECRYSTAL) && isFlag(i, ISCRYSTAL)){
 		int isEdge = 0;
-		for(int i = 0; i < aroundCellIDs.length; ++i){
-			if(!isFlag(aroundCellIDs[i], ISCRYSTAL)){
+		for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
+			if(!isFlag(aroundCellIDs[aro_i], ISCRYSTAL)){
 				isEdge = 1;
 				break;
 			}

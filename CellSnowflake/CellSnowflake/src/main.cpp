@@ -217,15 +217,19 @@ int main() {
 		const Matrix view(Matrix::lookat(eyePos, destPos, upVec));
 		// モデルビュー変換行列を求める
 		const Matrix modelview(view * model);
-		// 直交投影変換行列を求める
-		const GLfloat fovy(window.getScale() * 0.01f);
-		const GLfloat aspect(size[0] / size[1]);
-		const Matrix projection(Matrix::perspective(fovy, aspect, 1.0f, 10.0f));
+		// 透視投影変換行列を求める
+		//const GLfloat fovy(window.getScale() * 0.01f);
+		//const GLfloat aspect(size[0] / size[1]);
+		//const Matrix projection(Matrix::perspective(fovy, aspect, 1.0f, 10.0f));
+		//直交投影
+		const GLfloat scale(window.getScale() * 6.0f);
+		const GLfloat w(size[0] / scale), h(size[1] / scale);
+		const Matrix projection(Matrix::orthogonal(-w, w, -h, h, 1.0f, 10.0f));
 
 		//光源を回す
 		const Vector3 transLit = { 0.5, 0.0, 0.0 };
 		const Matrix transMatLit(Matrix::translate(transLit));
-		const Matrix modelMatLit(r * transMatLit);
+		const Matrix modelMatLit(/*r * */transMatLit);
 		Vector4 rotatedLpos = modelMatLit.multiplyVec4(Lpos);
 
 		// uniform 変数に値を設定する
@@ -245,7 +249,7 @@ int main() {
 		if (stepCount <= 750) {
 			cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
 		}
-		if (stepCount < 730) {
+		if (stepCount >= 730) {
 			marchingTetrahedra.dispatchCompute();
 			marchingTetrahedra.drawMesh();
 		}
