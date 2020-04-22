@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <GL/glew.h>
-//#include <GLFW/glfw3.h>
+
 namespace Program {
 	// シェーダオブジェクトのコンパイル結果を表示する
 	// shader: シェーダオブジェクト名

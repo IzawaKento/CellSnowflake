@@ -14,29 +14,11 @@
 #include "CellularAutomata.h"
 #include "Cell.h"
 #include "MarchingTetrahedra.h"
+#include "DebugLog.h"
 
-// 八面体の頂点の位置
-constexpr Vertex octahedronVertex[] =
-{
-	 { 0.0f, 1.0f, 0.0f, 1.0f,  0.2f, 0.2f, 0.2f, 1.0f},
-	 { -1.0f, 0.0f, 0.0f, 1.0f,  0.2f, 0.2f, 0.2f, 1.0f },
-	 { 0.0f, -1.0f, 0.0f, 1.0f,  0.2f, 0.2f, 0.2f, 1.0f },
-	 { 1.0f, 0.0f, 0.0f, 1.0f,  0.2f, 0.2f, 0.2f, 1.0f },
-	 { 0.0f, 1.0f, 0.0f, 1.0f,  0.2f, 0.2f, 0.2f, 1.0f },
-	 { 0.0f, 0.0f, 1.0f, 1.0f,  0.2f, 0.2f, 0.2f, 1.0f },
-	 { 0.0f, -1.0f, 0.0f, 1.0f,  0.2f, 0.2f, 0.2f, 1.0f },
-	 { 0.0f, 0.0f, -1.0f, 1.0f,  0.2f, 0.2f, 0.2f, 1.0f },
-	 { -1.0f, 0.0f, 0.0f, 1.0f,  0.2f, 0.2f, 0.2f, 1.0f },
-	 { 0.0f, 0.0f, 1.0f, 1.0f,  0.2f, 0.2f, 0.2f, 1.0f },
-	 { 1.0f, 0.0f, 0.0f, 1.0f,  0.2f, 0.2f, 0.2f, 1.0f },
-	 { 0.0f, 0.0f, -1.0f, 1.0f,  0.2f, 0.2f, 0.2f, 1.0f }
-};
+//精度より速度重視で
+const float pi = 3.141592653589f;
 
-
-
-//うーん
-const float pi = 3.1415926535f;
-//うーん
 // 水蒸気セルの初期拡散質量
 const float rho = 0.2f;
 
@@ -47,9 +29,6 @@ const int gridNumZ = 70;
 const float cellSizeX = 0.03f;
 const float cellSizeZ = cellSizeX * sin(60.0f * pi / 180.0f);		//√3 / 2
 const float cellSizeY = cellSizeX *1.10013f;						//c : a = 1.10013 : 1
-
-//てすと
-Vertex TestCellVertex[gridNumX * gridNumY * gridNumZ];
 
 int main() {
 	// GLFW を初期化する
@@ -74,23 +53,10 @@ int main() {
 	std::cout << "WORK_GROUP_COUNT" << workgroupCount << std::endl;
 	*/
 
-
 	Window window(720, 960, "CellSnowFlake");
-	
-	//ワークグループ内で起動可能なスレッドの数	1536　少な
-	GLint workgroupInvocations = 0;
-	glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS, &workgroupInvocations);
-	std::cout << "WORK_GROUP_INVOCATIONS " << workgroupInvocations << std::endl;
-	//シェアードメモリの合計サイズ	49152？
-	GLint sharedMemorySize = 0;
-	glGetIntegerv(GL_MAX_COMPUTE_SHARED_MEMORY_SIZE, &sharedMemorySize);
-	std::cout << "SHARED_MEMORY_SIZE " << sharedMemorySize << std::endl;
-	GLint maxGeometryOutputVertices = 0;
-	glGetIntegerv(GL_MAX_GEOMETRY_OUTPUT_VERTICES, &maxGeometryOutputVertices);
-	std::cout << "MAX_GEOMETRY_OUTPUT_VERTICES " << maxGeometryOutputVertices << std::endl;
-	GLint maxGeometryTotalOutputComponents = 0;
-	glGetIntegerv(GL_MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS, &maxGeometryTotalOutputComponents);
-	std::cout << "MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS " << maxGeometryTotalOutputComponents << std::endl;
+	//シングルトン
+	DebugLog::create();
+	DebugLog::get_instance().printMachineInfo();
 
 	// 背景色を指定する
 	glClearColor(0.15f, 0.13f, 0.14f, 1.0f);
@@ -131,20 +97,6 @@ int main() {
 	MarchingTetrahedra marchingTetrahedra(gridNumX,
 		gridNumY, gridNumZ, &cellularAutomata);
 	
-	//const GLint modelviewLoc1(glGetUniformLocation(marchingTetrahedra.getVfProgObj(), "modelview"));
-	//const GLint projectionLoc1(glGetUniformLocation(marchingTetrahedra.getVfProgObj(), "projection"));
-
-	for (int k = 0; k < gridNumY; ++k) {
-		for (int j = 0; j < gridNumZ; ++j) {
-			for (int i = 0; i < gridNumX; ++i) {
-				int num = i + gridNumX * j + k * gridNumX * gridNumZ;
-				TestCellVertex[num].position = cellularAutomata.GetCells()[num].position;
-			}
-		}
-	}
-	//std::unique_ptr<const Shape> shape(new Shape(3, 12, octahedronVertex));
-	std::unique_ptr<const Shape> shape(new Shape(4, gridNumX*gridNumY*gridNumZ, TestCellVertex));
-	
 	//光源データ
 	static constexpr Vector4 Lpos = { 0.0f, 0.0f, 0.0f, 1.0f };
 	static constexpr Vector4 Lamb = { 0.2f, 0.1f, 0.1f };
@@ -158,9 +110,9 @@ int main() {
 	// ウィンドウが開いている間繰り返す
 	while (window.shouldClose() == GL_FALSE)
 	{
-		/*
+		
 		//リプレイ
-		if (glfwGetTime() > 400.0f)
+		if (glfwGetTime() > 30.0f)
 		{
 			std::cout << "RePlay" << std::endl;
 			cellularAutomata.initialize();
@@ -168,7 +120,7 @@ int main() {
 
 			previousTime = glfwGetTime();
 		}
-		*/
+		
 		//1フレームデバッグ
 		//なんか無理やり止める感じ
 		//std::this_thread::sleep_for(std::chrono::milliseconds(250));
@@ -188,10 +140,6 @@ int main() {
 			frameCount = 0;
 			previousTime = currentTime;
 		}
-		
-
-		// シェーダプログラムの使用開始
-		//glUseProgram(vertfragProgramObj);
 
 		// 拡大縮小の変換行列を求める
 		const GLfloat *const size(window.getSize());
@@ -206,8 +154,6 @@ int main() {
 			rAxis));
 		const Matrix model(translation);
 		// ビュー変換行列を求める
-
-		//仮変数
 		/*Vector3 eyePos{ 3.0f, 4.0f, 3.0f };
 		Vector3 destPos{ 3.0f, 0.0f, 3.1f };
 		Vector3 upVec{ 0.0f, 1.0f, 0.0f };*/
@@ -239,23 +185,14 @@ int main() {
 		glUniform3fv(LambLoc, 1, Lamb.data());
 		glUniform3fv(LdiffLoc, 1, Ldiff.data());
 		glUniform3fv(LspecLoc, 1, Lspec.data());
-		//マーチングキューブ
-		//glUniformMatrix4fv(modelviewLoc1, 1, GL_FALSE, modelview.data());
-		//glUniformMatrix4fv(projectionLoc1, 1, GL_FALSE, projection.data());
 
 		// 図形を描画する
-		//shape->draw();
+
 		//セルオートマトン処理
-		if (stepCount <= 750) {
-			cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
-		}
-		if (stepCount >= 730) {
-			marchingTetrahedra.dispatchCompute();
-			marchingTetrahedra.drawMesh();
-		}
-		else {
-			cellularAutomata.drawCell(gridNumX * gridNumY * gridNumZ, vertfragProgramObj);
-		}
+		cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
+		marchingTetrahedra.dispatchCompute();
+		marchingTetrahedra.drawMesh();
+		//cellularAutomata.drawCell(gridNumX * gridNumY * gridNumZ, vertfragProgramObj);
 		
 		// カラーバッファを入れ替える
 		window.swapBuffers();

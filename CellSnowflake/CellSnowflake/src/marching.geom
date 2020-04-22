@@ -11,6 +11,7 @@ layout (triangle_strip, max_vertices = 3) out;
 void main(){
 	for(int i = 0; i < gl_in.length(); ++i){
 		gColor = vIdiff[i];//vColor[i];//vec4(vIdiff[i], 1.0);
+		//gColor = vColor[i];
 		if(vColor[i].a > 0.0){
 			gl_Position = vProjection[i] * vModelview[i] * gl_in[i].gl_Position;
 			EmitVertex();

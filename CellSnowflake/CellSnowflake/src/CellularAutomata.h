@@ -1,5 +1,4 @@
 #pragma once
-#define _USE_MATH_DEFINES			//もしかして自分でPI定義した方が高速？
 #include <cmath>
 #include <array>
 #include <GL/glew.h>
@@ -16,9 +15,6 @@ public:
 		float cellSizeX, float cellSizeZ, float cellSizeY, GLuint vfProgObj);
 	~CellularAutomata();
 
-	void set2RadiusCells(int centerNum, int yOffset);
-	void set3RadiusCells(int centerNum, int yOffset);
-
 	void setInitialCells(int centerNum);
 
 	void copySSBO(GLuint readBuffer, GLuint writeBuffer);
@@ -32,13 +28,13 @@ public:
 	void initialize();
 	
 	//安直やけどいいのか?
-	int getCellNumX(int i) {
+	const int getCellNumX(int i) const {
 		return (i % (mGridNumX * mGridNumZ)) % mGridNumX;
 	}
-	int getCellNumY(int i) {
+	const int getCellNumY(int i) const {
 		return i / (mGridNumX * mGridNumZ);
 	}
-	int getCellNumZ(int i) {
+	const int getCellNumZ(int i) const {
 		return (i % (mGridNumX * mGridNumZ)) / mGridNumX;
 	}
 	const GLuint getSsbo() const{
@@ -63,6 +59,9 @@ private:
 
 	//セルを境界結晶にする
 	void SetEdgeCry(int);
+	//セル初期化時に使用
+	void set2RadiusCells(int centerNum, int yOffset);
+	void set3RadiusCells(int centerNum, int yOffset);
 
 	//セル描画用
 	GLuint vao;

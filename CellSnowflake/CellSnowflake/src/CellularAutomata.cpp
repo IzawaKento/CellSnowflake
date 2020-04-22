@@ -45,23 +45,14 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 		for (int i_z = 0; i_z < gridNumZ; ++i_z) {
 			GLfloat z = i_z * cellSizeZ;
 			float shiftX = (i_z % 2) * 0.5f * cellSizeX;
+			//i_zが奇数なら1, 偶数なら0
 			GLuint zIsOdd = i_z % 2;
 			for (int i_x = 0; i_x < gridNumX; ++i_x) {
 				GLfloat x = i_x * cellSizeX +shiftX;
 				int pointNum = i_x + gridNumX * i_z + i_y * gridNumX * gridNumZ;
 				cells[pointNum].SetPosition(x, y, z);
-				//ここ複雑になってる
+				//zが奇数ならflags |= MZSIODD, そうでないならflags |= 0何もしない
 				cells[pointNum].SetFlagTrue(CellFlags::MZISODD * zIsOdd);
-				
-				/*没、未使用
-				//Zが奇数なら*2+1、偶数なら*2。1との論理積
-				if (getCellNumZ(pointNum) && 0b1) {
-					cells[pointNum].hexMapNum = pointNum * 2 + 1;
-				}
-				else {
-					cells[pointNum].hexMapNum = pointNum * 2;
-				}
-				*/
 
 				cells[pointNum].SetFlagFalse(CellFlags::ISCRYSTAL);		//なくてもいい
 				cells[pointNum].SetFlagFalse(CellFlags::ISEDGECRYSTAL);
@@ -119,6 +110,7 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	glBufferData(GL_SHADER_STORAGE_BUFFER,
 		gridNumX*gridNumY*gridNumZ * sizeof(Cell), cells, GL_DYNAMIC_DRAW);
 
+	//未使用？
 	//アトミックカウンターバッファオブジェクト作成
 	glGenBuffers(1, &acbo);
 	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, acbo);
@@ -219,8 +211,6 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 	//	}
 	//}
 	
-
-	
 	SetEdgeCry(centerCellNum);
 	set2RadiusCells(centerCellNum, 1);
 	set3RadiusCells(centerCellNum, 2);
@@ -228,28 +218,6 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 	set3RadiusCells(centerCellNum, 4);
 	set2RadiusCells(centerCellNum, 5);
 	SetEdgeCry(centerCellNum - tmpY * 6);
-	
-
-	//以下不要
-	////ifはつかってないけどめっちゃくそやと思う
-	//SetEdgeCry((cells[centerCellNum].hexMapNum + gridNumX * 2 + 1) / 2);
-	//SetEdgeCry((cells[centerCellNum].hexMapNum + gridNumX * 2 - 1) / 2);
-	//SetEdgeCry((cells[centerCellNum].hexMapNum - gridNumX * 2 + 1) / 2);
-	//SetEdgeCry((cells[centerCellNum].hexMapNum - gridNumX * 2 - 1) / 2);
-
-	//過去
-	//SetEdgeCry(centerCellNum + gridNumX);
-	//SetEdgeCry(centerCellNum - gridNumX);
-	////なんかできそうやけど凝ったことはしない
-	//int cellNumZ = getCellNumZ(centerCellNum);
-	//if (!(cellNumZ && 0b1)) {
-	//	SetEdgeCry(centerCellNum + gridNumX - 1);
-	//	SetEdgeCry(centerCellNum - gridNumX - 1);
-	//}
-	//else {
-	//	SetEdgeCry(centerCellNum + gridNumX + 1);
-	//	SetEdgeCry(centerCellNum - gridNumX + 1);
-	//}
 }
 
 void CellularAutomata::copySSBO(GLuint readBuffer, GLuint writeBuffer) {

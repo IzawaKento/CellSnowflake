@@ -14,6 +14,7 @@ class Cell
 	int horizontalNeighbourNum;
 	int verticalNeighbourNum;
 	int neighbourNum;
+	float beta;
 };
 
 struct Vertex{

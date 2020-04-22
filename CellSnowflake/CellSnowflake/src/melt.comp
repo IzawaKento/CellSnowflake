@@ -32,6 +32,7 @@ class Cell
 	int horizontalNeighbourNum;
 	int verticalNeighbourNum;
 	int neighbourNum;
+	float beta;
 };
 
 layout(std430, binding = 0) buffer Cells
