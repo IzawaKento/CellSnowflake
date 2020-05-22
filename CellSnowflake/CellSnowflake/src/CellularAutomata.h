@@ -40,6 +40,10 @@ public:
 	const GLuint getSsbo() const{
 		return ssbo;
 	}
+	//glGetUniformLocationのため
+	const GLuint getDiffusion1ComProgObj() const {
+		return diffusion1ComProgObj;
+	}
 
 	//てすと
 	Cell* GetCells() { return cells; }
@@ -73,9 +77,6 @@ private:
 	GLuint tmpSsbo;		//名前これでいいんかなあ
 	//一斉面成長用アトミックカウンターバッファオブジェクト
 	GLuint acbo;
-
-	//マーチングキューブ用ユニフォームバッファ
-	GLuint ubo;
 
 	//vgf
 	const GLuint mvfProgObj;

@@ -63,28 +63,12 @@ void setEdgeBoundary(uint i){
 	setFlagTrue(i, ISEDGEBOUNDARY);
 }
 
-void main()
-{
-	const uint i = gl_WorkGroupID.y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
-		gl_WorkGroupID.z * gl_NumWorkGroups.x +
-		gl_WorkGroupID.x;
-	const uint gridNumX = gl_NumWorkGroups.x, gridNumZ = gl_NumWorkGroups.z;
-	
-	const float colorValue = float(i) / float(gl_NumWorkGroups.x);
-	int zOddNum = int(isFlag(i, MZISODD)) * 2 - 1;	//名前思いつかん
-
-	const uint[8] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX,
-		i + gridNumX + zOddNum, i - gridNumX + zOddNum,
-		i + gridNumX * gridNumZ, i - gridNumX * gridNumZ);
-	
-	//とりあえず色付ける
-	tmpCell[i].color = vec4(0.0, 0.0, 0.0, 1.0);
-
+void setCellColor(uint i){
 	//diffusionMassのみ可視化
 	//tmpCell[i].color = vec4(abs(cell[i].diffusionMass - 0.1) * 30.0, cell[i].boundaryMass, 0.0, 1.0);
 
 	//状態
-	
+	/*
 	if(isFlag(i, ISCRYSTAL)){
 		tmpCell[i].color = vec4(0.0, 0.4, 0.4, 1.0);
 	}
@@ -94,44 +78,6 @@ void main()
 	if(isFlag(i, ISBOUNDARY)){
 		tmpCell[i].color = vec4(0.0, 0.1, 0.0, 0.0);
 	}
-	if(isFlag(i, ISEDGEBOUNDARY)){	//この段階では存在しないのででない
-		tmpCell[i].color = vec4(0.3, 0.3, 0.3, 1.0);
-	}
-	
-	/*
-	//平行隣接結晶数
-	int hNeighbourNum = cell[i].horizontalNeighbourNum;
-	switch(hNeighbourNum){
-		case 0:
-			tmpCell[i].color.rgba = vec4(0.5, 0.5, 0.5, 1.0);
-			break;
-		case 1:
-			tmpCell[i].color.rgba = vec4(1.0, 0.0, 0.0, 1.0);
-			break;
-		case 2:
-			tmpCell[i].color.rgba = vec4(0.0, 1.0, 0.0, 1.0);
-			break;
-		case 3:
-			tmpCell[i].color.rgba = vec4(0.0, 0.0, 1.0, 1.0);
-			break;
-		case 4:
-			tmpCell[i].color.rgba = vec4(1.0, 1.0, 0.0, 1.0);
-			break;
-		case 5:
-			tmpCell[i].color.rgba = vec4(1.0, 0.0, 1.0, 1.0);
-			break;
-		case 6:
-			tmpCell[i].color.rgba = vec4(0.0, 1.0, 1.0, 1.0);
-			break;
-	}
-	*/
-	
-
-	//隣接面方向ベクトル確認
-	//tmpCell[i].color = vec4((normalize(cell[i].neighbourSurfaceDir) + vec3(1,1,1)) * 0.5, 1.0);
-	/*
-	float neighSurDirLen = length(cell[i].neighbourSurfaceDir);
-	tmpCell[i].color = vec4(0.0, neighSurDirLen, 0.0, 1.0);
 	*/
 	
 	//座標確認
@@ -154,11 +100,32 @@ void main()
 	}
 	*/
 	//端っこを消す
-	
+	/*
 	if(isFlag(i, ISENDOFCELLS)){
 		tmpCell[i].color = vec4(0.0, 0.0, 0.0, 0.0);
 	}
+	*/
+}
 
+void main()
+{
+	const uint i = gl_WorkGroupID.y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
+		gl_WorkGroupID.z * gl_NumWorkGroups.x +
+		gl_WorkGroupID.x;
+	const uint gridNumX = gl_NumWorkGroups.x, gridNumZ = gl_NumWorkGroups.z;
+
+	int zOddNum = int(isFlag(i, MZISODD)) * 2 - 1;	//名前思いつかん
+
+	const uint[8] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX,
+		i + gridNumX + zOddNum, i - gridNumX + zOddNum,
+		i + gridNumX * gridNumZ, i - gridNumX * gridNumZ);
+
+	//色デバッグ
+	setCellColor(i);
+	//気体を消す
+	if(isFlag(i, ISBOUNDARY)){
+		tmpCell[i].color = vec4(0.0, 0.0, 0.0, 0.0);
+	}
 	//resetCrystalEdge
 	if(isFlag(i, ISEDGECRYSTAL) && isFlag(i, ISCRYSTAL)){
 		int isEdge = 0;

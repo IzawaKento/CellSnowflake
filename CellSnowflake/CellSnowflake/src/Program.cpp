@@ -163,6 +163,8 @@ GLuint Program::createProgramObj(const char *vsrc, const char *gsrc, const char 
 	glBindAttribLocation(program, 0, "position");
 	glBindAttribLocation(program, 1, "color");
 	glBindAttribLocation(program, 2, "flags");
+	glBindAttribLocation(program, 3, "neighbourSurfaceDir");
+	glBindAttribLocation(program, 4, "vertexNormal");
 	//フラグメントシェーダーからの出力先を指定
 	glBindFragDataLocation(program, 0, "fragment");
 	// プログラムオブジェクトをリンクする

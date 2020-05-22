@@ -48,15 +48,6 @@ void setFlagFalse(uint i, uint flagID) {
 	tmpCell[i].flags &= ~flagID;
 }
 
-void setEdgeCry(uint i){
-	setFlagTrue(i, ISCRYSTAL);
-	setFlagTrue(i, ISEDGECRYSTAL);
-	setFlagFalse(i, ISBOUNDARY);
-	setFlagFalse(i, ISEDGEBOUNDARY);
-	tmpCell[i].diffusionMass = 0.0;
-	tmpCell[i].boundaryMass = 1.0;
-}
-
 void setEdgeBoundary(uint i){
 	setFlagFalse(i, ISBOUNDARY);
 	setFlagTrue(i, ISEDGEBOUNDARY);
@@ -78,25 +69,7 @@ void main()
 	//set_boundary
 	//EDGECRYSTALの周囲の気体をEDGEBOUNDARYに変える
 	if(isFlag(i, ISEDGECRYSTAL)){
-		/*
-		//新 周囲２０マス
-		for(int j = -1; j < 2; ++j){
-			for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
-				uint id = aroundCellIDs[aro_i] + j * gridNumX * gridNumZ;
-				if(!isFlag(id, ISCRYSTAL) && !isFlag(id, ISEDGEBOUNDARY)){
-					setEdgeBoundary(id);
-				}
-			}
-		}
-		if(!isFlag(i + gridNumX * gridNumZ, ISCRYSTAL) && !isFlag(i + gridNumX * gridNumZ, ISEDGEBOUNDARY)){
-			setEdgeBoundary(i + gridNumX * gridNumZ);
-		}
-		if(!isFlag(i - gridNumX * gridNumZ, ISCRYSTAL) && !isFlag(i - gridNumX * gridNumZ, ISEDGEBOUNDARY)){
-			setEdgeBoundary(i - gridNumX * gridNumZ);
-		}
-		*/
 		
-		//旧
 		for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
 			uint id = aroundCellIDs[aro_i];
 			if(!isFlag(id, ISCRYSTAL) && !isFlag(id, ISEDGEBOUNDARY)){

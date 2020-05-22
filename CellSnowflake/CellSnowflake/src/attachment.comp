@@ -129,11 +129,6 @@ void setEdgeCry(uint i){
 	//tmpCell[i].boundaryMass = 1.0;	//なった時点で閾値より高いし確かにいらんか
 }
 
-//２次元座標から乱数
-float random (vec2 st) {
-    return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
-}
-
 uint coord2cellID(int x, int y, int z){
 	uint id = y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
 		z * gl_NumWorkGroups.x + x;
@@ -148,81 +143,15 @@ void main(){
 
 	if(isFlag(i, ISEDGEBOUNDARY) && !isFlag(i, ISENDOFCELLS)){
 
-		const int h = cell[i].horizontalNeighbourNum;
-		const int v = cell[i].verticalNeighbourNum;
-		const int hm = min(3, h);
-		const int vm = min(1, v);
-
 		float beta = 999;
 
-		/*
-		if(hm == 0 && vm == 1){
-			beta = beta01;
-			//tmpCell[i].color = vec4(0.0, 0.3, 0.0, 1.0);
-		}else if(hm == 1 && vm == 0){
-			beta = beta10;
-			//tmpCell[i].color = vec4(0.3, 0.0, 0.0, 1.0);
-		}else if(hm == 1 && vm == 1){
-			beta = beta11;
-			//tmpCell[i].color = vec4(0.3, 0.3, 0.0, 1.0);
-		}else if(hm == 2 && vm == 0){
-			beta = beta20;
-			//tmpCell[i].color = vec4(0.6, 0.0, 0.0, 1.0);
-		}else if(hm == 2 && vm == 1){
-			beta = beta21;
-			//tmpCell[i].color = vec4(0.6, 0.3, 0.0, 1.0);
-		}else if(hm == 3 && vm == 0){
-			beta = beta30;
-			//tmpCell[i].color = vec4(0.9, 0.0, 0.0, 1.0);
-		}else if(hm == 3 && vm == 1){
-			beta = beta31;
-			//tmpCell[i].color = vec4(0.9, 0.3, 0.0, 1.0);
-		}else{
-			beta = 999;
-			//tmpCell[i].color = vec4(0.9, 0.9, 0.9, 1.0);
-		}
-		
-		//付け足し　へこみの閾値を下げる
-		ivec3 fixedSliNeiNums
-				= cell[i].slicedNeighbourNums.x > cell[i].slicedNeighbourNums.z 
-				? cell[i].slicedNeighbourNums.xyz : cell[i].slicedNeighbourNums.zyx;
-		if(fixedSliNeiNums.x > 4 && fixedSliNeiNums.z > 1){
-			beta = 0.1;
-			//tmpCell[i].color = vec4(0.9, 0.9, 0.0, 1.0);
-		}
-		
-		if(cell[i].boundaryMass >= beta || (h >= 4 && v >= 1)){
-			setEdgeCry(i);
-		}
-		*/
-
-		
 		//上中下による分岐
 		//何回も参照する
 		ivec3 tmpSliNeiNums = cell[i].slicedNeighbourNums;
 		//上下統一のため下が大きい場合反転
 		ivec3 fixedSliNeiNums
 				= tmpSliNeiNums.x > tmpSliNeiNums.z ? tmpSliNeiNums.xyz : tmpSliNeiNums.zyx;
-		/*
-		//所属箇所判定191205
-		if(fixedSliNeiNums.x == 1 && fixedSliNeiNums.y == 0 && fixedSliNeiNums.y == 0){
-			beta = 0.8;
-			tmpCell[i].color = vec4(0.5, 0.0, 0.5, 1.0);
-		}else if(fixedSliNeiNums.x<6 && fixedSliNeiNums.x>3 && fixedSliNeiNums.y > 0){
-			beta = 1.5;
-			tmpCell[i].color = vec4(0.5, 1.0, 0.5, 1.0);
-		}else if(fixedSliNeiNums.x==2 && fixedSliNeiNums.y==2 && fixedSliNeiNums.z==2){
-			beta = 0.9;
-			tmpCell[i].color = vec4(0.7, 0.0, 0.7, 1.0);
-		}else if(fixedSliNeiNums.x==1 && fixedSliNeiNums.y==1 && fixedSliNeiNums.z==1){
-			beta = 3.0;
-			tmpCell[i].color = vec4(0.2, 0.6, 0.7, 1.0);
-		}else{
-			beta = 115.0;
-			tmpCell[i].color = vec4(1.0, 0.0, 0.5, 1.0);
-		}
-		*/
-		
+
 		//所属箇所判定191130改
 		if(fixedSliNeiNums.x > 4 && fixedSliNeiNums.y > 3){								//穴を埋める
 			beta = 0.0;
@@ -248,94 +177,11 @@ void main(){
 			beta = 6.0;	//カイネティクス的にくっつきにくい
 		}
 		
-		/*
-		//所属箇所判定191212
-		if(fixedSliNeiNums.x == 1 && fixedSliNeiNums.y == 0 && fixedSliNeiNums.z == 0){
-			beta = 2.0;
-			tmpCell[i].color = vec4(0.5, 0.5, 1.0, 1.0);
-		}else if(fixedSliNeiNums.x > 3 && fixedSliNeiNums.y > 0 && fixedSliNeiNums.z > 0){//でっぱりの周りの閾値を下げる
-			beta = 0.2;
-			tmpCell[i].color = vec4(0.5, 1.0, 0.5, 1.0);
-		}else{
-			tmpCell[i].color = vec4(0.0, 0.0, cell[i].boundaryMass / 2.6, 1.0);
-			beta = 2.6;
-		}
-		*/
-		/*
-		//気まぐれで結晶化0.962
-		if(random(vec2(i, i)) > 0.99){
-			beta = 0.0;
-			tmpCell[i].color = vec4(0.9, 0.1, 0.1, 1.0);
-		}
-		*/
-		/*
-		//気まぐれで結晶化
-		if(i == coord2cellID(35, 75, 33)
-			|| i == coord2cellID(35, 72, 34)
-			){
-			beta = 0.0;
-			tmpCell[i].color = vec4(1.0, 1.0, 1.0, 1.0);
-		}
-		*/
-		
-		//旧所属箇所判定（くそだけど）
-		/*
-		if(fixedSliNeiNums.x == 0){
-			beta = 5.0;
-		}else if(fixedSliNeiNums.z > 3 || fixedSliNeiNums.y > 3){
-			beta = 0.0;																//埋め
-			tmpCell[i].color = vec4(0.3, 0.3, 0.3, 1.0);
-		}else if(fixedSliNeiNums.z > 0){
-			if(fixedSliNeiNums.y == 1 || fixedSliNeiNums.z == 1){
-				beta =  fixedSliNeiNums.y == 1 && fixedSliNeiNums.z == 1 && fixedSliNeiNums.x != 1 ?
-					5.0 : 5.0;	//頂点付近:垂角薄赤
-				tmpCell[i].color = fixedSliNeiNums.y == 1 && fixedSliNeiNums.z == 1 && fixedSliNeiNums.x != 1 ?
-						vec4(0.2, 0.2, 0.2, 1.0) : vec4(1.0, 0.5, 0.5, 1.0);
-			}else{
-				beta = 5.0;	//垂面薄緑
-				tmpCell[i].color = vec4(0.5, 1.0, 0.5, 1.0);
-			}
-			
-		}else{
-			if(fixedSliNeiNums.y == 0){
-				if(fixedSliNeiNums.x == 1){
-					beta = cell[i].verticalNeighbourNum > 0 ? 5.0 : 4.0;			//頂点赤:斜め白
-					tmpCell[i].color = cell[i].verticalNeighbourNum > 0 ?
-						vec4(1.0, 0.0, 0.0, 1.0) : vec4(0.8, 0.8, 0.8, 1.0);
-				}else{
-					beta = 5.0;														//平面緑
-					tmpCell[i].color = vec4(0.0, 1.0, 0.0, 1.0);
-				}
-				
-				
-			}else{
-				if(fixedSliNeiNums.x > 1 && fixedSliNeiNums.y > 1){
-					beta = fixedSliNeiNums.x > 4 ? 1.0 : 5.0;						//角面紫:斜面水色
-					
-					tmpCell[i].color = fixedSliNeiNums.x > 4 ?
-						vec4(1.0, 0.0, 1.0, 1.0) : vec4(0.0, 1.0, 1.0, 1.0);
-					
-				}else{
-					beta = fixedSliNeiNums.x > 3 ? 5.0 : 5.0;						//斜角黄:角青
-					
-					tmpCell[i].color = fixedSliNeiNums.x > 3 ?
-						vec4(1.0, 1.0, 0.0, 1.0) : vec4(0.0, 0.0, 1.0, 1.0);
-					
-				}
-			}
-
-		}
-		*/
-
 		if(cell[i].boundaryMass >= beta){
 			setEdgeCry(i);
 		}
 		
 		tmpCell[i].beta = beta;
 
-		if(atomicCounter(growCellCounter) > 0u){
-			tmpCell[i].color += vec4(0.1, 0.1, 0.1, 0.0);
-			//return;
-		}
 	}
 }

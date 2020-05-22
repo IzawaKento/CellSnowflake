@@ -50,11 +50,6 @@ layout(std430, binding = 7) buffer TriangleConnectionTables{
 	int triangleConnectionTable[4096];	//[256][16]
 };
 
-
-layout(std140) uniform TriangleConnectionTableU{
-	int triangleConnectionTableU[4096];
-};
-
 //後でユニフォームに
 //エッジ番号からローカル頂点番号
 const int edgeConnection[12][2] =
@@ -202,13 +197,6 @@ void main(){
 			vertex[wgi*12 + iEdge].position = edgeVertPos[iEdge];
 			//TESTO
 			//vertex[wgi*12 + iEdge].color = edgeVertPos[iEdge];
-			/*
-			vec3 v3 = vec3(float(triangleConnectionTableU[16]) * 0.1,
-				float(triangleConnectionTableU[17])* 0.1,
-				float(triangleConnectionTableU[18]) * 0.1
-			);
-			vertex[wgi*12 + iEdge].color = vec4(v3, 1.0);
-			*/
 		}
 	}
 

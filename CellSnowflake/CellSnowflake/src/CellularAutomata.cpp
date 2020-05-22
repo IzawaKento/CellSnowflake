@@ -115,15 +115,6 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	glGenBuffers(1, &acbo);
 	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, acbo);
 	glBufferData(GL_ATOMIC_COUNTER_BUFFER, sizeof(GLuint), nullptr, GL_DYNAMIC_DRAW);
-
-	//マーチングキューブ用
-	glGenBuffers(1, &ubo);
-	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(TriangleConnectionTable), &tct, GL_STATIC_DRAW);
-	//ユニフォームブロックの番号を取得
-	GLuint uniformBlockIndex0 = glGetUniformBlockIndex(mvfProgObj, "TriangleConnectionTable");
-	//その番号に独自の番号を当てる
-	glUniformBlockBinding(mvfProgObj, uniformBlockIndex0, 0);
 }
 
 CellularAutomata::~CellularAutomata() {
@@ -134,7 +125,6 @@ CellularAutomata::~CellularAutomata() {
 	glDeleteBuffers(1, &tmpSsbo);
 	//アトミックカウンター削除
 	glDeleteBuffers(1, &acbo);
-	glDeleteBuffers(1, &ubo);
 
 }
 
@@ -345,8 +335,7 @@ void CellularAutomata::drawCell(int count, GLuint vfProgObj) {
 
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, ssbo);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 0, ubo);
-	glUseProgram(vfProgObj);
+	glUseProgram(mvfProgObj);
 	glDrawArrays(GL_POINTS, 0, count);
 }
 

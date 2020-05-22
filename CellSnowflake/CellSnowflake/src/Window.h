@@ -1,6 +1,7 @@
 #pragma once
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <iostream>
 
 class Window {
 public:
@@ -47,7 +48,9 @@ public:
 		if (instance != NULL)
 		{
 			// キーの状態を保存する
+			instance->prevFrameKeyStatus = instance->keyStatus;
 			instance->keyStatus = action;
+			std::cout << instance->keyStatus << " " << instance->prevFrameKeyStatus << std::endl;
 			//Qが押されたら
 			if (key == GLFW_KEY_Q && action == GLFW_PRESS) {
 
@@ -59,6 +62,10 @@ public:
 	GLfloat getScale() const { return scale; }
 	const GLfloat* getLocation() const { return location; }
 
+	//パラメータ用
+	const bool isMC() const { return isMarchingCubes; }
+	const GLfloat getRho() const { return rho; }
+
 private:
 	GLFWwindow *const window;
 
@@ -69,6 +76,11 @@ private:
 	GLfloat location[2];
 
 	int keyStatus;
+	int prevFrameKeyStatus;
 
+	//パラメータ用
+	//描画切替
+	bool isMarchingCubes = 0;
 
+	GLfloat rho;
 };

@@ -1,5 +1,7 @@
 #version 460 core
 
+uniform float rho;
+
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
 //フラグの代わり.....
@@ -66,16 +68,14 @@ void main(){
 	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX,
 		i + gridNumX + zOddNum, i - gridNumX + zOddNum);
 	
-	//変化ないのでとりあえず没
 	//とりあえず自分の周りにでっぱりがあったらアトミックカウンタ+1
 	if(isFlag(i, ISEDGEBOUNDARY) && !isFlag(i, ISENDOFCELLS)){
 		ivec3 tmpSliNeiNums = cell[i].slicedNeighbourNums;
 		ivec3 fixedSliNeiNums
 			= tmpSliNeiNums.x > tmpSliNeiNums.z ? tmpSliNeiNums.xyz : tmpSliNeiNums.zyx;
 		if(fixedSliNeiNums.y > 2 || (fixedSliNeiNums.x > 3 && fixedSliNeiNums.y > 0 && fixedSliNeiNums.z > 0)){
-			//atomicCounterIncrement(growCellCounter);
+			atomicCounterIncrement(growCellCounter);
 		}
-
 	}
 	
 	//面成長中は拡散処理をスキップ
@@ -87,34 +87,9 @@ void main(){
 	if(!isFlag(i, ISCRYSTAL) && !isFlag(i, ISENDOFCELLS)){		//気体であり端っこでない
 		//乱数の決定
 		float ran = random(vec2(i+111, i));
-		const float gamma = 0.99;
+		const float gamma = 0.5;
 
 		float tmpDiffusionMass = cell[i].diffusionMass;
-		/*
-		//旧拡散
-		//水平
-		float horiDiffMass = 0.0;
-		horiDiffMass = cell[i].diffusionMass +
-			cell[aroundCellIDs[0]].diffusionMass + 
-			cell[aroundCellIDs[1]].diffusionMass + 
-			cell[aroundCellIDs[2]].diffusionMass + 
-			cell[aroundCellIDs[3]].diffusionMass + 
-			cell[aroundCellIDs[4]].diffusionMass + 
-			cell[aroundCellIDs[5]].diffusionMass;
-		horiDiffMass /= 7.0;
-		//垂直
-		float verDiffMass = 0.0;
-		verDiffMass += cell[i + gridNumX * gridNumZ].diffusionMass +
-			cell[i - gridNumX * gridNumZ].diffusionMass;	//どうも足すだけ
-		
-		//拡散質量計算　水平4/7 垂直 3/7 (↓の式では垂直の２で割るのを含めている)
-		//なぜか垂直の割合を増やすと水平方向の成長が進む
-		tmpDiffusionMass = horiDiffMass * 4.0 / 7.0 + verDiffMass * 3.0 / 14.0;
-		
-		//垂直水平関係なく拡散
-		//tmpDiffusionMass = (horiDiffMass + verDiffMass) / 9.0;
-		*/
-		
 		
 		//周囲２０マスで拡散　簡単のため垂直:水平 = 1:1とする
 		uint id;
@@ -139,19 +114,10 @@ void main(){
 		tmpDiffusionMass += cell[i+gridNumX*gridNumZ].diffusionMass * tmpValueA;
 		tmpDiffusionMass += cell[i-gridNumX*gridNumZ].diffusionMass * tmpValueA;
 		
-		tmpDiffusionMass /= 21.0;// *= 0.05;	//21で割る
+		tmpDiffusionMass /= 21.0;	//21で割る
 
 		//ノイズ完成 gamma0.5ぐらいがいい
 		tmpDiffusionMass = (1.0 - gamma * ran) * tmpDiffusionMass + (gamma * ran) * cell[i].diffusionMass;
-		
-		
-		//元論文の実装。うまくいかん
-		//tmpDiffusionMass *= 1.0 + 0.1 * (step(0.515, (random(vec2(i, i)) )) * 2 - 1);
-		
-		//tmpDiffusionMass *= 1.0 + 0.2 * ((int(i) % 2) * 2 - 1);
-
-		//これもなんか惜しい感じ
-		//tmpDiffusionMass *= (1.0 - random(vec2(i+97, i)) * 0.05);
 
 		tmpCell[i].diffusionMass = tmpDiffusionMass;
 	}

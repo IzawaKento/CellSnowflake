@@ -11,7 +11,7 @@ const uint MZISODD = 16;	//セル番号のZ値が奇数である
 const uint ISENDOFCELLS = 32;
 
 //パラメータ
-//水晶は準液体相がないので0.0に
+//水晶は準液体相がないので0.0に←いや、境界質量の増える割合
 const float kappa01 = 0.1, kappa10 = 0.1, kappa11 = 0.1, 
 	kappa20 = 0.1, kappa21 = 0.1, kappa30 = 0.1, kappa31 = 0.1;
 
@@ -61,6 +61,7 @@ uint coord2cellID(int x, int y, int z){
 }
 
 void main(){
+	//でっぱりがあったら更新しない
 	if(atomicCounter(growCellCounter) > 0u){
 		return;
 	}
@@ -99,53 +100,13 @@ void main(){
 		}
 		*/
 
-		/*
-		//適当にランダム性を入れてみる
-		float ran = random(vec2(i, i)) * 0.1;
-		//tmpCell[i].color = vec4(vec3(ran), 1.0);
-		kappa += ran;
-		*/
-		/*
-		//気まぐれで結晶化
-		if(i == coord2cellID(36, 75, 34)){
-			kappa = 0.0;
-			tmpCell[i].color = vec4(1.0, 1.0, 1.0, 1.0);
-		}
-		*/
-
-		/*
-		//てすと周囲のセル状況に応じて凍結具合を変えてみる
-		ivec3 tmpSliNeiNums = cell[i].slicedNeighbourNums;
-		ivec3 fixedSliNeiNums
-			 = tmpSliNeiNums.x > tmpSliNeiNums.z ? tmpSliNeiNums.xyz : tmpSliNeiNums.zyx;
-		if(fixedSliNeiNums.x == 0){
-			kappa = 1.0;
-		}
-		else if(fixedSliNeiNums.z > 3 || fixedSliNeiNums.y > 3){
-			kappa = 0.0;																//埋め
-		}else if(fixedSliNeiNums.z > 0){
-			kappa = fixedSliNeiNums.y == 1 || fixedSliNeiNums.z == 1 ? 0.8 : 0.1;	//垂角薄赤:垂面薄緑
-		}else{
-			if(fixedSliNeiNums.y == 0){
-				kappa = fixedSliNeiNums.x == 1 ? 0.1 : 0.4;							//頂点赤:平面緑
-			}else{
-				if(fixedSliNeiNums.x > 1 && fixedSliNeiNums.y > 1){
-					kappa = fixedSliNeiNums.x > 4 ? 0.1 : 0.1;						//角面紫:斜面水色
-				}else{
-					kappa = fixedSliNeiNums.x > 3 ? 0.3 : 0.0;						//斜角黄:角青
-				}
-			}
-
-		}
-		*/
-
 		float tmpBoundaryMass = cell[i].boundaryMass + (1 - kappa) * cell[i].diffusionMass;
 		float tmpDiffusionMass = kappa * cell[i].diffusionMass;
 
 		tmpCell[i].diffusionMass = tmpDiffusionMass;
 		tmpCell[i].boundaryMass = tmpBoundaryMass;
 
-		tmpCell[i].color = vec4(kappa, 0.0, kappa, 1.0);
-
+		tmpCell[i].color = vec4(tmpBoundaryMass, 0.0, tmpBoundaryMass, 1.0);
+		
 	}
 }

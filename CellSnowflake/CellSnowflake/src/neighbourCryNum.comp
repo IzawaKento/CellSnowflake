@@ -41,34 +41,6 @@ layout(std430, binding = 1) buffer tmpCells
 bool isFlag(uint i, uint flagID) {
 	return ((cell[i].flags & flagID) != 0);
 }
-void setFlagTrue(uint i, uint flagID) {
-	tmpCell[i].flags |= flagID;
-}
-void setFlagFalse(uint i, uint flagID) {
-	tmpCell[i].flags &= ~flagID;
-}
-
-void setEdgeCry(uint i){
-	setFlagTrue(i, ISCRYSTAL);
-	setFlagTrue(i, ISEDGECRYSTAL);
-	setFlagFalse(i, ISBOUNDARY);
-	setFlagFalse(i, ISEDGEBOUNDARY);
-	tmpCell[i].diffusionMass = 0.0;
-	tmpCell[i].boundaryMass = 1.0;
-}
-
-void setEdgeBoundary(uint i){
-	setFlagFalse(i, ISBOUNDARY);
-	setFlagTrue(i, ISEDGEBOUNDARY);
-}
-
-vec3 getCellCoordinate(uint cellID, uint gridNumX, uint gridNumZ){
-	uint y = cellID / (gridNumX * gridNumZ);
-	uint a = cellID % (gridNumX * gridNumZ);
-	uint x = a % gridNumX;
-	uint z = a / gridNumX;
-	return vec3(x,y,z);
-}
 
 void main()
 {
@@ -82,62 +54,6 @@ void main()
 
 	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX,	
 		i + gridNumX + zOddNum, i - gridNumX + zOddNum);
-	
-	const vec3[6] baseSurfaceDir = vec3[](
-		vec3(1.0, 0.0, 0.0),
-		vec3(-1.0, 0.0, 0.0),
-		vec3(-zOddNum * sin(radians(30.0)), 0.0, cos(radians(30.0))),
-		vec3(-zOddNum * sin(radians(30.0)), 0.0, -cos(radians(30.0))),
-		vec3(zOddNum * sin(radians(30.0)), 0.0, cos(radians(30.0))),
-		vec3(zOddNum * sin(radians(30.0)), 0.0, -cos(radians(30.0)))
-	);
-	/*
-	//旧隣接結晶数格納
-	if(isFlag(i, ISEDGEBOUNDARY)){
-		//水平
-		for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){				//iにしたいけどめんどい
-			uint id = aroundCellIDs[aro_i];
-			if(isFlag(id, ISCRYSTAL)){
-				tmpCell[i].horizontalNeighbourNum++;
-				
-			}
-		}
-		//垂直
-		if(isFlag(i + gridNumX * gridNumZ, ISCRYSTAL)){
-			tmpCell[i].verticalNeighbourNum++;
-		}
-		if(isFlag(i - gridNumX * gridNumZ, ISCRYSTAL)){
-			tmpCell[i].verticalNeighbourNum++;
-		}
-	}
-	*/
-	/*
-	//多分没（泣） 周囲の結晶の平均の向きのベクトルを作る
-	vec3 tmpNeighSurDir = vec3(0,0,0);
-	if(isFlag(i, ISEDGEBOUNDARY)){
-		uint id;
-		for(int j = -1; j < 2; ++j){
-			for(int aro_i = 0; aro_i < aroundCellIDs.length; ++aro_i){
-				id = aroundCellIDs[aro_i] + j * gridNumX * gridNumZ;
-				if(isFlag(id, ISCRYSTAL)){
-					tmpCell[i].neighbourNum++;	//隣接数を格納する
-					//ベクトルを足す
-					tmpNeighSurDir += normalize(baseSurfaceDir[aro_i] + vec3(0.0, float(j), 0.0));
-				}
-			}
-		}
-		//真上真下
-		if(isFlag(i + gridNumX * gridNumZ, ISCRYSTAL)){
-			tmpNeighSurDir += vec3(0.0, 1.0, 0.0);
-		}
-		if(isFlag(i - gridNumX * gridNumZ, ISCRYSTAL)){
-			tmpNeighSurDir += vec3(0.0, -1.0, 0.0);
-		}
-
-		//ベクトル反転
-		tmpCell[i].neighbourSurfaceDir = tmpNeighSurDir * -1;
-	}
-	*/
 
 	//周囲水平３層それぞれの結晶数を格納（アトミックカウンター使うと便利なのかなあ）
 	ivec3 tmpSlicedNeighNums = ivec3(0,0,0);
@@ -160,9 +76,6 @@ void main()
 		}
 		tmpCell[i].slicedNeighbourNums = tmpSlicedNeighNums;
 	}
-
-
-
 }
 
 

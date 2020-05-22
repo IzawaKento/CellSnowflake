@@ -61,24 +61,19 @@ MarchingTetrahedra::MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, triangleConnectionTableBuffer);
 	glBufferData(GL_SHADER_STORAGE_BUFFER,
 		4096 * sizeof(GLint), triangleConnectionTable, GL_STATIC_DRAW);	//256 * (3 * 5 + 1)
-	
 
-	//ルックアップテーブル(巨大なため)
-	glGenBuffers(1, &ubo);
-	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(Aligned16IntArray) * 4096, &triangleConnectionTableA, GL_STATIC_DRAW);
-	//ユニフォームブロックの番号を取得
-	GLuint uniformBlockIndex0 = glGetUniformBlockIndex(compProgObj, "TriangleConnectionTableU");
-	//その番号に独自の番号を当てる
-	glUniformBlockBinding(compProgObj, uniformBlockIndex0, 0);
+	//Unifrom変数に値を入れる
+	glUseProgram(vfProgObj);
+	glUniform4fv(litposLoc, 1, Lpos.data());
+	std::cout << litposLoc << "P1" << std::endl;
 }
 
 MarchingTetrahedra::~MarchingTetrahedra() {
 	glDeleteVertexArrays(1, &vao);
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ibo);
-	glDeleteBuffers(1, &tetraBuffer);
-	glDeleteBuffers(1, &vertexCounterBuffer);
+	//glDeleteBuffers(1, &tetraBuffer);
+	//glDeleteBuffers(1, &vertexCounterBuffer);
 	glDeleteBuffers(1, &triangleConnectionTableBuffer);
 	delete[] v;
 }

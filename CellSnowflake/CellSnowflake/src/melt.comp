@@ -96,6 +96,7 @@ void main(){
 			tmpCell[i].diffusionMass = tmpDiffusionMass;
 			tmpCell[i].boundaryMass = tmpBoundaryMass;
 		}
+
 		//resetBoundary
 		tmpCell[i].horizontalNeighbourNum = 0;
 		tmpCell[i].verticalNeighbourNum = 0;

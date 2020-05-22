@@ -3,8 +3,6 @@
 in vec4 vColor[];
 in uint vFlags[];
 in vec3 vNeighSurDir[];
-in vec3 vIdiff[];
-in vec3 vIspec[];
 in mat4 vModelview[];
 in mat4 vProjection[];
 out vec4 gColor;
@@ -46,7 +44,7 @@ void main()
 	//そもそもvFlagsの値で判断したいけどうまくいかん（泣）
 	for(int i = 0; i < gl_in.length(); ++i){
 
-		gColor = vColor[i];//vec4(vIdiff[i]+vIspec[i], 1.0);
+		gColor = vColor[i];
 		
 		//gColor[3] = 0.9999;		//0.0~0.999.. これを入れると動く、訳が分からない
 		//gColor[1] = 0.5555;		//0.01~1.0    これを入れても動く、訳が分からない

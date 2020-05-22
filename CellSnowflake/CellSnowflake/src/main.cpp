@@ -20,7 +20,7 @@
 const float pi = 3.141592653589f;
 
 // 水蒸気セルの初期拡散質量
-const float rho = 0.2f;
+const float initRho = 0.2f;
 
 const int gridNumX = 70;
 const int gridNumY = 100;
@@ -80,28 +80,19 @@ int main() {
 	glEnable(GL_DEPTH_TEST);*/
 
 	//// シェーダのソースファイルを読み込んでプログラムオブジェクトを作成する
-	//Program program("src\\point.vert", "src\\point.frag");
 	GLuint vertfragProgramObj = Program::loadProgramObj("src\\point.vert", "src\\point.geom", "src\\point.frag");
-
+	
 	// uniform 変数の場所を取得する
 	const GLint modelviewLoc(glGetUniformLocation(vertfragProgramObj, "modelview"));
 	const GLint projectionLoc(glGetUniformLocation(vertfragProgramObj, "projection"));
-	const GLint LposLoc(glGetUniformLocation(vertfragProgramObj, "Lpos"));
-	const GLint LambLoc(glGetUniformLocation(vertfragProgramObj, "Lamb"));
-	const GLint LdiffLoc(glGetUniformLocation(vertfragProgramObj, "Ldiff"));
-	const GLint LspecLoc(glGetUniformLocation(vertfragProgramObj, "Lspec"));
 
-	CellularAutomata cellularAutomata(rho, 
+	CellularAutomata cellularAutomata(initRho,
 		gridNumX, gridNumY, gridNumZ, cellSizeX, cellSizeZ, cellSizeY, vertfragProgramObj);
-	
+	//パラメータ用
+	//const GLint rhoLoc = glGetUniformLocation(cellularAutomata.getDiffusion1ComProgObj(), "rho");
+
 	MarchingTetrahedra marchingTetrahedra(gridNumX,
 		gridNumY, gridNumZ, &cellularAutomata);
-	
-	//光源データ
-	static constexpr Vector4 Lpos = { 0.0f, 0.0f, 0.0f, 1.0f };
-	static constexpr Vector4 Lamb = { 0.2f, 0.1f, 0.1f };
-	static constexpr Vector4 Ldiff = { 1.0f, 0.5f, 0.5f };
-	static constexpr Vector4 Lspec = { 1.0f, 0.5f, 0.5f };
 
 	//FPS表示用
 	double previousTime = glfwGetTime();
@@ -172,27 +163,22 @@ int main() {
 		const GLfloat w(size[0] / scale), h(size[1] / scale);
 		const Matrix projection(Matrix::orthogonal(-w, w, -h, h, 1.0f, 10.0f));
 
-		//光源を回す
-		const Vector3 transLit = { 0.5, 0.0, 0.0 };
-		const Matrix transMatLit(Matrix::translate(transLit));
-		const Matrix modelMatLit(/*r * */transMatLit);
-		Vector4 rotatedLpos = modelMatLit.multiplyVec4(Lpos);
-
 		// uniform 変数に値を設定する
 		glUniformMatrix4fv(modelviewLoc, 1, GL_FALSE, modelview.data());
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, projection.data());
-		glUniform4fv(LposLoc, 1, rotatedLpos.data());
-		glUniform3fv(LambLoc, 1, Lamb.data());
-		glUniform3fv(LdiffLoc, 1, Ldiff.data());
-		glUniform3fv(LspecLoc, 1, Lspec.data());
+		//glUniform1f(rhoLoc, 1.0f);
 
 		// 図形を描画する
 
 		//セルオートマトン処理
 		cellularAutomata.DispatchCompute(gridNumX, gridNumY, gridNumZ);
-		marchingTetrahedra.dispatchCompute();
-		marchingTetrahedra.drawMesh();
-		//cellularAutomata.drawCell(gridNumX * gridNumY * gridNumZ, vertfragProgramObj);
+		if (window.isMC()) {
+			marchingTetrahedra.dispatchCompute();
+			marchingTetrahedra.drawMesh();
+		}
+		else {
+			cellularAutomata.drawCell(gridNumX * gridNumY * gridNumZ, vertfragProgramObj);
+		}
 		
 		// カラーバッファを入れ替える
 		window.swapBuffers();
