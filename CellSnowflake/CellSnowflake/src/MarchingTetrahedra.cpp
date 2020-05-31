@@ -62,10 +62,17 @@ MarchingTetrahedra::MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,
 	glBufferData(GL_SHADER_STORAGE_BUFFER,
 		4096 * sizeof(GLint), triangleConnectionTable, GL_STATIC_DRAW);	//256 * (3 * 5 + 1)
 
-	//Unifrom変数に値を入れる
 	glUseProgram(vfProgObj);
-	glUniform4fv(litposLoc, 1, Lpos.data());
-	std::cout << litposLoc << "P1" << std::endl;
+	litposLoc = glGetUniformLocation(vfProgObj, "litpos");
+	//Unifrom変数に値を入れる
+	//glUniform4fv(litposLoc, 1, Lpos.data());
+	//でばっぐ
+	GLfloat vv[4]{};
+	glGetUniformfv(vfProgObj, litposLoc, vv);
+	std::cout << "litpos:" << vv[3] << std::endl;
+	std::cout << "litposLoc:" << litposLoc << std::endl;
+	std::cout << "litposLoc1:" << glGetUniformLocation(vfProgObj, "modelview") << std::endl;
+	std::cout << "litposLoc2:" << glGetUniformLocation(vfProgObj, "projection") << std::endl;
 }
 
 MarchingTetrahedra::~MarchingTetrahedra() {
@@ -91,29 +98,6 @@ void MarchingTetrahedra::dispatchCompute() {
 	glDispatchCompute(mGridNumX, mGridNumY, mGridNumZ);
 	//いるかわからん
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
-}
-
-//未使用
-void MarchingTetrahedra::marchingHoneycomb() {
-	for (int iX = 0; iX < mGridNumX; iX++) {
-		for (int iY = 0; iY < mGridNumY; iY++) {
-			for (int iZ = 0; iZ < mGridNumZ; iZ++)
-			{
-				marchingHexagonalPrism();
-			}
-		}
-	}
-	if(vertexCount > 0)
-		drawMesh();
-
-}
-
-void MarchingTetrahedra::marchingHexagonalPrism() {
-
-}
-
-void MarchingTetrahedra::marchingTetra() {
-
 }
 
 void MarchingTetrahedra::drawMesh() {

@@ -80,7 +80,7 @@ private:
 
 	//パラメータ用
 	//描画切替
-	bool isMarchingCubes = 0;
+	bool isMarchingCubes = true;
 
 	GLfloat rho;
 };

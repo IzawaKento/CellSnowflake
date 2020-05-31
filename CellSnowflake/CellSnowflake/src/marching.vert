@@ -2,7 +2,8 @@
 
 uniform mat4 modelview;
 uniform mat4 projection;
-uniform vec4 litpos;
+uniform vec4 litpos = vec4(1.0, 5.0, 0.0, 1.0);
+vec4 litpos1 = { 0.0f, 0.0f, 3.5f, 1.0f };
 vec3 Lamb = vec3(0.2);
 vec3 Ldiff = vec3(1.0);
 vec3 Lspec = vec3(1.0);
@@ -21,7 +22,7 @@ const float Kshi = 30.0;
 
 void main(){
 	vec4 P = modelview * position;
-	vec3 L = normalize((litpos * P.w - P * litpos.w).xyz);
+	vec3 L = normalize((litpos * P.w - P * litpos.w).xyz);	//’Ê•ª‚µ‚Ä‚é
 	vec3 Iamb = Kamb * Lamb;
 	vec3 Idiff = max(dot(color.xyz, L), 0.0) * Kdiff * Ldiff + Iamb;
 

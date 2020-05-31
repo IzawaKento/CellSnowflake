@@ -18,13 +18,13 @@ public:
 		return vfProgObj;
 	}
 
-	void marchingTetra();
-	void marchingHexagonalPrism();
-	void marchingHoneycomb();
-
 	void dispatchCompute();
 
 	void drawMesh();	//描画用クラスに移動した方がいいかも
+
+	void setUniforms() {
+
+	}
 
 private:
 	GLuint vao;
@@ -41,17 +41,15 @@ private:
 	Vertex* v = new Vertex[5880000];
 
 	//光源データ
-	const Vector4 Lpos = { 0.0f, 0.0f, 5.0f, 1.0f };
+	const Vector4 Lpos = { 4.0f, 0.0f, 1.0f, 1.0f };
 	const Vector4 Lamb = { 0.2f, 0.1f, 0.1f };
 	const Vector4 Ldiff = { 1.0f, 0.5f, 0.5f };
 	const Vector4 Lspec = { 1.0f, 0.5f, 0.5f };
 
 	GLuint vfProgObj = Program::loadProgramObj("src\\marching.vert", "src\\marching.geom", "src\\marching.frag");
 	GLuint compProgObj = Program::loadCompProgramObj("src\\marchingCube.comp");
-	
-	const GLint litposLoc = glGetUniformLocation(vfProgObj, "litpos");
-	//const GLint LposLoc = glGetUniformLocation(vfProgObj, "Lpos");
-	//const GLint projectionLoc = glGetUniformLocation(vfProgObj, "projection");
+
+	GLint litposLoc;
 
 	const int mGridNumX, mGridNumY, mGridNumZ, mVertexNum, mTetraPerHex = 12, mMaxTriPerTetra = 2;
 

@@ -69,7 +69,6 @@ int main() {
 	//glAlphaFunc(GL_ALWAYS, 0.5);
 
 	// 背面カリングを有効にする
-	
 	glFrontFace(GL_CCW);
 	glCullFace(GL_BACK);
 	glEnable(GL_CULL_FACE);
@@ -79,13 +78,14 @@ int main() {
 	glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);*/
 
-	//// シェーダのソースファイルを読み込んでプログラムオブジェクトを作成する
+	// シェーダのソースファイルを読み込んでプログラムオブジェクトを作成する
 	GLuint vertfragProgramObj = Program::loadProgramObj("src\\point.vert", "src\\point.geom", "src\\point.frag");
-	
+	std::cout << "vertfragProgObj:" << vertfragProgramObj << std::endl;
 	// uniform 変数の場所を取得する
 	const GLint modelviewLoc(glGetUniformLocation(vertfragProgramObj, "modelview"));
 	const GLint projectionLoc(glGetUniformLocation(vertfragProgramObj, "projection"));
-
+	std::cout << "modelviewLoc:" << modelviewLoc << std::endl;
+	std::cout << "projectionLoc:" << projectionLoc << std::endl;
 	CellularAutomata cellularAutomata(initRho,
 		gridNumX, gridNumY, gridNumZ, cellSizeX, cellSizeZ, cellSizeY, vertfragProgramObj);
 	//パラメータ用
@@ -163,6 +163,7 @@ int main() {
 		const GLfloat w(size[0] / scale), h(size[1] / scale);
 		const Matrix projection(Matrix::orthogonal(-w, w, -h, h, 1.0f, 10.0f));
 
+		//glUseProgram(marchingTetrahedra.getVfProgObj());
 		// uniform 変数に値を設定する
 		glUniformMatrix4fv(modelviewLoc, 1, GL_FALSE, modelview.data());
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, projection.data());
