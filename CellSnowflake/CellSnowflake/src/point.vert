@@ -1,8 +1,8 @@
 #version 460 core
 //uniform vec2 size;
 //uniform float scale;
-uniform mat4 modelview;
-uniform mat4 projection;
+layout(location = 0) uniform mat4 modelview;
+layout(location = 1) uniform mat4 projection;
 
 in vec4 position;
 in vec4 color;

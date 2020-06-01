@@ -64,15 +64,21 @@ MarchingTetrahedra::MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,
 
 	glUseProgram(vfProgObj);
 	litposLoc = glGetUniformLocation(vfProgObj, "litpos");
+	litambLoc = glGetUniformLocation(vfProgObj, "litamb");
+	litdiffLoc = glGetUniformLocation(vfProgObj, "litdiff");
+	litspecLoc = glGetUniformLocation(vfProgObj, "litspec");
 	//UnifromïœêîÇ…ílÇì¸ÇÍÇÈ
-	//glUniform4fv(litposLoc, 1, Lpos.data());
+	glUniform4fv(litposLoc, 1, Lpos.data());
+	glUniform3fv(litambLoc, 1, Lamb.data());
+	glUniform3fv(litdiffLoc, 1, Ldiff.data());
+	glUniform3fv(litspecLoc, 1, Lspec.data());
 	//Ç≈ÇŒÇ¡ÇÆ
 	GLfloat vv[4]{};
 	glGetUniformfv(vfProgObj, litposLoc, vv);
 	std::cout << "litpos:" << vv[3] << std::endl;
 	std::cout << "litposLoc:" << litposLoc << std::endl;
-	std::cout << "litposLoc1:" << glGetUniformLocation(vfProgObj, "modelview") << std::endl;
-	std::cout << "litposLoc2:" << glGetUniformLocation(vfProgObj, "projection") << std::endl;
+	std::cout << "Locmodel:" << glGetUniformLocation(vfProgObj, "modelview") << std::endl;
+	std::cout << "Locproj:" << glGetUniformLocation(vfProgObj, "projection") << std::endl;
 }
 
 MarchingTetrahedra::~MarchingTetrahedra() {

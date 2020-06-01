@@ -158,10 +158,10 @@ void main(){
 			//tmpCell[i].color = vec4(0.5, 0.5, 0.5, 1.0);
 		}else if(fixedSliNeiNums.x > 3 && fixedSliNeiNums.y > 0 && fixedSliNeiNums.z > 0
 			|| fixedSliNeiNums.z > 5){//–Ê‚É‚·‚éB‚Å‚Á‚Ï‚è‚ÌŽü‚è‚Ìè‡’l‚ð‰º‚°‚é
-			beta = 0.45;//0.1 0.45;
+			beta = 0.1;//0.1 0.45;
 			//tmpCell[i].color = vec4(0.5, cell[i].boundaryMass/2.0, 0.5, 1.0);
 		}else if(fixedSliNeiNums.y > 2){	//–Ê‚É‚·‚éB‰¡‚ÉL‚Î‚µ‚½‚¢
-			beta = 0.45;//0.1 0.45;
+			beta = 0.1;//0.1 0.45;
 			//tmpCell[i].color = vec4(cell[i].boundaryMass/2.0, 0.5, 0.5, 1.0);
 		}else if(fixedSliNeiNums.x+fixedSliNeiNums.y+fixedSliNeiNums.z > 6){	//ŽÎ–Ê
 			beta = 0.6;

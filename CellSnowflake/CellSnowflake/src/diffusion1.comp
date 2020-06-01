@@ -1,6 +1,6 @@
 #version 460 core
 
-uniform float rho;
+layout(location = 6) uniform float rho = 1.0;
 
 layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
 
@@ -50,6 +50,16 @@ void setFlagTrue(uint i, uint flagID) {
 }
 void setFlagFalse(uint i, uint flagID) {
 	tmpCell[i].flags &= ~flagID;
+}
+
+//Šj¶¬‚Ì‚Ä‚·‚Æ—p
+void setEdgeCry(uint i){
+	setFlagTrue(i, ISCRYSTAL);
+	setFlagTrue(i, ISEDGECRYSTAL);
+	setFlagFalse(i, ISBOUNDARY);
+	setFlagFalse(i, ISEDGEBOUNDARY);
+	tmpCell[i].diffusionMass = 0.0;
+	tmpCell[i].boundaryMass = 1.0;
 }
 
 //‚QŽŸŒ³À•W‚©‚ç—”
@@ -116,8 +126,14 @@ void main(){
 		
 		tmpDiffusionMass /= 21.0;	//21‚ÅŠ„‚é
 
+		tmpDiffusionMass += rho;	//‚¨—V‚Ñ
+
 		//ƒmƒCƒYŠ®¬ gamma0.5‚®‚ç‚¢‚ª‚¢‚¢
 		tmpDiffusionMass = (1.0 - gamma * ran) * tmpDiffusionMass + (gamma * ran) * cell[i].diffusionMass;
+
+		if(tmpDiffusionMass > 0.3){
+			setEdgeCry(i);
+		}
 
 		tmpCell[i].diffusionMass = tmpDiffusionMass;
 	}

@@ -14,8 +14,11 @@ public:
 		CellularAutomata* cellAutoPtr);
 	~MarchingTetrahedra();
 
-	GLuint getVfProgObj() {
+	const GLuint getVfProgObj() const{
 		return vfProgObj;
+	}
+	const GLuint getCompObj() const {
+		return compProgObj;
 	}
 
 	void dispatchCompute();
@@ -42,14 +45,15 @@ private:
 
 	//åıåπÉfÅ[É^
 	const Vector4 Lpos = { 4.0f, 0.0f, 1.0f, 1.0f };
-	const Vector4 Lamb = { 0.2f, 0.1f, 0.1f };
-	const Vector4 Ldiff = { 1.0f, 0.5f, 0.5f };
-	const Vector4 Lspec = { 1.0f, 0.5f, 0.5f };
+	const Vector4 Lamb = { 0.1f, 0.15f, 0.2f };
+	const Vector4 Ldiff = { 0.4f, 0.7f, 1.0f };
+	const Vector4 Lspec = { 0.4f, 0.7f, 1.0f };
 
 	GLuint vfProgObj = Program::loadProgramObj("src\\marching.vert", "src\\marching.geom", "src\\marching.frag");
 	GLuint compProgObj = Program::loadCompProgramObj("src\\marchingCube.comp");
 
-	GLint litposLoc;
+	GLint litposLoc, litambLoc, litdiffLoc, litspecLoc;
+	GLint diffMassLoc;
 
 	const int mGridNumX, mGridNumY, mGridNumZ, mVertexNum, mTetraPerHex = 12, mMaxTriPerTetra = 2;
 

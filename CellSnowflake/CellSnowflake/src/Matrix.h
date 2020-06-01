@@ -172,6 +172,49 @@ public:
 		return  rv * tv;
 	}
 
+	// 逆ビュー変換行列を作成する
+	static Matrix window2world(
+		const Vector3 eye, // 視点の位置
+		const Vector3 dest, // 目標点の位置
+		const Vector3 up) // 上方向のベクトル
+	{
+		
+		// 平行移動の変換行列
+		const Matrix tv(translate(eye * -1));
+
+		// t 軸 = e - g
+		const Vector3 t(eye - dest);
+		// r 軸 = u x t 軸
+		const Vector3 r(CrossVec3(up, t));
+		// s 軸 = t 軸 x r 軸
+		const Vector3 s(CrossVec3(t, r));
+
+		// s 軸の長さのチェック
+		const GLfloat s2(SquareLenVec3(s));
+		if (s2 == 0.0f) return tv;
+		// 回転の変換行列
+		Matrix rv;
+		rv.loadIdentity();
+		// r 軸を正規化して配列変数に格納
+		const GLfloat rDis(LengthVec3(r));
+		rv.matrix[0] = r[0] / rDis;
+		rv.matrix[4] = r[1] / rDis;
+		rv.matrix[8] = r[2] / rDis;
+		// s 軸を正規化して配列変数に格納
+		const GLfloat sDis(sqrt(s2));
+		rv.matrix[1] = s[0] / sDis;
+		rv.matrix[5] = s[1] / sDis;
+		rv.matrix[9] = s[2] / sDis;
+		// t 軸を正規化して配列変数に格納
+		const GLfloat tDis(LengthVec3(t));
+		rv.matrix[2] = t[0] / tDis;
+		rv.matrix[6] = t[1] / tDis;
+		rv.matrix[10] = t[2] / tDis;
+
+		// 視点の平行移動の変換行列に視線の回転の変換行列を乗じる
+		return  rv * tv;
+	}
+
 	// 直交投影変換行列を作成する
 	static Matrix orthogonal(GLfloat left, GLfloat right,
 		GLfloat bottom, GLfloat top,

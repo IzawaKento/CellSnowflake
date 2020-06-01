@@ -89,11 +89,12 @@ int main() {
 	CellularAutomata cellularAutomata(initRho,
 		gridNumX, gridNumY, gridNumZ, cellSizeX, cellSizeZ, cellSizeY, vertfragProgramObj);
 	//パラメータ用
-	//const GLint rhoLoc = glGetUniformLocation(cellularAutomata.getDiffusion1ComProgObj(), "rho");
+	const GLint rhoLoc = glGetUniformLocation(cellularAutomata.getDiffusion1ComProgObj(), "rho");
+	std::cout << "rhoLoc:" << rhoLoc << std::endl;
 
 	MarchingTetrahedra marchingTetrahedra(gridNumX,
 		gridNumY, gridNumZ, &cellularAutomata);
-
+	
 	//FPS表示用
 	double previousTime = glfwGetTime();
 	int frameCount = 0;
@@ -103,7 +104,7 @@ int main() {
 	{
 		
 		//リプレイ
-		if (glfwGetTime() > 30.0f)
+		if (window.isPressingReplayKey()/*glfwGetTime() > 30.0f*/)
 		{
 			std::cout << "RePlay" << std::endl;
 			cellularAutomata.initialize();
@@ -163,12 +164,12 @@ int main() {
 		const GLfloat w(size[0] / scale), h(size[1] / scale);
 		const Matrix projection(Matrix::orthogonal(-w, w, -h, h, 1.0f, 10.0f));
 
-		//glUseProgram(marchingTetrahedra.getVfProgObj());
 		// uniform 変数に値を設定する
 		glUniformMatrix4fv(modelviewLoc, 1, GL_FALSE, modelview.data());
 		glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, projection.data());
-		//glUniform1f(rhoLoc, 1.0f);
 
+		glUseProgram(cellularAutomata.getDiffusion1ComProgObj());
+		glUniform1f(rhoLoc, window.getRho());
 		// 図形を描画する
 
 		//セルオートマトン処理

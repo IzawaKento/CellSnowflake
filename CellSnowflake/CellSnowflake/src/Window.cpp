@@ -7,7 +7,7 @@
 Window::Window(int width, int height, const char* title)
 	: window(glfwCreateWindow(width, height, title, NULL, NULL))
 	, scale(100.0f), location{ 0, 0 }, keyStatus(GLFW_RELEASE)
-	, prevFrameKeyStatus(GLFW_RELEASE), rho(1.0f){
+	, prevFrameKeyStatus(GLFW_RELEASE), rho(0.0f){
 
 	if (window == NULL)
 	{
@@ -80,18 +80,28 @@ void Window::swapBuffers() {
 		location[1] += 2.0f / size[1];
 
 	//パラメータ入力
-	if (glfwGetKey(window, GLFW_KEY_A) != GLFW_RELEASE && rho > 0.1f) {
-		rho -= 0.1f;
-		std::cout << rho << std::endl;
+	if (glfwGetKey(window, GLFW_KEY_A) != GLFW_RELEASE && prevFrameKeyStatus == GLFW_RELEASE) {
+		rho = -0.1f;
+		std::cout << "RHO" << rho << std::endl;
 	}
-	else if (glfwGetKey(window, GLFW_KEY_S) != GLFW_RELEASE) {
-		rho += 0.1f;
-		std::cout << rho << std::endl;
+	else if (glfwGetKey(window, GLFW_KEY_S) != GLFW_RELEASE && prevFrameKeyStatus == GLFW_RELEASE) {
+		rho = 0.1f;
+		std::cout << "RHO" << rho << std::endl;
+	}else if (glfwGetKey(window, GLFW_KEY_A) == GLFW_RELEASE || glfwGetKey(window, GLFW_KEY_S) == GLFW_RELEASE) {
+		rho = 0.0f;
 	}
+
+	
 
 	if (glfwGetKey(window, GLFW_KEY_D) != GLFW_RELEASE && prevFrameKeyStatus == GLFW_RELEASE) {
 		isMarchingCubes = isMarchingCubes ? false : true;
-		std::cout << "AAA" << std::endl;
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_R) != GLFW_RELEASE && prevFrameKeyStatus == GLFW_RELEASE) {
+		isReplaying = true;
+	}
+	else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_RELEASE && isReplaying) {
+		isReplaying = false;
 	}
 
 	// マウスの左ボタンの状態を調べる
@@ -104,5 +114,6 @@ void Window::swapBuffers() {
 		location[0] = static_cast<GLfloat>(x) * 2.0f / size[0] - 1.0f;
 		location[1] = 1.0f - static_cast<GLfloat>(y) * 2.0f / size[1];
 	}
+	//１フレーム後のためにキー状態を保存
 	prevFrameKeyStatus = keyStatus;
 }
