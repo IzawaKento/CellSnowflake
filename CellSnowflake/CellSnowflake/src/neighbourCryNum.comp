@@ -24,6 +24,7 @@ class Cell
 	int verticalNeighbourNum;
 	int neighbourNum;
 	float beta;
+	float ran;
 };
 
 layout(std430, binding = 0) buffer Cells

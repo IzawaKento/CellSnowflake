@@ -4,9 +4,8 @@
 #include "Cell.h"
 //#include "Program.h"
 
-CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gridNumZ,
-	float cellSizeX, float cellSizeZ, float cellSizeY, GLuint vfProgObj)
-	:cells(new Cell[gridNumX*gridNumY*gridNumZ]), mGridNumX(gridNumX), mGridNumY(gridNumY), mGridNumZ(gridNumZ)
+CellularAutomata::CellularAutomata(GLuint vfProgObj)
+	:cells(new Cell[mGridNumX*mGridNumY*mGridNumZ])
 	, mvfProgObj(vfProgObj)
 {	/*
 	std::cout << "sizeofCell:" << sizeof(Cell) << std::endl;
@@ -40,16 +39,18 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	std::cout << "cells[0].hori:  " << &cells[1].horizontalNeighbourNum << std::endl;
 	std::cout << "cells[0].ver:   " << &cells[1].verticalNeighbourNum << std::endl;
 	*/
-	for (int i_y = 0; i_y < gridNumY; ++i_y) {
-		GLfloat y = i_y * cellSizeY;
-		for (int i_z = 0; i_z < gridNumZ; ++i_z) {
-			GLfloat z = i_z * cellSizeZ;
-			float shiftX = (i_z % 2) * 0.5f * cellSizeX;
+
+	
+	for (int i_y = 0; i_y < mGridNumY; ++i_y) {
+		GLfloat y = i_y * mCellSizeY;
+		for (int i_z = 0; i_z < mGridNumZ; ++i_z) {
+			GLfloat z = i_z * mCellSizeZ;
+			float shiftX = (i_z % 2) * 0.5f * mCellSizeX;
 			//i_zが奇数なら1, 偶数なら0
 			GLuint zIsOdd = i_z % 2;
-			for (int i_x = 0; i_x < gridNumX; ++i_x) {
-				GLfloat x = i_x * cellSizeX +shiftX;
-				int pointNum = i_x + gridNumX * i_z + i_y * gridNumX * gridNumZ;
+			for (int i_x = 0; i_x < mGridNumX; ++i_x) {
+				GLfloat x = i_x * mCellSizeX +shiftX;
+				int pointNum = i_x + mGridNumX * i_z + i_y * mGridNumX * mGridNumZ;
 				cells[pointNum].SetPosition(x, y, z);
 				//zが奇数ならflags |= MZSIODD, そうでないならflags |= 0何もしない
 				cells[pointNum].SetFlagTrue(CellFlags::MZISODD * zIsOdd);
@@ -58,15 +59,18 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 				cells[pointNum].SetFlagFalse(CellFlags::ISEDGECRYSTAL);
 				cells[pointNum].SetFlagTrue(CellFlags::ISBOUNDARY);	//Cellのコンストラクタの方がいい？
 				cells[pointNum].SetFlagFalse(CellFlags::ISEDGEBOUNDARY);
-				cells[pointNum].diffusionMass = rho;
+				cells[pointNum].diffusionMass = mInitRho;
 				cells[pointNum].boundaryMass = 0.0f;
-
+				std::mt19937 mt(pointNum);
+				std::uniform_real_distribution<float> random(0.0f, 1.0f);
+				cells[pointNum].ran = random(mt);
 				//端っこなら
-				if (i_y == 0 || i_y == gridNumY - 1
-					|| i_z == 0 || i_z == gridNumZ - 1
-					|| i_x == 0 || i_x == gridNumX - 1) {
+				if (i_y == 0 || i_y == mGridNumY - 1
+					|| i_z == 0 || i_z == mGridNumZ - 1
+					|| i_x == 0 || i_x == mGridNumX - 1) {
 					cells[pointNum].SetFlagTrue(CellFlags::ISENDOFCELLS);
-
+					//端っこの拡散質量を下げてみる
+					cells[pointNum].diffusionMass = 0.0f;
 				}
 				else {
 					cells[pointNum].SetFlagFalse(CellFlags::ISENDOFCELLS);
@@ -78,7 +82,7 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	//中心初期セル作成
 	int centerCellNum = (mGridNumX / 2) + (mGridNumZ / 2 * mGridNumX) + ((mGridNumY / 2 ) * mGridNumX * mGridNumZ);
 	setInitialCells(centerCellNum);
-	setInitialCells(centerCellNum + 156);
+	//setInitialCells(centerCellNum + 156);
 	//Houdiniの隣り合うセル数格納処理は省略
 
 	//確認用頂点配列オブジェクト
@@ -89,7 +93,7 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	glGenBuffers(1, &ssbo);
 	glBindBuffer(GL_ARRAY_BUFFER, ssbo);
 	glBufferData(GL_ARRAY_BUFFER,
-		gridNumX*gridNumY*gridNumZ * sizeof(Cell), cells, GL_DYNAMIC_DRAW);
+		mGridNumX * mGridNumY * mGridNumZ * sizeof(Cell), cells, GL_DYNAMIC_DRAW);
 
 	// 結合されている頂点バッファオブジェクトを in 変数から参照できるようにする
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Cell), &static_cast<const Cell *>(0)->position);
@@ -108,7 +112,7 @@ CellularAutomata::CellularAutomata(float rho, int gridNumX, int gridNumY, int gr
 	//結合ポイントは1番でいいのか？
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glBufferData(GL_SHADER_STORAGE_BUFFER,
-		gridNumX*gridNumY*gridNumZ * sizeof(Cell), cells, GL_DYNAMIC_DRAW);
+		mGridNumX * mGridNumY * mGridNumZ * sizeof(Cell), cells, GL_DYNAMIC_DRAW);
 
 	//未使用？
 	//アトミックカウンターバッファオブジェクト作成
@@ -223,7 +227,7 @@ void CellularAutomata::copySSBO(GLuint readBuffer, GLuint writeBuffer) {
 }
 
 //毎フレーム行うコンピュートシェーダの実行
-void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ) {
+void CellularAutomata::DispatchCompute() {
 
 	//resetEdge
 	// シェーダストレージバッファオブジェクトを 0 番の結合ポイントに結合する
@@ -235,7 +239,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	// 更新用のシェーダプログラムの使用開始
 	glUseProgram(resetEdgeComProgObj);
 	//引数は３次元でx, y, zのワークグループを起動する数
-	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
+	glDispatchCompute(mGridNumX, mGridNumY, mGridNumZ);
 	//メモリへのアクセスを止める
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
@@ -246,7 +250,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, acbo);
 	glUseProgram(computeProgramObj);
-	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
+	glDispatchCompute(mGridNumX, mGridNumY, mGridNumZ);
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
@@ -256,7 +260,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, acbo);
 	glUseProgram(neighbourCryNumComProgObj);
-	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
+	glDispatchCompute(mGridNumX, mGridNumY, mGridNumZ);
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
@@ -266,7 +270,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, acbo);
 	glUseProgram(diffusion1ComProgObj);
-	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
+	glDispatchCompute(mGridNumX, mGridNumY, mGridNumZ);
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
@@ -287,7 +291,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, acbo);
 	glUseProgram(freezingComProgObj);
-	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
+	glDispatchCompute(mGridNumX, mGridNumY, mGridNumZ);
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
@@ -297,7 +301,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, acbo);
 	glUseProgram(attachmentComProgObj);
-	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
+	glDispatchCompute(mGridNumX, mGridNumY, mGridNumZ);
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
@@ -307,7 +311,7 @@ void CellularAutomata::DispatchCompute(int gridNumX, int gridNumY, int gridNumZ)
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);
 	glBindBuffer(GL_ATOMIC_COUNTER_BUFFER, acbo);
 	glUseProgram(meltingComProgObj);
-	glDispatchCompute(gridNumX, gridNumY, gridNumZ);
+	glDispatchCompute(mGridNumX, mGridNumY, mGridNumZ);
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);	//なくていいかも
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
@@ -324,7 +328,7 @@ void CellularAutomata::SetEdgeCry(int cellNum) {
 }
 
 
-void CellularAutomata::drawCell(int count, GLuint vfProgObj) {
+void CellularAutomata::drawCell() {
 	
 	/*Cell* dc(static_cast<Cell*>(glMapNamedBufferEXT(ssbo, GL_WRITE_ONLY)));
 	for (int i = 0; i < count; ++i)
@@ -336,7 +340,7 @@ void CellularAutomata::drawCell(int count, GLuint vfProgObj) {
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, ssbo);
 	glUseProgram(mvfProgObj);
-	glDrawArrays(GL_POINTS, 0, count);
+	glDrawArrays(GL_POINTS, 0, mGridNumX * mGridNumY * mGridNumZ);
 }
 
 void CellularAutomata::initialize() {
@@ -349,4 +353,9 @@ void CellularAutomata::initialize() {
 		mGridNumX*mGridNumY*mGridNumZ * sizeof(Cell), cells);
 	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, 2, acbo);
 	glNamedBufferSubDataEXT(acbo, 0, sizeof(GLuint), nullptr);
+}
+
+void CellularAutomata::setUniforms(GLfloat rho) {
+	glUseProgram(diffusion1ComProgObj);
+	glUniform1f(rhoLoc, rho);
 }

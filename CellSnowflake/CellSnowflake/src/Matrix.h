@@ -1,9 +1,9 @@
 #pragma once
-#include <cmath>
 #include <algorithm>
 #include <array>
 #include <stack>
 #include <GL/glew.h>
+#include "MyMath.h"
 #include "Vector.h"
 
 class Matrix {
@@ -12,7 +12,7 @@ private:
 
 public:
 	//デバッグ用関数
-	void printMat() {
+	const void printMat() const {
 		std::cout << matrix[0] << "," << matrix[4] << "," << matrix[8] << "," << matrix[12] << "," << std::endl;
 		std::cout << matrix[1] << "," << matrix[5] << "," << matrix[9] << "," << matrix[13] << "," << std::endl;
 		std::cout << matrix[2] << "," << matrix[6] << "," << matrix[10] << "," << matrix[14] << "," << std::endl;
@@ -35,10 +35,7 @@ public:
 	}
 
 	void load(const Matrix& m) {
-		//とりあえず値をforで入れた
-		for (int i = 0; i < 16; ++i) {
-			matrix[i] = m.data()[i];
-		}
+		std::copy(m.data(), m.data() + 16, matrix);
 	}
 
 	Vector4 multiplyVec4(Vector4 v) const{

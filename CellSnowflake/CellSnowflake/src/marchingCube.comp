@@ -23,6 +23,7 @@ class Cell
 	int verticalNeighbourNum;
 	int neighbourNum;
 	float beta;
+	float ran;
 };
 
 struct Vertex{

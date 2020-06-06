@@ -1,7 +1,5 @@
 #include "Cell.h"
 
-#include "GL/glew.h"
-#include "Vector.h"
 #include "BitOperation.h"
 
 

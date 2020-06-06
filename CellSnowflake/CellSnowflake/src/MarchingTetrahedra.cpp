@@ -4,10 +4,14 @@
 #include "Vertex.h"
 #include "Tetrahedra.h"
 
-MarchingTetrahedra::MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,
+MarchingTetrahedra::MarchingTetrahedra(
 	CellularAutomata* ca) 
-	: mGridNumX(gridNumX), mGridNumY(gridNumY), mGridNumZ(gridNumZ),
-	mVertexNum(gridNumX*gridNumY*gridNumZ), cellularAutomata(ca)
+	: cellularAutomata(ca)
+	, mGridNumX(cellularAutomata->gridNumX())
+	, mGridNumY(cellularAutomata->gridNumY())
+	, mGridNumZ(cellularAutomata->gridNumZ())
+	, mVertexNum(mGridNumX*mGridNumY*mGridNumZ)
+	, v(new Vertex[mVertexNum * 12])	//12ÇÕóßï˚ëÃÇÃï”êîÅiï”è„ÇÃí∏ì_êîÅj
 {
 
 	//test
@@ -60,7 +64,7 @@ MarchingTetrahedra::MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,
 	glGenBuffers(1, &triangleConnectionTableBuffer);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, triangleConnectionTableBuffer);
 	glBufferData(GL_SHADER_STORAGE_BUFFER,
-		4096 * sizeof(GLint), triangleConnectionTable, GL_STATIC_DRAW);	//256 * (3 * 5 + 1)
+		 sizeof(triangleConnectionTable), triangleConnectionTable, GL_STATIC_DRAW);	//256 * (3 * 5 + 1)
 
 	glUseProgram(vfProgObj);
 	litposLoc = glGetUniformLocation(vfProgObj, "litpos");
@@ -72,13 +76,6 @@ MarchingTetrahedra::MarchingTetrahedra(int gridNumX, int gridNumY, int gridNumZ,
 	glUniform3fv(litambLoc, 1, Lamb.data());
 	glUniform3fv(litdiffLoc, 1, Ldiff.data());
 	glUniform3fv(litspecLoc, 1, Lspec.data());
-	//Ç≈ÇŒÇ¡ÇÆ
-	GLfloat vv[4]{};
-	glGetUniformfv(vfProgObj, litposLoc, vv);
-	std::cout << "litpos:" << vv[3] << std::endl;
-	std::cout << "litposLoc:" << litposLoc << std::endl;
-	std::cout << "Locmodel:" << glGetUniformLocation(vfProgObj, "modelview") << std::endl;
-	std::cout << "Locproj:" << glGetUniformLocation(vfProgObj, "projection") << std::endl;
 }
 
 MarchingTetrahedra::~MarchingTetrahedra() {
@@ -112,5 +109,5 @@ void MarchingTetrahedra::drawMesh() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glUseProgram(vfProgObj);
 	//glDrawArrays(GL_POINTS, 0, 5880000);
-	glDrawElements(GL_TRIANGLES, mGridNumX*mGridNumY*mGridNumZ * 15, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, mVertexNum * 15, GL_UNSIGNED_INT, 0);
 }

@@ -1,5 +1,5 @@
 #pragma once
-//ビット演算練習、没になりそう
+//ビット演算
 namespace BitOperation {
 	//flagIDは2進数の値
 	//flagsのビットのfragID番目（0から）が1ならtrue

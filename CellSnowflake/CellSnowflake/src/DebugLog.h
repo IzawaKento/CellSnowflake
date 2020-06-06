@@ -9,7 +9,7 @@ public:
 	DebugLog(DebugLog&&) = delete;
 	DebugLog& operator=(DebugLog&&) = delete;
 
-	static DebugLog& get_instance() {
+	static DebugLog& getInstance() {
 		return *instance;
 	}
 
@@ -24,13 +24,27 @@ public:
 		instance = nullptr;
 	}
 
-	void printMachineInfo(){
+	const void printMachineInfo(){
 		std::cout << "WORK_GROUP_INVOCATIONS " << workgroupInvocations << std::endl;
 		std::cout << "SHARED_MEMORY_SIZE " << sharedMemorySize << std::endl;
 		std::cout << "MAX_GEOMETRY_OUTPUT_VERTICES " << maxGeometryOutputVertices << std::endl;
 		std::cout << "MAX_GEOMETRY_TOTAL_OUTPUT_COMPONENTS " << maxGeometryTotalOutputComponents << std::endl;
 		std::cout << "MAX_UNIFORM_BLOCK_SIZE " << maxUniformBlockSize << std::endl;
 	}
+
+	void displayFPS() {
+		double currentTime = glfwGetTime();
+		frameCount++;
+		stepCount++;
+		if (currentTime - previousTime >= 1.0)
+		{
+			std::cout << "fps:" << frameCount << std::endl;
+			std::cout << "t = " << stepCount << std::endl;
+			frameCount = 0;
+			previousTime = currentTime;
+		}
+	}
+
 private:
 	//ワークグループ内で起動可能なスレッドの数 1536 or 1024
 	GLint workgroupInvocations = 0;
@@ -39,6 +53,10 @@ private:
 	GLint maxGeometryOutputVertices = 0;
 	GLint maxGeometryTotalOutputComponents = 0;
 	GLint maxUniformBlockSize = 0;
+	//FPS表示用
+	double previousTime = glfwGetTime();
+	int frameCount = 0;
+	int stepCount = 0;
 
 	DebugLog() {
 		glGetIntegerv(GL_MAX_COMPUTE_WORK_GROUP_INVOCATIONS, &workgroupInvocations);

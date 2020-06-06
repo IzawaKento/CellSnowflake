@@ -26,6 +26,7 @@ class Cell
 	int verticalNeighbourNum;
 	int neighbourNum;
 	float beta;
+	float ran;
 };
 
 layout(std430, binding = 0) buffer Cells
@@ -96,7 +97,7 @@ void main(){
 	//diffusion_1
 	if(!isFlag(i, ISCRYSTAL) && !isFlag(i, ISENDOFCELLS)){		//気体であり端っこでない
 		//乱数の決定
-		float ran = random(vec2(i+111, i));
+		float ran = cell[i].ran;//random(vec2(i+111, i));
 		const float gamma = 0.5;
 
 		float tmpDiffusionMass = cell[i].diffusionMass;
@@ -126,14 +127,17 @@ void main(){
 		
 		tmpDiffusionMass /= 21.0;	//21で割る
 
-		tmpDiffusionMass += rho;	//お遊び
+		//お遊び 0.1はマジックナンバー
+		tmpDiffusionMass = tmpDiffusionMass + rho > 0.0 ? tmpDiffusionMass + rho : tmpDiffusionMass;	
 
 		//ノイズ完成 gamma0.5ぐらいがいい
 		tmpDiffusionMass = (1.0 - gamma * ran) * tmpDiffusionMass + (gamma * ran) * cell[i].diffusionMass;
 
-		if(tmpDiffusionMass > 0.3){
+		
+		if(ran > 0.9999 && isFlag(i+gridNumX*gridNumZ, ISBOUNDARY)){
 			setEdgeCry(i);
 		}
+		
 
 		tmpCell[i].diffusionMass = tmpDiffusionMass;
 	}

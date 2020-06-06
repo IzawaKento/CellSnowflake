@@ -29,6 +29,7 @@ public:
 	//‚Ä‚·‚Æ
 	alignas(4)GLint neighbourNum = 0;
 	alignas(4)GLfloat beta = 0.0f;
+	alignas(4)GLfloat ran = 0.5f;
 
 	void SetPosition(GLfloat x, GLfloat y, GLfloat z) {
 		position[0] = x;
