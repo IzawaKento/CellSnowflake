@@ -17,10 +17,11 @@ Window::Window(int width, int height, const char* title)
 		exit(1);
 	}
 
-	// 現在のウィンドウを処理対象にする
+	// 現在のウィンドウ(についてるコンテキスト？)を処理対象にする
 	glfwMakeContextCurrent(window);
 	// GLEW を初期化する
-	glewExperimental = GL_TRUE;		//なんかtrueにしなあかんらしい
+	//なんかtrueにしなあかんらしい
+	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK)
 	{
 		// GLEW の初期化に失敗した

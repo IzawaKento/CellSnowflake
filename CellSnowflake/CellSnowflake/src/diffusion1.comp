@@ -62,7 +62,7 @@ void setEdgeCry(uint i){
 	tmpCell[i].diffusionMass = 0.0;
 	tmpCell[i].boundaryMass = 1.0;
 }
-
+//未使用
 //２次元座標から乱数
 float random (vec2 st) {
     return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
@@ -133,12 +133,13 @@ void main(){
 		//ノイズ完成 gamma0.5ぐらいがいい
 		tmpDiffusionMass = (1.0 - gamma * ran) * tmpDiffusionMass + (gamma * ran) * cell[i].diffusionMass;
 
-		
-		if(ran > 0.9999 && isFlag(i+gridNumX*gridNumZ, ISBOUNDARY)){
+		tmpCell[i].diffusionMass = tmpDiffusionMass;
+		/*
+		if(ran <= 0.995) return;
+
+		if(isFlag(i - gridNumX*gridNumZ * 5, ISCRYSTAL)){
 			setEdgeCry(i);
 		}
-		
-
-		tmpCell[i].diffusionMass = tmpDiffusionMass;
+		*/
 	}
 }

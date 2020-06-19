@@ -73,9 +73,9 @@ private:
 
 	//パラメータ
 	//初期拡散質量
-	const float mInitRho = 0.2f;
+	const float mInitRho = 0.3f;
 	//セルオートマトングリッドサイズ
-	const int mGridNumX = 70, mGridNumY = 100, mGridNumZ = 70;
+	const int mGridNumX = 65, mGridNumY = 110, mGridNumZ = 65;
 	const float mCellSizeX = 0.03f;
 	const float mCellSizeZ = mCellSizeX * sin(60.0f * MyMath::pi / 180.0f);		//√3 / 2
 	const float mCellSizeY = mCellSizeX * 1.10013f;						//c : a = 1.10013 : 1

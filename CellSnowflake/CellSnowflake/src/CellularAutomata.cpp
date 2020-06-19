@@ -70,7 +70,7 @@ CellularAutomata::CellularAutomata(GLuint vfProgObj)
 					|| i_x == 0 || i_x == mGridNumX - 1) {
 					cells[pointNum].SetFlagTrue(CellFlags::ISENDOFCELLS);
 					//端っこの拡散質量を下げてみる
-					cells[pointNum].diffusionMass = 0.0f;
+					cells[pointNum].diffusionMass = mInitRho * 1.0f;
 				}
 				else {
 					cells[pointNum].SetFlagFalse(CellFlags::ISENDOFCELLS);
@@ -81,6 +81,10 @@ CellularAutomata::CellularAutomata(GLuint vfProgObj)
 	
 	//中心初期セル作成
 	int centerCellNum = (mGridNumX / 2) + (mGridNumZ / 2 * mGridNumX) + ((mGridNumY / 2 ) * mGridNumX * mGridNumZ);
+	//おあそび位置
+	int centerCellNum1 = (mGridNumX / 2) + (mGridNumZ / 2 * mGridNumX) + (6 * mGridNumX * mGridNumZ);
+	int centerCellNum2 = (mGridNumX / 2) + ((mGridNumZ / 2 + 10) * mGridNumX) + (6 * mGridNumX * mGridNumZ);
+
 	setInitialCells(centerCellNum);
 	//setInitialCells(centerCellNum + 156);
 	//Houdiniの隣り合うセル数格納処理は省略

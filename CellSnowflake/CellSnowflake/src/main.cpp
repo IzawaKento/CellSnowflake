@@ -33,7 +33,7 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	Window window(720, 960, "CellSnowFlake");
+	Window window(960, 720, "CellSnowFlake");
 
 	DebugLog::create();
 	DebugLog::getInstance().printMachineInfo();
