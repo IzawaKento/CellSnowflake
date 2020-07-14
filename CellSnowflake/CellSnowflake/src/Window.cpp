@@ -105,6 +105,10 @@ void Window::swapBuffers() {
 		isReplaying = false;
 	}
 
+	if (glfwGetKey(window, GLFW_KEY_F) != GLFW_RELEASE && prevFrameKeyStatus == GLFW_RELEASE && !mIsReady) {
+		mIsReady = true;
+	}
+
 	// マウスの左ボタンの状態を調べる
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_1) != GLFW_RELEASE)
 	{

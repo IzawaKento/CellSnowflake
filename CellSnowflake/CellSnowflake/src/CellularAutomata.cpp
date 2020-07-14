@@ -4,8 +4,9 @@
 #include "Cell.h"
 //#include "Program.h"
 
-CellularAutomata::CellularAutomata(GLuint vfProgObj)
-	:cells(new Cell[mGridNumX*mGridNumY*mGridNumZ])
+CellularAutomata::CellularAutomata(GLuint vfProgObj, const int gridNumX, const int gridNumY, const int gridNumZ)
+	:mGridNumX(gridNumX), mGridNumY(gridNumY), mGridNumZ(gridNumZ)
+	,cells(new Cell[mGridNumX*mGridNumY*mGridNumZ])
 	, mvfProgObj(vfProgObj)
 {	/*
 	std::cout << "sizeofCell:" << sizeof(Cell) << std::endl;
@@ -219,6 +220,7 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 }
 
 void CellularAutomata::copySSBO(GLuint readBuffer, GLuint writeBuffer) {
+	return;
 	//SSBOをコピー
 	//SSBOのままでは引数的にコピーできない
 	glBindBuffer(GL_COPY_READ_BUFFER, readBuffer);

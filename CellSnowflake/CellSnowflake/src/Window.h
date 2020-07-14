@@ -65,6 +65,7 @@ public:
 	//パラメータ用
 	const bool isMC() const { return isMarchingCubes; }
 	const bool isPressingReplayKey() const { return isReplaying; }
+	const bool isReady() const { return mIsReady; }
 	const GLfloat getRho() const { return rho; }
 
 private:
@@ -84,6 +85,7 @@ private:
 	bool isMarchingCubes = true;
 	//リプレイボタン
 	bool isReplaying = false;
-
+	//録画用
+	bool mIsReady = false;
 	GLfloat rho;
 };

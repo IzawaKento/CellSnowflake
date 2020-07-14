@@ -62,7 +62,7 @@ int main() {
 
 	Render basicRender(&window, &mainCamera);
 
-	CellularAutomata cellularAutomata(basicRender.cellVFProgObj());
+	CellularAutomata cellularAutomata(basicRender.cellVFProgObj(), 70, 100, 70);
 	//パラメータ用
 	const GLint rhoLoc = glGetUniformLocation(cellularAutomata.getDiffusion1ComProgObj(), "rho");
 
@@ -99,15 +99,18 @@ int main() {
 		basicRender.setUniforms();
 		cellularAutomata.setUniforms(window.getRho());
 		
-		// 図形を描画する
-		//セルオートマトン処理
-		cellularAutomata.DispatchCompute();
-		if (window.isMC()) {
-			marchingTetrahedra.dispatchCompute();
-			marchingTetrahedra.drawMesh();
-		}
-		else {
-			cellularAutomata.drawCell();
+		if (window.isReady()) {
+			// 図形を描画する
+			//セルオートマトン処理
+			cellularAutomata.DispatchCompute();
+
+			if (window.isMC()) {
+				marchingTetrahedra.dispatchCompute();
+				marchingTetrahedra.drawMesh();
+			}
+			else {
+				cellularAutomata.drawCell();
+			}
 		}
 		
 		// カラーバッファを入れ替える
