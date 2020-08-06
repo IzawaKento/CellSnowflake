@@ -1,0 +1,137 @@
+#version 460 core
+
+layout(location = 6) uniform float rho = 1.0;
+
+layout(local_size_x = 1, local_size_y = 1, local_size_z = 1) in;
+
+//フラグの代わり.....
+const uint ISCRYSTAL = 1;	//ISCRYSTAL
+const uint ISEDGECRYSTAL = 2;	//ISEDGECRYSTAL
+const uint ISBOUNDARY = 4;	//ISBOUNDARY
+const uint ISEDGEBOUNDARY = 8;	//ISEDGEBOUNDARY
+const uint MZISODD = 16;	//セル番号のZ値が奇数である
+const uint ISENDOFCELLS = 32;
+
+class Cell
+{
+	vec4 position;
+	vec4 color;
+	vec3 neighbourSurfaceDir;
+	ivec3 slicedNeighbourNums;
+	vec3 vertexNormal;
+	uint flags;
+	float diffusionMass;
+	float boundaryMass;
+	int horizontalNeighbourNum;
+	int verticalNeighbourNum;
+	int neighbourNum;
+	float beta;
+	float ran;
+};
+
+layout(std430, binding = 0) buffer Cells
+{
+	Cell cell[];
+};
+
+layout(std430, binding = 1) buffer tmpCells
+{
+	Cell tmpCell[];
+};
+
+layout(binding = 2, offset = 0) uniform atomic_uint growCellCounter;
+
+//flagIDは2進数の値
+//flagsのビットのfragID番目（0から）が1ならtrue
+bool isFlag(uint i, uint flagID) {
+	return ((cell[i].flags & flagID) != 0);
+}
+void setFlagTrue(uint i, uint flagID) {
+	tmpCell[i].flags |= flagID;
+}
+void setFlagFalse(uint i, uint flagID) {
+	tmpCell[i].flags &= ~flagID;
+}
+
+//核生成のてすと用
+void setEdgeCry(uint i){
+	setFlagTrue(i, ISCRYSTAL);
+	setFlagTrue(i, ISEDGECRYSTAL);
+	setFlagFalse(i, ISBOUNDARY);
+	setFlagFalse(i, ISEDGEBOUNDARY);
+	tmpCell[i].diffusionMass = 0.0;
+	tmpCell[i].boundaryMass = 1.0;
+}
+
+void main(){
+	
+	const uint i = gl_WorkGroupID.y * gl_NumWorkGroups.x * gl_NumWorkGroups.z +
+		gl_WorkGroupID.z * gl_NumWorkGroups.x +
+		gl_WorkGroupID.x;
+	const uint gridNumX = gl_NumWorkGroups.x, gridNumZ = gl_NumWorkGroups.z;
+
+	int zOddNum = int(isFlag(i, MZISODD)) * 2 - 1;	//名前思いつかん
+	const uint[6] aroundCellIDs = uint[](i + 1, i - 1, i + gridNumX, i - gridNumX,
+		i + gridNumX + zOddNum, i - gridNumX + zOddNum);
+	
+	//とりあえず自分の周りにでっぱりがあったらアトミックカウンタ+1
+	if(isFlag(i, ISEDGEBOUNDARY) && !isFlag(i, ISENDOFCELLS)){
+		ivec3 tmpSliNeiNums = cell[i].slicedNeighbourNums;
+		ivec3 fixedSliNeiNums
+			= tmpSliNeiNums.x > tmpSliNeiNums.z ? tmpSliNeiNums.xyz : tmpSliNeiNums.zyx;
+		if(fixedSliNeiNums.y > 2 || (fixedSliNeiNums.x > 3 && fixedSliNeiNums.y > 0 && fixedSliNeiNums.z > 0)){
+			atomicCounterIncrement(growCellCounter);
+		}
+	}
+	
+	//面成長中は拡散処理をスキップ
+	if(atomicCounter(growCellCounter) > 0u){
+		return;
+	}
+	
+	//diffusion_1
+	if(isFlag(i, ISEDGEBOUNDARY) && !isFlag(i, ISENDOFCELLS)){		//界面液体
+		//乱数の決定
+		float ran = cell[i].ran;
+		const float gamma = 0.5;
+		float increase = 0.0;
+
+		//上中下による分岐
+		//何回も参照する
+		ivec3 tmpSliNeiNums = cell[i].slicedNeighbourNums;
+		
+		//上下統一のため下が大きい場合反転
+		ivec3 fixedSliNeiNums
+				= tmpSliNeiNums.x > tmpSliNeiNums.z ? tmpSliNeiNums.xyz : tmpSliNeiNums.zyx;
+		
+		if(fixedSliNeiNums.x > 4 && fixedSliNeiNums.y > 3){								//穴を埋める
+			increase = 0.05;
+		}else if(fixedSliNeiNums.x > 3 && fixedSliNeiNums.y > 0 && fixedSliNeiNums.z > 0
+			|| fixedSliNeiNums.z > 5){//面にする。でっぱりの周りの閾値を下げる
+			increase = 0.05;
+		}else if(fixedSliNeiNums.y > 2){	//面にする。横に伸ばしたい
+			increase = 0.05;
+		}else if(fixedSliNeiNums.x+fixedSliNeiNums.y+fixedSliNeiNums.z > 6){	//斜面
+			increase = 0.05;
+		}else if(fixedSliNeiNums.x+fixedSliNeiNums.y+fixedSliNeiNums.z > 5){	//側面
+			increase = 0.05;
+		}else if(fixedSliNeiNums.x+fixedSliNeiNums.y+fixedSliNeiNums.z > 2){	//斜角、面角
+			increase = 0.05;
+		}else if(fixedSliNeiNums.x > 0 && fixedSliNeiNums.y == 0 && fixedSliNeiNums.z == 0){	//斜角、面角
+			increase = 0.3;
+		}else{																	//角
+			increase = 0.1;
+		}
+
+		float tmpDiffusionMass = cell[i].diffusionMass + increase;
+
+		//お遊び 0.1はマジックナンバー
+		tmpDiffusionMass = tmpDiffusionMass + rho > 0.0 ? tmpDiffusionMass + rho : tmpDiffusionMass;	
+
+		//ノイズ完成 gamma0.5ぐらいがいい
+		tmpDiffusionMass = (1.0 - gamma * ran) * tmpDiffusionMass + (gamma * ran) * cell[i].diffusionMass;
+
+		tmpCell[i].diffusionMass = tmpDiffusionMass;
+		tmpCell[i].color = vec4(0.0, 0.0, cell[i].diffusionMass, 1.0);
+	}
+}

@@ -107,11 +107,13 @@ private:
 	GLuint resetEdgeComProgObj = Program::loadCompProgramObj("src\\resetEdge.comp");
 	GLuint computeProgramObj = Program::loadCompProgramObj("src\\compute.comp");
 	GLuint neighbourCryNumComProgObj = Program::loadCompProgramObj("src\\neighbourCryNum.comp");
-	GLuint diffusion1ComProgObj = Program::loadCompProgramObj("src\\diffusion1.comp");
+	GLuint diffusion1ComProgObj = Program::loadCompProgramObj("src\\diffusionFast.comp");
 	GLuint diffusion2ComProgObj = Program::loadCompProgramObj("src\\diffusion2.comp");
 	GLuint freezingComProgObj = Program::loadCompProgramObj("src\\freezing.comp");
 	GLuint attachmentComProgObj = Program::loadCompProgramObj("src\\attachment.comp");
 	GLuint meltingComProgObj = Program::loadCompProgramObj("src\\melt.comp");
+
+	GLuint testComProgObj = Program::loadCompProgramObj("src\\test.comp");
 
 	//ユニフォーム変数場所
 	const GLint rhoLoc = glGetUniformLocation(diffusion1ComProgObj, "rho");

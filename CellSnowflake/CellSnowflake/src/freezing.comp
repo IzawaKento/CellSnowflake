@@ -107,7 +107,7 @@ void main(){
 		tmpCell[i].diffusionMass = tmpDiffusionMass;
 		tmpCell[i].boundaryMass = tmpBoundaryMass;
 
-		tmpCell[i].color = vec4(tmpBoundaryMass, 0.0, tmpBoundaryMass, 1.0);
+		tmpCell[i].color += vec4(tmpBoundaryMass, 0.0, 0.0, 0.0);
 		
 	}
 }

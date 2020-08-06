@@ -62,7 +62,7 @@ int main() {
 
 	Render basicRender(&window, &mainCamera);
 
-	CellularAutomata cellularAutomata(basicRender.cellVFProgObj(), 70, 100, 70);
+	CellularAutomata cellularAutomata(basicRender.cellVFProgObj(), 70, 90, 70);
 	//パラメータ用
 	const GLint rhoLoc = glGetUniformLocation(cellularAutomata.getDiffusion1ComProgObj(), "rho");
 
@@ -98,9 +98,9 @@ int main() {
 		//uniform変数を設定する
 		basicRender.setUniforms();
 		cellularAutomata.setUniforms(window.getRho());
+		// 図形を描画する
 		
 		if (window.isReady()) {
-			// 図形を描画する
 			//セルオートマトン処理
 			cellularAutomata.DispatchCompute();
 

@@ -220,7 +220,6 @@ void CellularAutomata::setInitialCells(int centerCellNum) {
 }
 
 void CellularAutomata::copySSBO(GLuint readBuffer, GLuint writeBuffer) {
-	return;
 	//SSBOをコピー
 	//SSBOのままでは引数的にコピーできない
 	glBindBuffer(GL_COPY_READ_BUFFER, readBuffer);
@@ -234,7 +233,6 @@ void CellularAutomata::copySSBO(GLuint readBuffer, GLuint writeBuffer) {
 
 //毎フレーム行うコンピュートシェーダの実行
 void CellularAutomata::DispatchCompute() {
-
 	//resetEdge
 	// シェーダストレージバッファオブジェクトを 0 番の結合ポイントに結合する
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
@@ -245,12 +243,12 @@ void CellularAutomata::DispatchCompute() {
 	// 更新用のシェーダプログラムの使用開始
 	glUseProgram(resetEdgeComProgObj);
 	//引数は３次元でx, y, zのワークグループを起動する数
-	glDispatchCompute(mGridNumX, mGridNumY, mGridNumZ);
+	glDispatchCompute(mGridNumX, mGridNumY, mGridNumZ); 
 	//メモリへのアクセスを止める
 	glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT);
 	//更新後SSBOを読み取り用SSBOにコピー
 	copySSBO(tmpSsbo, ssbo);
-
+	
 	//setBoundary
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, tmpSsbo);

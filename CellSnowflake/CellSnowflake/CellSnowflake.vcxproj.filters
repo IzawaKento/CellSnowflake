@@ -30,6 +30,11 @@
     <None Include="src\marchingCube.comp" />
     <None Include="src\marchingCube.geom" />
     <None Include="src\marching.geom" />
+    <None Include="src\marching.vert" />
+    <None Include="src\marching.frag" />
+    <None Include="src\marching.comp" />
+    <None Include="src\test.comp" />
+    <None Include="src\diffusionFast.comp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">

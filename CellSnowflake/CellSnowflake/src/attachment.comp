@@ -10,12 +10,13 @@ const uint ISEDGEBOUNDARY = 8;	//ISEDGEBOUNDARY
 const uint MZISODD = 16;	//セル番号のZ値が奇数である
 const uint ISENDOFCELLS = 32;
 
-const float betalist[7 * 5] = {
+const float betalist[7 * 6] = {
 	0.0, 0.55, 0.55, 0.8, 1.8, 4.0, 6.0,
 	1.0, 1.0,  1.0,  1.0, 1.0, 1.0, 1.0,
 	0.0, 0.45, 0.45, 0.8, 1.6, 4.0, 6.0,
 	1.0, 1.0,  1.0,  1.0, 1.0, 1.5, 1.5,
-	0.0, 0.1, 0.1, 0.8, 1.8, 4.0, 6.0,
+	0.0, 0.1, 0.1, 0.8, 2.0, 4.0, 6.0,
+	0.5, 0.5, 0.5, 0.5, 0.5, 1.5, 1.5
 };
 
 const uint BETATYPE = 4;
@@ -159,10 +160,11 @@ void main(){
 		//上中下による分岐
 		//何回も参照する
 		ivec3 tmpSliNeiNums = cell[i].slicedNeighbourNums;
+		
 		//上下統一のため下が大きい場合反転
 		ivec3 fixedSliNeiNums
 				= tmpSliNeiNums.x > tmpSliNeiNums.z ? tmpSliNeiNums.xyz : tmpSliNeiNums.zyx;
-
+		
 		//所属箇所判定191130改
 		if(fixedSliNeiNums.x > 4 && fixedSliNeiNums.y > 3){								//穴を埋める
 			beta = betalist[BETATYPE * 7];
@@ -183,6 +185,8 @@ void main(){
 		}else if(fixedSliNeiNums.x+fixedSliNeiNums.y+fixedSliNeiNums.z > 2){	//斜角、面角
 			beta = betalist[BETATYPE * 7 + 5];//カイネティクス的にくっつきにくい
 			//tmpCell[i].color = vec4(0.1, 0.2, cell[i].boundaryMass/3.0, 1.0);
+		}else if(fixedSliNeiNums.x > 0 && fixedSliNeiNums.y == 0 && fixedSliNeiNums.z == 0){	//頂点
+			beta = 1.8;
 		}else{																	//角
 			//tmpCell[i].color = vec4(0.0, 0.0, cell[i].boundaryMass/6.0, 1.0);
 			beta = betalist[BETATYPE * 7 + 6];	//カイネティクス的にくっつきにくい
