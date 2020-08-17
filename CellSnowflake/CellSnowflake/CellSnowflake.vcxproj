@@ -143,6 +143,7 @@
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\Cell.cpp" />
     <ClCompile Include="src\CellularAutomata.cpp" />
+    <ClCompile Include="src\ObjLoader.cpp" />
     <ClCompile Include="src\Render.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\MarchingTetrahedra.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="src\CellularAutomata.h" />
     <ClInclude Include="src\DebugLog.h" />
     <ClInclude Include="src\MyMath.h" />
+    <ClInclude Include="src\ObjLoader.h" />
     <ClInclude Include="src\Render.h" />
     <ClInclude Include="src\MarchingTetrahedra.h" />
     <ClInclude Include="src\Matrix.h" />

@@ -81,10 +81,6 @@ int main() {
 
 			//previousTime = glfwGetTime();
 		}
-		
-		//1フレームデバッグ
-		//なんか無理やり止める感じ
-		//std::this_thread::sleep_for(std::chrono::milliseconds(250));
 
 		// ウィンドウを消去する
 		glClear(GL_COLOR_BUFFER_BIT);

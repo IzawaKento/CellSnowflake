@@ -3,6 +3,46 @@
 //グローバルの関数
 
 //const参照渡しに変更して高速化してる
+Vector2 operator-(const Vector2 &v1, const Vector2 &v2)
+{
+	Vector2 v{ v1[0] - v2[0], v1[1] - v2[1] };
+	return v;
+}
+
+Vector2 operator+(const Vector2 &v1, const Vector2 &v2)
+{
+	Vector2 v{ v1[0] + v2[0], v1[1] + v2[1] };
+	return v;
+}
+
+//スカラー
+Vector2 operator*(const Vector2 &v1, const GLfloat f)
+{
+	Vector2 v{ v1[0] * f, v1[1] * f };
+	return v;
+}
+
+Vector2 operator/(const Vector2 &v1, const GLfloat f)
+{
+	//ソフトウェアじゃないから0割り回避はいいかな
+	Vector2 v{ v1[0] / f, v1[1] / f };
+	return v;
+}
+//長さ
+GLfloat LengthVec2(const Vector2 &v) {
+
+	return sqrt(v[0] * v[0] + v[1] * v[1]);
+}
+//長さの2乗の値
+GLfloat SquareLenVec2(const Vector2 &v) {
+	return v[0] * v[0] + v[1] * v[1];
+}
+//正規化
+Vector2 NormalizeVec2(const Vector2 &v) {
+	return v / LengthVec2(v);
+}
+
+//const参照渡しに変更して高速化してる
 Vector3 operator-(const Vector3 &v1, const Vector3 &v2)
 {
 	Vector3 v{ v1[0] - v2[0], v1[1] - v2[1], v1[2] - v2[2] };
@@ -16,15 +56,15 @@ Vector3 operator+(const Vector3 &v1, const Vector3 &v2)
 }
 
 //スカラー
-Vector3 operator*(const Vector3 &v1, const float f)
+Vector3 operator*(const Vector3 &v1, const GLfloat f)
 {
 	Vector3 v{ v1[0] * f, v1[1] * f, v1[2] * f };
 	return v;
 }
 
-Vector3 operator/(const Vector3 &v1, const float f)
+Vector3 operator/(const Vector3 &v1, const GLfloat f)
 {
-	//ソフトウェアじゃないから０割り回避はいいかな
+	//ソフトウェアじゃないから0割り回避はいいかな
 	Vector3 v{ v1[0] / f, v1[1] / f, v1[2] / f };
 	return v;
 }
@@ -81,7 +121,7 @@ Vector4 operator+(const Vector4 v1, const Vector4 v2)
 }
 
 //スカラー
-Vector4 operator*(const Vector4 v1, const float f)
+Vector4 operator*(const Vector4 v1, const GLfloat f)
 {
 	Vector4 v;
 	v[0] = v1[0] * f;
@@ -91,7 +131,7 @@ Vector4 operator*(const Vector4 v1, const float f)
 	return v;
 }
 
-Vector4 operator/(const Vector4 v1, const float f)
+Vector4 operator/(const Vector4 v1, const GLfloat f)
 {
 	if (f == 0) {
 		std::cerr << "Vec4: 0割り" << std::endl;
